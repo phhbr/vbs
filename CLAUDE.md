@@ -130,6 +130,16 @@ serialises concurrent joins so the 50-participant limit cannot be overshot.
 Afterwards they call `touch_session()`, which pushes `expires_at` out by 24
 hours and bumps `sessions.version`.
 
+## Rounds
+
+`rounds.round_number` is a session-wide sequence — every round ever started in
+a session gets the next number, which is what the footer's "Round: N" shows.
+`rounds.attempt` is scoped to one story: it starts at 1 with `start_story` and
+increments with `re_estimate`, so re-estimating the same story produces a new
+`rounds` row with a new `round_number` but `attempt + 1`, while the previous
+round and its `result` stay in place as history. `sessions.current_round_id`
+points at the live round; null means idle.
+
 ## Error codes
 
 Functions raise custom SQLSTATEs, which PostgREST passes through as

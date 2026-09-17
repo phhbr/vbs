@@ -77,7 +77,9 @@ export type Database = {
       }
       rounds: {
         Row: {
+          attempt: number
           id: string
+          result: Json | null
           revealed_at: string | null
           round_number: number
           session_id: string
@@ -86,7 +88,9 @@ export type Database = {
           story: string
         }
         Insert: {
+          attempt?: number
           id?: string
+          result?: Json | null
           revealed_at?: string | null
           round_number: number
           session_id: string
@@ -95,7 +99,9 @@ export type Database = {
           story: string
         }
         Update: {
+          attempt?: number
           id?: string
+          result?: Json | null
           revealed_at?: string | null
           round_number?: number
           session_id?: string
@@ -118,6 +124,7 @@ export type Database = {
           admin_token_hash: string
           code: string
           created_at: string
+          current_round_id: string | null
           deck: string
           expires_at: string
           id: string
@@ -128,6 +135,7 @@ export type Database = {
           admin_token_hash: string
           code: string
           created_at?: string
+          current_round_id?: string | null
           deck?: string
           expires_at?: string
           id?: string
@@ -138,13 +146,22 @@ export type Database = {
           admin_token_hash?: string
           code?: string
           created_at?: string
+          current_round_id?: string | null
           deck?: string
           expires_at?: string
           id?: string
           last_activity_at?: string
           version?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sessions_current_round_id_fkey"
+            columns: ["current_round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       votes: {
         Row: {
@@ -190,6 +207,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_read_vote: {
+        Args: { p_participant_id: string; p_round_id: string }
+        Returns: boolean
+      }
       claim_admin: { Args: { p_code: string; p_token: string }; Returns: Json }
       create_session: {
         Args: { p_deck?: string; p_locale?: string; p_nickname: string }
@@ -211,6 +232,7 @@ export type Database = {
           admin_token_hash: string
           code: string
           created_at: string
+          current_round_id: string | null
           deck: string
           expires_at: string
           id: string

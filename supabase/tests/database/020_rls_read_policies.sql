@@ -50,9 +50,12 @@ select is(
   'a member sees the rounds of their session'
 );
 
-select is_empty(
-  $$ select * from votes $$,
-  'votes stay unreadable in M2, even for a member of the session'
+-- M3 opens votes up for the caller's own row; 060_votes_visibility.sql covers
+-- the full policy, including that other rows stay hidden before reveal.
+select is(
+  (select count(*) from votes),
+  1::bigint,
+  'a member sees only their own vote before reveal'
 );
 
 -- ------------------------------------------------------ cross-session reads
