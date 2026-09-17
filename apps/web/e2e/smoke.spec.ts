@@ -5,7 +5,11 @@ test("home route renders", async ({ page }) => {
   await expect(page.getByText("Vorgangsbewertungsstelle")).toBeVisible();
 });
 
-test("session route renders with the code from the URL", async ({ page }) => {
+test("a malformed code in the URL resolves to the error screen", async ({
+  page,
+}) => {
   await page.goto("/s/ABCD-1234");
-  await expect(page.getByText("ABCD-1234")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Das hat nicht geklappt" }),
+  ).toBeVisible();
 });

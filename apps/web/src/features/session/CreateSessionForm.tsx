@@ -2,6 +2,7 @@ import type { Deck } from "@vbs/core";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { adminRecoveryUrl } from "./adminToken";
 import { useCreateSession } from "./queries";
 import { useErrorMessage } from "./useErrorMessage";
 
@@ -27,11 +28,12 @@ export function CreateSessionForm() {
       { nickname: trimmed, deck, locale: i18n.resolvedLanguage ?? "de" },
       {
         onSuccess: (result) => {
-          // The recovery token is shown once, on the session screen, and never
-          // enters the history stack or the server logs: it travels in the
-          // fragment and is replaced, not pushed.
-          void navigate(`/s/${result.code}#admin=${result.admin_token}`, {
+          // The token travels in the fragment, which browsers never send to a
+          // server. `justCreated` tells the session screen to show it once
+          // rather than treat it as a recovery attempt.
+          void navigate(adminRecoveryUrl("", result.code, result.admin_token), {
             replace: true,
+            state: { justCreated: true },
           });
         },
       },
