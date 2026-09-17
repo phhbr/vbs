@@ -124,6 +124,27 @@ adding a policy, not by changing grants.
 `set_can_vote`, `round_status` (read-only; before reveal it returns only who has
 voted, never values).
 
+Every mutating function goes through `lock_live_session()`, which takes a row
+lock on the session and raises on unknown or expired codes. The lock is what
+serialises concurrent joins so the 50-participant limit cannot be overshot.
+Afterwards they call `touch_session()`, which pushes `expires_at` out by 24
+hours and bumps `sessions.version`.
+
+## Error codes
+
+Functions raise custom SQLSTATEs, which PostgREST passes through as
+`error.code`, so the frontend maps a code to an i18n key without matching on
+message text.
+
+| Code    | Meaning           | Code    | Meaning                        |
+| ------- | ----------------- | ------- | ------------------------------ |
+| `VB001` | session_not_found | `VB007` | invalid_token                  |
+| `VB002` | session_expired   | `VB008` | not_a_participant              |
+| `VB003` | session_full      | `VB009` | participant_not_found          |
+| `VB004` | nickname_taken    | `VB010` | admin_invariant (trigger only) |
+| `VB005` | nickname_invalid  | `VB011` | not_authenticated              |
+| `VB006` | not_admin         |         |                                |
+
 ## Roles
 
 - **admin** — exactly one per session, the creator. Creates stories, reveals cards,
