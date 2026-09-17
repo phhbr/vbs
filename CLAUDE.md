@@ -108,8 +108,8 @@ lives in exactly one place — a policy.
 All read policies call one predicate, `is_active_session_member(session_id)`,
 which answers membership and expiry together. It must be `security definer`: the
 obvious policy on `participants` has to query `participants` to decide, and
-Postgres rejects that with *infinite recursion detected in policy for relation
-participants*. A security definer function is not subject to the caller's RLS,
+Postgres rejects that with _infinite recursion detected in policy for relation
+participants_. A security definer function is not subject to the caller's RLS,
 which breaks the recursion at one controlled point. Inside it, `auth.uid()` is
 wrapped in a sub-select so the planner evaluates it once per query rather than
 once per row.
