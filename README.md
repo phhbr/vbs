@@ -18,6 +18,10 @@ docker context use colima
 
 # Abhängigkeiten installieren
 pnpm install
+
+# Frontend-Konfiguration: die lokalen Supabase-Keys sind auf jedem Rechner
+# dieselben festen Demo-Werte, die Beispieldatei ist also direkt lauffähig.
+cp apps/web/.env.example apps/web/.env.local
 ```
 
 ### Frontend
