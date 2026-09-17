@@ -14,11 +14,5 @@
   "language": {
     "de": "Deutsch",
     "en": "Englisch"
-  },
-  "home": {
-    "placeholder": "Home — Platzhalter"
-  },
-  "session": {
-    "placeholder": "Session {{code}} — Platzhalter"
   }
 }

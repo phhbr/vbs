@@ -1,11 +1,11 @@
-import { useTranslation } from "react-i18next";
+import { CreateSessionForm } from "../features/session/CreateSessionForm";
+import { JoinByCodeForm } from "../features/session/JoinByCodeForm";
 
 export function Home() {
-  const { t } = useTranslation();
-
   return (
     <main>
-      <p>{t("home.placeholder")}</p>
+      <CreateSessionForm />
+      <JoinByCodeForm />
     </main>
   );
 }

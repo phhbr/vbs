@@ -1,0 +1,60 @@
+{
+  "create": {
+    "title": "Open a new session",
+    "nickname": "Your name",
+    "nicknameHint": "1 to 24 characters.",
+    "deck": "Card deck",
+    "deckFibonacci": "Fibonacci",
+    "deckTshirt": "T-shirt",
+    "submit": "[ Open session ]",
+    "submitting": "[ opening … ]"
+  },
+  "join": {
+    "title": "Join a session",
+    "code": "Session code",
+    "codeHint": "12 characters, case does not matter.",
+    "codeInvalid": "A code is 12 characters long — without I, O, 0 and 1.",
+    "nickname": "Your name",
+    "submit": "[ Join ]",
+    "submitting": "[ joining … ]",
+    "forSession": "You are joining session {{code}}."
+  },
+  "lobby": {
+    "title": "Waiting room",
+    "waiting": "Voting starts once the session is called to order.",
+    "participants": "Present",
+    "participantCount": "{{count}} of 50",
+    "code": "Session code",
+    "link": "Link to share",
+    "copy": "[Copy]",
+    "copied": "[Copied]",
+    "refresh": "[Refresh]",
+    "refreshing": "[loading …]",
+    "qrCaption": "QR code for the session link",
+    "you": "you"
+  },
+  "admin": {
+    "recoveryTitle": "Recovery link",
+    "recoveryWarning": "This link is shown exactly once. Use it to take the chair back if you switch browsers or clear your data. Save it now — after this it is gone.",
+    "recoveryAcknowledge": "[ Understood, continue ]",
+    "claimed": "You have taken the chair.",
+    "claiming": "Taking the chair …"
+  },
+  "errors": {
+    "session_not_found": "We do not know that code. Typo?",
+    "session_expired": "This session has expired. Sessions close 24 hours after the last activity.",
+    "session_full": "This session is full. More than 50 participants are not provided for.",
+    "nickname_taken": "That name is already taken here. Pick another.",
+    "nickname_invalid": "The name must be between 1 and 24 characters.",
+    "not_admin": "You do not have permission for that.",
+    "invalid_token": "That recovery link is not valid.",
+    "not_a_participant": "You are not a member of this session.",
+    "participant_not_found": "That person is not a member of this session.",
+    "admin_invariant": "A session needs exactly one chair.",
+    "not_authenticated": "Sign-in failed. Reload the page.",
+    "unknown": "Something went wrong. Try again.",
+    "title": "That did not work",
+    "back": "[ Back to the start ]",
+    "retry": "[ Try again ]"
+  }
+}

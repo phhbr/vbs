@@ -14,11 +14,5 @@
   "language": {
     "de": "German",
     "en": "English"
-  },
-  "home": {
-    "placeholder": "Home — placeholder"
-  },
-  "session": {
-    "placeholder": "Session {{code}} — placeholder"
   }
 }

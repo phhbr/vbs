@@ -1,0 +1,60 @@
+{
+  "create": {
+    "title": "Neue Sitzung eröffnen",
+    "nickname": "Dein Name",
+    "nicknameHint": "1 bis 24 Zeichen.",
+    "deck": "Kartensatz",
+    "deckFibonacci": "Fibonacci",
+    "deckTshirt": "T-Shirt",
+    "submit": "[ Sitzung eröffnen ]",
+    "submitting": "[ wird eröffnet … ]"
+  },
+  "join": {
+    "title": "Sitzung beitreten",
+    "code": "Sitzungs-Code",
+    "codeHint": "12 Zeichen, Schreibweise egal.",
+    "codeInvalid": "Ein Code besteht aus 12 Zeichen — ohne I, O, 0 und 1.",
+    "nickname": "Dein Name",
+    "submit": "[ Beitreten ]",
+    "submitting": "[ tritt bei … ]",
+    "forSession": "Du trittst der Sitzung {{code}} bei."
+  },
+  "lobby": {
+    "title": "Vorzimmer",
+    "waiting": "Die Abstimmung beginnt, sobald die Sitzung eröffnet ist.",
+    "participants": "Anwesend",
+    "participantCount": "{{count}} von 50",
+    "code": "Sitzungs-Code",
+    "link": "Link zum Teilen",
+    "copy": "[Kopieren]",
+    "copied": "[Kopiert]",
+    "refresh": "[Aktualisieren]",
+    "refreshing": "[wird geladen …]",
+    "qrCaption": "QR-Code für den Sitzungslink",
+    "you": "du"
+  },
+  "admin": {
+    "recoveryTitle": "Wiederherstellungs-Link",
+    "recoveryWarning": "Dieser Link wird genau einmal angezeigt. Mit ihm holst du dir die Leitung zurück, falls du den Browser wechselst oder deine Daten löschst. Bewahre ihn jetzt auf — danach ist er weg.",
+    "recoveryAcknowledge": "[ Verstanden, weiter ]",
+    "claimed": "Du hast die Leitung übernommen.",
+    "claiming": "Leitung wird übernommen …"
+  },
+  "errors": {
+    "session_not_found": "Diesen Code kennen wir nicht. Vertippt?",
+    "session_expired": "Diese Sitzung ist abgelaufen. Sitzungen schließen 24 Stunden nach der letzten Aktivität.",
+    "session_full": "Diese Sitzung ist voll. Mehr als 50 Teilnehmende sind nicht vorgesehen.",
+    "nickname_taken": "Diesen Namen gibt es hier schon. Nimm einen anderen.",
+    "nickname_invalid": "Der Name muss zwischen 1 und 24 Zeichen lang sein.",
+    "not_admin": "Dafür fehlt dir die Berechtigung.",
+    "invalid_token": "Dieser Wiederherstellungs-Link ist ungültig.",
+    "not_a_participant": "Du gehörst dieser Sitzung nicht an.",
+    "participant_not_found": "Diese Person gehört der Sitzung nicht an.",
+    "admin_invariant": "Eine Sitzung braucht genau eine Leitung.",
+    "not_authenticated": "Anmeldung fehlgeschlagen. Lade die Seite neu.",
+    "unknown": "Etwas ist schiefgelaufen. Versuch es noch einmal.",
+    "title": "Das hat nicht geklappt",
+    "back": "[ Zurück zum Anfang ]",
+    "retry": "[ Noch einmal versuchen ]"
+  }
+}

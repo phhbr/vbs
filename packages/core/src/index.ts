@@ -1,6 +1,7 @@
 // Deck definitions and the remaining display helpers land in M3/M4.
 export type {
   Database,
+  Json,
   Tables,
   TablesInsert,
   TablesUpdate,

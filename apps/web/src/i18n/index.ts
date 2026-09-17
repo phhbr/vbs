@@ -1,8 +1,16 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
-import de from "./locales/de.json";
-import en from "./locales/en.json";
+import sessionDe from "../features/session/locales/de.json";
+import sessionEn from "../features/session/locales/en.json";
+import commonDe from "./locales/de.json";
+import commonEn from "./locales/en.json";
+
+// Keys live with the feature (CLAUDE.md), merged here into one namespace so
+// components call plain t("lobby.title") without namespace boilerplate. Each
+// file owns distinct top-level keys, so a shallow merge is enough.
+const de = { ...commonDe, ...sessionDe };
+const en = { ...commonEn, ...sessionEn };
 
 void i18next
   .use(LanguageDetector)
@@ -18,5 +26,12 @@ void i18next
       escapeValue: false,
     },
   });
+
+// CLAUDE.md: <html lang> follows the active locale.
+const applyDocumentLanguage = (lng: string) => {
+  document.documentElement.lang = lng;
+};
+applyDocumentLanguage(i18next.resolvedLanguage ?? "de");
+i18next.on("languageChanged", applyDocumentLanguage);
 
 export default i18next;
