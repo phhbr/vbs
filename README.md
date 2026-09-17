@@ -45,6 +45,12 @@ supabase stop              # stoppt den lokalen Stack wieder
 `supabase start` gibt lokale URLs und Keys aus (u. a. die Studio-URL und den
 anon Key für `apps/web`'s `.env.local`, siehe `.env.example`, sobald vorhanden).
 
+**Colima-Falle:** Mit `mountType: sshfs` (Colima-Default) kann der erste
+`supabase start` mit `chown ... permission denied` für
+`supabase/snippets` fehlschlagen, weil Docker das Bind-Mount-Verzeichnis
+selbst anlegen und chownen will und sshfs das nicht erlaubt. Das Verzeichnis
+liegt bereits im Repo (`supabase/snippets/.gitkeep`), das reicht als Fix.
+
 ## Monorepo-Struktur
 
 - `apps/web` — React 19 + Vite + TypeScript, die eigentliche Anwendung
