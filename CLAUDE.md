@@ -154,7 +154,22 @@ message text.
 - **spectator** — watches; not counted in "x of y voted".
 
 Admin recovery: `/s/<code>#admin=<token>`. The token travels only in the URL
-fragment and is stored as a hash.
+fragment — never the path or query, so it stays out of server logs and
+`Referer` headers — and the database stores only its SHA-256 hash. It is
+returned exactly once, by `create_session`.
+
+`claim_admin` has two paths, because the realistic case is a browser that lost
+its anonymous session and is therefore a stranger to the session:
+
+- **caller is not a participant** → the existing admin row is taken over,
+  keeping its nickname. No ghost participant is left behind, no extra seat is
+  used, and recovery still works on a full session.
+- **caller is already a participant** → the old admin drops to player and the
+  caller is promoted, the plain hand-over case.
+
+Both `claim_admin` and `transfer_admin` **demote before they promote**: the
+partial unique index on admin rows cannot be deferred, so the reverse order
+would collide with the outgoing admin.
 
 ## i18n
 

@@ -66,7 +66,10 @@ begin
             'can_vote', p.can_vote,
             'is_you', p.user_id = v_user_id
           )
-          order by p.joined_at, p.id
+          -- Name, not id, as the tiebreaker: participants created in the same
+          -- transaction share joined_at to the microsecond, and a random uuid
+          -- would order the list differently on every call.
+          order by p.joined_at, p.name
         ),
         '[]'::jsonb
       )

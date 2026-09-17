@@ -190,6 +190,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_admin: { Args: { p_code: string; p_token: string }; Returns: Json }
       create_session: {
         Args: { p_deck?: string; p_locale?: string; p_nickname: string }
         Returns: Json
@@ -226,6 +227,7 @@ export type Database = {
       normalize_session_code: { Args: { p_code: string }; Returns: string }
       session_state: { Args: { p_code: string }; Returns: Json }
       touch_session: { Args: { p_session_id: string }; Returns: undefined }
+      transfer_admin: { Args: { p_participant_id: string }; Returns: Json }
       validate_nickname: { Args: { p_nickname: string }; Returns: string }
     }
     Enums: {
