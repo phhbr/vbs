@@ -1,2 +1,7 @@
-// Scaffold only — generated DB types, deck definitions and display helpers land in M2/M3.
-export {};
+// Deck definitions and display helpers land in M2/M3.
+export type {
+  Database,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+} from "./database.types";
