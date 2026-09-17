@@ -1,0 +1,8 @@
+body {
+  margin: 0;
+  background: var(--vbs-bg);
+  color: var(--vbs-fg);
+  font-family: var(--vbs-font-mono);
+  font-size: var(--vbs-font-size);
+  line-height: var(--vbs-line-height);
+}

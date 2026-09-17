@@ -1,0 +1,88 @@
+/*
+ * VBS design tokens, derived from the canvas prototype
+ * (docs/prototype/prototype.dc.html).
+ *
+ * Text colors are raised to WCAG AAA (7:1) compared to the prototype. The ratios
+ * below were computed by hand and MUST be confirmed by the contrast unit test in
+ * packages/ui ("token contrast"). Decorative rules and borders sit at 3:1 or
+ * better — there is no AAA tier for non-text — and disabled controls are exempt
+ * per WCAG.
+ */
+
+:root {
+  /* Typography: deliberately the system-monospace look of the prototype */
+  --vbs-font-mono: "Courier New", Courier, monospace;
+  --vbs-font-size: 13px;
+  --vbs-font-size-small: 11px;
+  --vbs-font-size-label: 12px;
+  --vbs-line-height: 1.55;
+  --vbs-logo-line-height: 1.05;
+
+  /* Spacing, carried over from the prototype */
+  --vbs-gap-row: 14px;
+  --vbs-gap-cards: 8px;
+  --vbs-gap-columns: 26px;
+  --vbs-pad-bar: 6px 12px;
+  --vbs-pad-panel: 12px 14px;
+  --vbs-pad-page: 24px 32px 48px;
+
+  /* Surfaces: no radii, no shadows, no gradients */
+  --vbs-radius: 0;
+  --vbs-border-style: 1px dashed var(--vbs-divider);
+  --vbs-touch-target: 44px;
+  --vbs-focus-ring: 2px dashed currentColor;
+}
+
+/* Dark, the prototype's default */
+:root,
+:root[data-theme="dark"] {
+  --vbs-bg: #000000;          /* ground */
+  --vbs-fg: #b7b7b7;          /* body text        10.5:1 */
+  --vbs-fg-dim: #9a9a9a;      /* secondary         7.5:1 */
+  --vbs-fg-dim-2: #a2a2a2;    /* section labels    8.2:1 */
+  --vbs-fg-strong: #eaeaea;   /* values, logo     18:1   */
+  --vbs-accent: #ff8c1a;      /* links, active     9.0:1 */
+  --vbs-danger: #ff6a5a;      /* warning, waiting  7.5:1 */
+  --vbs-divider: #7a5226;     /* rules, borders    3.1:1 */
+  --vbs-input-bg: #000000;
+  --vbs-input-fg: #eaeaea;
+  --vbs-disabled: #5a5a5a;    /* exempt */
+}
+
+/* Light */
+:root[data-theme="light"] {
+  --vbs-bg: #f7f4ec;          /* warm paper white */
+  --vbs-fg: #262620;          /* body text        13.8:1 */
+  --vbs-fg-dim: #4a4740;      /* secondary         8.4:1 */
+  --vbs-fg-dim-2: #3d3a34;    /* section labels   10:1   */
+  --vbs-fg-strong: #141310;   /* values, logo     17:1   */
+  --vbs-accent: #6e3a00;      /* links, active     8.4:1 */
+  --vbs-danger: #8a1f14;      /* warning, waiting  8.3:1 */
+  --vbs-divider: #9c7830;     /* rules, borders    3.7:1 */
+  --vbs-input-bg: #ffffff;
+  --vbs-input-fg: #141310;
+  --vbs-disabled: #a8a498;    /* exempt */
+}
+
+/* With no stored choice, follow the system. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --vbs-bg: #f7f4ec;
+    --vbs-fg: #262620;
+    --vbs-fg-dim: #4a4740;
+    --vbs-fg-dim-2: #3d3a34;
+    --vbs-fg-strong: #141310;
+    --vbs-accent: #6e3a00;
+    --vbs-danger: #8a1f14;
+    --vbs-divider: #9c7830;
+    --vbs-input-bg: #ffffff;
+    --vbs-input-fg: #141310;
+    --vbs-disabled: #a8a498;
+  }
+}
+
+/*
+ * The selected card and the consensus badge fill an area with --vbs-accent.
+ * Black or white on top of it only reaches AA for some hues, so the selection
+ * also carries a distinct border and is never signalled by color alone.
+ */
