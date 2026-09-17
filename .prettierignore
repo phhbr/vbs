@@ -1,0 +1,11 @@
+pnpm-lock.yaml
+dist/
+coverage/
+playwright-report/
+test-results/
+supabase/.branches/
+supabase/.temp/
+
+# Frozen prototype source, and its verbatim copy — not ours to reformat
+docs/prototype/
+packages/ui/src/tokens.css
