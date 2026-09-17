@@ -97,6 +97,26 @@ In pgTAP, assert the passing cases with `lives_ok('set constraints all
 immediate')` and the failing ones with the trigger switched to immediate first —
 `throws_ok` cannot catch a failing `SET CONSTRAINTS`.
 
+## RLS shape
+
+Writes are blocked by **grants**, reads are governed by **RLS**. `insert`,
+`update` and `delete` are revoked from `anon` and `authenticated` on every
+table, so "the frontend has no write access" holds even if someone later adds a
+careless policy. `select` grants are left in place so that every read decision
+lives in exactly one place — a policy.
+
+All read policies call one predicate, `is_active_session_member(session_id)`,
+which answers membership and expiry together. It must be `security definer`: the
+obvious policy on `participants` has to query `participants` to decide, and
+Postgres rejects that with *infinite recursion detected in policy for relation
+participants*. A security definer function is not subject to the caller's RLS,
+which breaks the recursion at one controlled point. Inside it, `auth.uid()` is
+wrapped in a sub-select so the planner evaluates it once per query rather than
+once per row.
+
+`votes` has no policy at all and is therefore unreadable; M3 opens it up by
+adding a policy, not by changing grants.
+
 ## RPC functions
 
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
