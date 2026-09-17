@@ -25,7 +25,7 @@ select ok(
 -- simplest to seed): insert as the test's superuser session, which bypasses
 -- RLS, then switch to `anon` and confirm every command is denied.
 insert into sessions (code, admin_token_hash)
-values ('TEST-0001', 'irrelevant-hash');
+values ('TESTCADE2345', 'irrelevant-hash');
 
 set local role anon;
 
@@ -35,7 +35,7 @@ select is_empty(
 );
 
 select throws_ok(
-  $$ insert into sessions (code, admin_token_hash) values ('TEST-0002', 'x') $$,
+  $$ insert into sessions (code, admin_token_hash) values ('TESTCADE2346', 'x') $$,
   '42501',
   null,
   'anon cannot insert into sessions without a policy'

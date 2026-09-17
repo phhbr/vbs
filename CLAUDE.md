@@ -66,6 +66,37 @@ pnpm gen:types           # supabase gen types typescript > packages/core/src/dat
    Presence heartbeats do not count as activity. Policies also check
    `expires_at > now()`.
 
+## Session codes
+
+12 characters from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789` — no `I`/`1`, no `O`/`0`,
+so a code survives being read aloud or retyped from a screenshot. Generated
+server-side by `generate_session_code()` from pgcrypto random bytes; clients
+never supply a code. Stored canonically upper case and unique, with a check
+constraint on the format. Lookups go through `normalize_session_code()`, which
+strips anything outside the alphabet and upper-cases, so pasted codes with
+dashes or spaces still resolve. The UI displays them grouped as `XXXX-XXXX-XXXX`
+while URLs carry the bare 12 characters.
+
+## Exactly one admin per session
+
+Two mechanisms, because the two failure directions need different tools:
+
+- **At most one** — a partial unique index over `participants (session_id)`
+  restricted to admin rows. This is the one that holds under concurrency:
+  simultaneous promotions serialise on the index, which a count-based check
+  cannot do because it cannot see another transaction's uncommitted row. Unique
+  indexes cannot be deferred, so every role swap **demotes before it promotes**.
+- **At least one** — a `deferrable initially deferred` constraint trigger
+  (`assert_session_has_admin`) that raises `VB010` unless the session has either
+  zero participants or exactly one admin. Deferring to commit time is what lets
+  a demote/promote pair pass on its end state. It also catches the case that has
+  no function behind it: `participants.user_id` cascades from `auth.users`, so a
+  deleted auth user would otherwise silently orphan a session.
+
+In pgTAP, assert the passing cases with `lives_ok('set constraints all
+immediate')` and the failing ones with the trigger switched to immediate first —
+`throws_ok` cannot catch a failing `SET CONSTRAINTS`.
+
 ## RPC functions
 
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
