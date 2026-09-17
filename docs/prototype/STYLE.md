@@ -27,7 +27,7 @@ grid, print filled cells as `#`. The constant `LOGO_LINES` in
 (`1px dashed var(--vbs-divider)`), padding `6px 12px`. Items are separated by
 literal pipe characters, which themselves use `--vbs-divider`:
 
-```
+```text
 | Main | History | Rules |
 | Session: K7QP-M2XR | Round: 3 | Deck: Fibonacci | Team: 5 players |
 ```
