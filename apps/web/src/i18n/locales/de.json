@@ -3,6 +3,10 @@
     "title": "Vorgangsbewertungsstelle",
     "subtitle": "Planning Poker"
   },
+  "auth": {
+    "signingIn": "Anmeldung läuft …",
+    "failed": "Anmeldung fehlgeschlagen. Lade die Seite neu."
+  },
   "theme": {
     "light": "Hell",
     "dark": "Dunkel"
