@@ -190,7 +190,43 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_session: {
+        Args: { p_deck?: string; p_locale?: string; p_nickname: string }
+        Returns: Json
+      }
+      current_user_id: { Args: never; Returns: string }
+      generate_session_code: { Args: never; Returns: string }
+      is_active_session_member: {
+        Args: { p_session_id: string }
+        Returns: boolean
+      }
+      join_session: {
+        Args: { p_code: string; p_nickname: string }
+        Returns: Json
+      }
+      lock_live_session: {
+        Args: { p_code: string }
+        Returns: {
+          admin_token_hash: string
+          code: string
+          created_at: string
+          deck: string
+          expires_at: string
+          id: string
+          last_activity_at: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "sessions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      normalize_session_code: { Args: { p_code: string }; Returns: string }
+      session_state: { Args: { p_code: string }; Returns: Json }
+      touch_session: { Args: { p_session_id: string }; Returns: undefined }
+      validate_nickname: { Args: { p_nickname: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
