@@ -1,106 +1,128 @@
 # Vorgangsbewertungsstelle (VBS)
 
-Planning Poker für agile Teams im Stil eines Gaming-Portals der frühen 2000er.
-Öffentlich unter `https://vbs.bruchner.dev`.
+Planning poker for agile teams, styled like an early-2000s gaming portal.
+Public at `https://vbs.bruchner.dev`.
 
-Sprache im Repo: Code, Dateinamen und Commits auf Englisch, UI-Texte auf Deutsch
-und Englisch (i18n ab v1), Gespräche mit dem Entwickler auf Deutsch.
+Language: everything in this repo — code, file names, comments, commits, docs,
+and our conversation — is English. The **application UI is bilingual** (German
+and English) from v1 via i18n; German is the source locale, English is a full
+translation, neither is a stub.
 
 ## Stack
 
 - `apps/web` — React 19 + Vite + TypeScript, React Router (`/`, `/s/:code`), TanStack Query
-- `supabase/migrations` — Schema, RLS-Policies, Funktionen, pg_cron-Jobs als SQL
+- `supabase/migrations` — schema, RLS policies, functions, pg_cron jobs, as SQL
 - `supabase/tests` — pgTAP
-- `packages/core` — generierte DB-Typen, Deck-Definitionen, reine Anzeige-Helfer
-- `packages/ui` — Komponenten und Design-Tokens
-- Backend: Supabase (Postgres, Auth mit anonymer Anmeldung, Realtime, pg_cron), Region Frankfurt
-- Kein Next.js, kein eigener Node-Server. Der VPS liefert nur statische Dateien über Caddy.
+- `packages/core` — generated DB types, deck definitions, pure display helpers
+- `packages/ui` — components and design tokens
+- Backend: Supabase (Postgres, anonymous auth, Realtime, pg_cron), Frankfurt region
+- No Next.js, no Node server of our own. The VPS only serves static files via Caddy.
 
-## Befehle
+## Environment
+
+MacBook with Apple Silicon (M4), zsh, pnpm, Docker through **Colima** (not Docker
+Desktop). Colima must be running before the local Supabase stack, and the
+Supabase CLI needs to find Colima's socket:
+
+```bash
+colima start                                          # or: colima start --cpu 4 --memory 8
+export DOCKER_HOST="unix://$HOME/.colima/default/docker.sock"   # put this in ~/.zshrc
+docker context use colima                             # alternative to DOCKER_HOST
+```
+
+If `supabase start` cannot reach Docker, that socket is almost always the reason.
+All images used must have arm64 builds; document any that do not.
+
+## Commands
 
 ```bash
 pnpm install
-pnpm dev                 # Vite Dev-Server
-supabase start           # lokales Supabase (Docker muss laufen)
-supabase db reset        # Migrationen + Seeds neu einspielen
+pnpm dev                 # Vite dev server
+supabase start           # local Supabase (Colima must be up)
+supabase db reset        # replay migrations + seeds
 supabase test db         # pgTAP
 pnpm test                # Vitest
-pnpm test:e2e            # Playwright gegen lokales Supabase
+pnpm test:e2e            # Playwright against local Supabase
 pnpm lint && pnpm typecheck
 pnpm gen:types           # supabase gen types typescript > packages/core/src/database.types.ts
 ```
 
-Entwicklungsumgebung ist Windows mit Git Bash; Befehle müssen dort laufen.
-Docker Desktop mit WSL2-Backend ist Voraussetzung für `supabase start`.
+## Architecture rules
 
-## Architekturregeln
-
-1. **Die Datenbank ist die Autorität.** Jede Zustandsänderung läuft über eine
-   Postgres-Funktion (`security definer`), die Rolle, Phase und Ablauf prüft.
-   Das Frontend hat keine Schreibrechte auf Tabellen.
-2. **Stimmwerte sind geheim, bis aufgedeckt wird.** RLS auf `votes` gibt fremde
-   Werte erst frei, wenn `rounds.status = 'revealed'`. Broadcast-Nachrichten
-   enthalten nie Werte, nur ein Änderungssignal plus `sessions.version`.
-   Jede Änderung an `votes` oder an der Policy braucht einen pgTAP-Test dafür.
-3. **Rechte nie nur im UI.** Admin-Knöpfe werden zusätzlich versteckt, aber die
-   Prüfung gehört in die Funktion.
-4. **Schema nur per Migration.** Keine Änderungen im Supabase-Dashboard.
-   Migrationen sind vorwärtskompatibel: erst Datenbank ausrollen, dann App.
-5. **Keine Secrets im Frontend.** Nur `SUPABASE_URL` und der Anon-Key (beide
-   öffentlich). Service-Role-Key ausschließlich in Supabase-Secrets und CI.
-6. **Ablauf:** Jede Aktion setzt `last_activity_at` und `expires_at = now() + 24h`.
-   Presence-Herzschläge zählen nicht als Aktivität. Policies prüfen zusätzlich
+1. **The database is the authority.** Every state change goes through a Postgres
+   function (`security definer`) that checks role, phase, and expiry. The frontend
+   has no write access to tables.
+2. **Vote values stay secret until reveal.** RLS on `votes` exposes other people's
+   values only when `rounds.status = 'revealed'`. Broadcast messages never carry
+   values, just a change signal plus `sessions.version`. Any change to `votes` or
+   its policies needs a pgTAP test covering this.
+3. **Never enforce permissions in the UI alone.** Hiding admin buttons is fine as
+   a convenience; the check belongs in the function.
+4. **Schema changes only via migrations.** Nothing through the Supabase dashboard.
+   Migrations are forward-compatible: deploy the database before the app.
+5. **No secrets in the frontend.** Only `SUPABASE_URL` and the anon key (both
+   public). The service-role key lives in Supabase secrets and CI only.
+6. **Expiry:** every action sets `last_activity_at` and `expires_at = now() + 24h`.
+   Presence heartbeats do not count as activity. Policies also check
    `expires_at > now()`.
 
-## Funktionen (RPC)
+## RPC functions
 
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
 `new_story`, `set_deck`, `remove_participant`, `transfer_admin`, `claim_admin`,
-`set_can_vote`, `round_status` (liest, liefert vor dem Aufdecken nur „hat abgestimmt").
+`set_can_vote`, `round_status` (read-only; before reveal it returns only who has
+voted, never values).
 
-## Rollen
+## Roles
 
-- **admin** — genau einer pro Session, der Ersteller. Legt Stories an, deckt auf,
-  startet „Neu schätzen", wählt das Deck, entfernt Teilnehmende. Stimmt mit ab,
-  abschaltbar über `can_vote`.
-- **player** — stimmt ab, sonst nichts.
-- **spectator** — sieht zu, zählt nicht in „x von y abgestimmt".
+- **admin** — exactly one per session, the creator. Creates stories, reveals cards,
+  triggers re-estimate, picks the deck, removes participants. Votes as well, which
+  can be switched off via `can_vote`.
+- **player** — votes, nothing else.
+- **spectator** — watches; not counted in "x of y voted".
 
-Admin-Wiederherstellung: `/s/<code>#admin=<token>`, Token nur im URL-Fragment,
-in der Datenbank nur als Hash.
+Admin recovery: `/s/<code>#admin=<token>`. The token travels only in the URL
+fragment and is stored as a hash.
 
-## Design und Barrierefreiheit
+## i18n
 
-- Look und Regeln kommen aus `docs/prototype/`. Tokens in `docs/prototype/tokens.css`
-  sind verbindlich, `docs/prototype/STYLE.md` erklärt die Muster.
-- Ziel ist WCAG AAA: 7:1 für Text, 44 × 44 px Klickflächen, sichtbarer Fokus,
-  Status immer auch als Text, nicht nur Farbe.
-- Ein Unit-Test prüft jedes Token-Paar auf 7:1. Neue Farben ohne Test sind nicht erlaubt.
-- Responsiv ab 360 px Breite. Das feste `min-width: 1040px` aus dem Prototyp
-  wird nicht übernommen.
-- Echte Elemente: `<button>`, `<a href>`, `<input>` mit `<label>`, Kartenreihe als
-  `radiogroup`. Kein `onClick` auf `div` oder `span`.
-- Keine Emoji als UI-Symbole.
+- Two locales, `de` and `en`, both complete. German copy from the prototype is the
+  source; see `docs/prototype/STYLE.md` for the original strings.
+- Keys live with the feature, not in one giant file. No concatenated sentences;
+  use interpolation so word order can differ per language.
+- `<html lang>` follows the active locale. Locale choice persists per browser.
+- Dates and numbers via `Intl`, never hand-formatted.
+
+## Design and accessibility
+
+- The look comes from `docs/prototype/`. `tokens.css` is binding, `STYLE.md`
+  explains the patterns.
+- Target is WCAG AAA: 7:1 for text, 44 × 44 px hit areas, visible focus, status
+  always conveyed as text and not by color alone.
+- A unit test checks every token pair for 7:1. New colors without a test are not allowed.
+- Responsive from 360 px up. The prototype's fixed `min-width: 1040px` is not carried over.
+- Real elements: `<button>`, `<a href>`, `<input>` with `<label>`, the card row as a
+  `radiogroup`. No `onClick` on a `div` or `span`.
+- No emoji as UI glyphs.
 
 ## Tests
 
-Neue Datenbankfunktionen und Policies kommen mit pgTAP-Tests. Änderungen am
-Ablauf (Phasen, Aufdecken, Neu schätzen) kommen mit einem Playwright-Test über
-mehrere Browser-Kontexte. CI läuft: Lint, Typecheck, Vitest, pgTAP, Playwright.
+New database functions and policies ship with pgTAP tests. Changes to the flow
+(phases, reveal, re-estimate) ship with a Playwright test across multiple browser
+contexts. CI runs lint, typecheck, Vitest, pgTAP, Playwright.
 
-## Der vollständige Plan
+## The full plan
 
-Der Umsetzungsplan mit Begründungen, Entscheidungstabelle, Datenmodell,
-Diagrammen und Meilensteinen liegt als Claude-Doc außerhalb des Repos.
-Export als Markdown nach `docs/PLAN.md`, dann ist er auch hier verfügbar.
-Entscheidungen aus dem Plan, die im Code nicht sichtbar sind, gehören in diese
-Datei, sobald sie den Code betreffen.
+The implementation plan — reasoning, decision table, data model, diagrams,
+milestones — lives in a Claude doc outside this repo. Export it as Markdown to
+`docs/PLAN.md` to have it here too. Decisions from the plan that affect code but
+are invisible in it belong in this file.
 
-## Meilensteine
+## Milestones
 
-- **M1** Fundament: Monorepo, CI, Vite-App, lokales Supabase, Grundschema mit RLS
-- **M2** Sessions: anonyme Anmeldung, Anlegen und Beitreten per Link, Admin-Wiederherstellung
-- **M3** Live-Abstimmung: Funktionen, Broadcast-Trigger, Presence, Reconnect
-- **M4** Oberfläche: Retro-UI, responsiv, Hell/Dunkel, Deutsch/Englisch, AAA
-- **M5** Robustheit: Ablauf per pg_cron mit Warnung, Captcha, Limits, Entfernen
-- **M6** Betrieb: Staging und Produktion, Caddy auf dem VPS, Monitoring, E2E und Last
+- **M1** Foundation: monorepo, CI, Vite app, local Supabase, base schema with RLS
+- **M2** Sessions: anonymous auth, create and join by link, admin recovery
+- **M3** Live voting: functions, broadcast triggers, presence, reconnect
+- **M4** UI: retro look, responsive, light/dark, German and English, AAA checks
+- **M5** Robustness: pg_cron expiry with warning, captcha, limits, remove participant
+- **M6** Operations: staging and production, Caddy on the VPS, monitoring, E2E and load
