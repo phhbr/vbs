@@ -1,11 +1,13 @@
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 export function Session() {
+  const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
 
   return (
     <main>
-      <p>Session {code} — Platzhalter</p>
+      <p>{t("session.placeholder", { code })}</p>
     </main>
   );
 }

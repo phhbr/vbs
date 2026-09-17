@@ -1,0 +1,20 @@
+{
+  "app": {
+    "title": "Vorgangsbewertungsstelle",
+    "subtitle": "Planning Poker"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "language": {
+    "de": "German",
+    "en": "English"
+  },
+  "home": {
+    "placeholder": "Home — placeholder"
+  },
+  "session": {
+    "placeholder": "Session {{code}} — placeholder"
+  }
+}
