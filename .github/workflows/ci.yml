@@ -127,3 +127,5 @@ jobs:
         run: pnpm --filter @vbs/web test:smoke
         env:
           SMOKE_BASE_URL: ${{ vars.SITE_URL }}
+          SMOKE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SMOKE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
