@@ -36,10 +36,16 @@ Labels in `--vbs-fg`, the value after them in `--vbs-accent`. Active tab: accent
 color plus `font-weight: 700`.
 
 **Bracket actions.** Every action looks like a link in square brackets:
-`[Start round]`, `[Reveal cards]`, `[Re-estimate]`, `[New story]`,
-`[Example story]`, `[Leave session]`. Technically a `<button>` with no border or
-background, `font: inherit`, color `--vbs-accent`. Inactive: `--vbs-fg-dim` plus
-`disabled`. The brackets are part of the label, not a border.
+`[ Start round ]`, `[ Reveal cards ]`, `[ Re-estimate ]`, `[ New story ]`,
+`[ Leave session ]`. The prototype itself has no internal spacing
+(`[Runde starten]`); M2 established padded brackets for every action label, and
+that's the actual convention this app follows — a page mixing both would look
+inconsistent, and repunctuating every already-shipped, already-tested label to
+match the prototype exactly would be churn for no visible benefit. Technically
+a `<button>` (`BracketButton` in `@vbs/ui`) with no border or background,
+`font: inherit`, color `--vbs-accent`. Inactive: `--vbs-fg-dim` plus `disabled`.
+The brackets are part of the label text itself, not CSS, so they live in the
+translation string, not the component.
 
 **Boxes.** Panels and form blocks get a dashed border all around and `12px 14px`
 padding. No radii, no shadows, no accent-colored fills except the two noted below.

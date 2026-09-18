@@ -36,5 +36,13 @@ export default tseslint.config(
       "react-refresh/only-export-components": "warn",
     },
   },
+  {
+    // Node CLI scripts that also hand a function to Playwright's
+    // page.evaluate(), which runs it in the browser — so both global sets.
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.browser },
+    },
+  },
   prettier,
 );

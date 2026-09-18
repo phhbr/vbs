@@ -8,11 +8,12 @@
     "failed": "Anmeldung fehlgeschlagen. Lade die Seite neu."
   },
   "theme": {
-    "light": "Hell",
-    "dark": "Dunkel"
+    "label": "Darstellung:",
+    "light": "[ Hell ]",
+    "dark": "[ Dunkel ]"
   },
   "language": {
-    "de": "Deutsch",
-    "en": "Englisch"
+    "de": "[ Deutsch ]",
+    "en": "[ Englisch ]"
   }
 }

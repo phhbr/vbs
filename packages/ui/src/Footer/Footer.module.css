@@ -1,0 +1,19 @@
+.footer {
+  border-top: var(--vbs-border-style);
+  padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--vbs-divider);
+  font-size: var(--vbs-font-size-small);
+  text-align: center;
+}
+
+.segments {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}

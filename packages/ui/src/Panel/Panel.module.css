@@ -1,0 +1,14 @@
+/* Boxes (STYLE.md): a dashed border all around, no radius, no shadow, no
+   accent fill except where a component explicitly opts into one (the
+   selected card, the consensus badge). */
+.panel {
+  border: var(--vbs-border-style);
+  padding: var(--vbs-pad-panel);
+}
+
+.heading {
+  margin: 0 0 6px;
+  color: var(--vbs-accent);
+  font-weight: 700;
+  font-size: inherit;
+}

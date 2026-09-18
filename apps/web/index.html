@@ -4,6 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vorgangsbewertungsstelle</title>
+    <script>
+      // Applies the stored theme/locale before first paint, so a returning
+      // visitor never sees a flash of the wrong one. Reads the exact two
+      // storage keys React itself writes later (useTheme's "vbs-theme",
+      // i18next-browser-languagedetector's "i18nextLng") — one storage
+      // contract, not two. With nothing stored, this does nothing and
+      // tokens.css's prefers-color-scheme fallback applies instead, which is
+      // equally flash-free.
+      (function () {
+        try {
+          var theme = localStorage.getItem("vbs-theme");
+          if (theme === "light" || theme === "dark") {
+            document.documentElement.dataset.theme = theme;
+          }
+          var locale = localStorage.getItem("i18nextLng");
+          if (locale) {
+            document.documentElement.lang =
+              locale.slice(0, 2) === "en" ? "en" : "de";
+          }
+        } catch (e) {
+          // Storage unavailable (e.g. private mode) — theme/locale still
+          // apply once React mounts, just not before first paint.
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

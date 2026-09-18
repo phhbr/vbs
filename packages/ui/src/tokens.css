@@ -33,6 +33,26 @@
   --vbs-focus-ring: 2px dashed currentColor;
 }
 
+/* 32px of side padding eats 18% of a 360px screen — halved below 480px. */
+@media (max-width: 480px) {
+  :root {
+    --vbs-pad-page: 20px 16px 32px;
+  }
+}
+
+/* Motion is decorative here (panel/tab transitions), never load-bearing, so
+   a blanket safety net is correct rather than tuning each animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Dark, the prototype's default */
 :root,
 :root[data-theme="dark"] {
@@ -47,6 +67,7 @@
   --vbs-input-bg: #000000;
   --vbs-input-fg: #eaeaea;
   --vbs-disabled: #5a5a5a;    /* exempt */
+  --vbs-on-accent: #000000;  /* text on an accent fill    9.0:1 */
 }
 
 /* Light */
@@ -62,6 +83,7 @@
   --vbs-input-bg: #ffffff;
   --vbs-input-fg: #141310;
   --vbs-disabled: #a8a498;    /* exempt */
+  --vbs-on-accent: #ffffff;  /* text on an accent fill    9.3:1 */
 }
 
 /* With no stored choice, follow the system. */
@@ -78,11 +100,15 @@
     --vbs-input-bg: #ffffff;
     --vbs-input-fg: #141310;
     --vbs-disabled: #a8a498;
+    --vbs-on-accent: #ffffff;
   }
 }
 
 /*
  * The selected card and the consensus badge fill an area with --vbs-accent.
- * Black or white on top of it only reaches AA for some hues, so the selection
- * also carries a distinct border and is never signalled by color alone.
+ * --vbs-on-accent (confirmed by the contrast test) reaches AAA against it in
+ * both themes, but the selection still carries a distinct border as well —
+ * STYLE.md's rule that selection is never signalled by color alone is a
+ * design principle, not just a contrast fallback, and holds even where the
+ * numbers alone would pass.
  */

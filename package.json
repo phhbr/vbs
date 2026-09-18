@@ -15,10 +15,12 @@
     "test:e2e": "pnpm --filter @vbs/web test:e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "gen:types": "supabase gen types typescript --local > packages/core/src/database.types.ts"
+    "gen:types": "supabase gen types typescript --local > packages/core/src/database.types.ts",
+    "gen:logo": "node scripts/generate-logo.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",

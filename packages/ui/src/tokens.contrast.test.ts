@@ -84,5 +84,14 @@ describe.each(Object.entries(THEMES))(
         expect(contrastRatio(color, bg)).toBeGreaterThanOrEqual(3);
       },
     );
+
+    // The selected card and the consensus badge print --vbs-on-accent text on
+    // an --vbs-accent fill, not on the page background — a different pair
+    // than every other text token, so it needs its own check.
+    it("--vbs-on-accent reaches 7:1 against --vbs-accent", () => {
+      const { "--vbs-on-accent": onAccent, "--vbs-accent": accent } =
+        extractTokens(block, ["--vbs-on-accent", "--vbs-accent"]);
+      expect(contrastRatio(onAccent!, accent!)).toBeGreaterThanOrEqual(7);
+    });
   },
 );

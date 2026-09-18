@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: var(--vbs-bg);
@@ -5,4 +11,16 @@ body {
   font-family: var(--vbs-font-mono);
   font-size: var(--vbs-font-size);
   line-height: var(--vbs-line-height);
+}
+
+/* A single rule for every focusable element, rather than per-component
+   outlines, so "visible focus everywhere" can't drift piecemeal. */
+:focus-visible {
+  outline: var(--vbs-focus-ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--vbs-accent);
+  color: var(--vbs-on-accent);
 }
