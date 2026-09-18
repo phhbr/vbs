@@ -22,7 +22,7 @@ export function ParticipantVotes({
   const voters = participants.filter((p) => p.role !== "spectator");
 
   return (
-    <ul aria-live="polite">
+    <ul aria-live="polite" aria-label={t("round.voteStatus")}>
       {voters.map((participant) => {
         const vote = byId.get(participant.id);
         const online = onlineParticipantIds.has(participant.id);

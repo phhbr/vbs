@@ -3,6 +3,7 @@
     "title": "Abstimmung",
     "cards": "Karten",
     "storyLabel": "Story",
+    "voteStatus": "Abstimmungsstatus",
     "start": "[ Runde starten ]",
     "reveal": "[ Karten aufdecken ]",
     "reEstimate": "[ Neu schätzen ]",

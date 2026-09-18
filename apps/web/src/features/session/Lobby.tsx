@@ -45,7 +45,11 @@ export function Lobby({
   return (
     <>
       <h1>{t("lobby.title")}</h1>
-      <p role="status">
+      {/* aria-live, not role="status": this page already has one status
+          region (the admin-claim announcement), and role="status" is itself
+          an implicit polite live region, so this achieves the same
+          announcement without a second ambiguous status landmark. */}
+      <p aria-live="polite">
         {connectionStatus === "connected"
           ? t("lobby.connected")
           : t("lobby.reconnecting")}

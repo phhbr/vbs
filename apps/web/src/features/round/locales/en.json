@@ -3,6 +3,7 @@
     "title": "Voting",
     "cards": "Cards",
     "storyLabel": "Story",
+    "voteStatus": "Vote status",
     "start": "[ Start round ]",
     "reveal": "[ Reveal cards ]",
     "reEstimate": "[ Re-estimate ]",
