@@ -40,6 +40,7 @@
     "statusBarLabel": "Sitzungsstatus",
     "footerRound": "Runde {{n}}",
     "footerLeave": "[ Sitzung verlassen ]",
+    "expiryWarning": "[ Achtung ] Diese Sitzung läuft in Kürze ab — danach sind alle Daten unwiederbringlich gelöscht. Jede Aktion (Abstimmen, Story starten, aufdecken …) verlängert sie um weitere 24 Stunden.",
     "rulesHeading": "Regeln",
     "rulesIntro": "Planning Poker ist eine Schätzmethode für agile Teams: Jede*r wählt verdeckt eine Karte für den Aufwand einer Story. Erst wenn alle abgestimmt haben, werden die Karten gemeinsam aufgedeckt.",
     "rulesDiscussion": "Große Unterschiede in den Schätzungen sind der eigentliche Sinn der Übung — sie zeigen, wo das Team unterschiedliche Annahmen hat, und lohnen eine kurze Diskussion. „Neu schätzen“ startet danach eine neue Abstimmung für dieselbe Story."

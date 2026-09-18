@@ -176,6 +176,23 @@ describe("useSessionRealtime", () => {
     expect(removeChannelSpy).toHaveBeenCalledWith(getFakeChannel());
   });
 
+  it("reports expired on a session_expired broadcast", async () => {
+    const { result } = renderHook(
+      () =>
+        useSessionRealtime({
+          sessionId: "session-1",
+          participantId: "participant-1",
+        }),
+      { wrapper },
+    );
+
+    expect(result.current.expired).toBe(false);
+
+    getFakeChannel().emitBroadcast("session_expired", { reason: "expired" });
+
+    await waitFor(() => expect(result.current.expired).toBe(true));
+  });
+
   it("does nothing until both a session and a participant id are known", () => {
     renderHook(
       () =>

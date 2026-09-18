@@ -8,6 +8,7 @@ import { RoundHistory } from "../round/RoundHistory";
 import { RoundScreen } from "../round/RoundScreen";
 import { useRoundHistory } from "../round/queries";
 import { useDocumentTitle } from "../../lib/useDocumentTitle";
+import { useExpiryStatus } from "./expiry";
 import type { ConnectionStatus } from "./realtime";
 import { RulesTab } from "./RulesTab";
 import styles from "./SessionScreen.module.css";
@@ -28,6 +29,7 @@ export function SessionScreen({
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>("main");
   const history = useRoundHistory(state.session.id);
+  const expiry = useExpiryStatus(state.session.expires_at);
   useDocumentTitle(`${t("app.title")} — ${t("session.heading")}`);
 
   const shareUrl = `${window.location.origin}/s/${code}`;
@@ -76,8 +78,15 @@ export function SessionScreen({
               count: state.session.participant_count,
             }),
           },
+          { label: t("round.statusExpires"), value: expiry.formatted },
         ]}
       />
+
+      {expiry.isNear && (
+        <p role="status" aria-live="polite" className={styles.expiryWarning}>
+          {t("session.expiryWarning")}
+        </p>
+      )}
 
       {tab === "main" && (
         <RoundScreen

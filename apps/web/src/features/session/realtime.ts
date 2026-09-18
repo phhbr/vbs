@@ -26,6 +26,7 @@ export function useSessionRealtime({
   const [onlineParticipantIds, setOnlineParticipantIds] = useState<
     ReadonlySet<string>
   >(new Set());
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
     if (!sessionId || !participantId) return;
@@ -55,6 +56,15 @@ export function useSessionRealtime({
           refetchAll();
         },
       )
+      .on(
+        "broadcast",
+        // Distinct from session_changed: the row that would have carried a
+        // version bump is the one being deleted, so the sweep broadcasts
+        // this explicitly rather than leaving clients to find out from the
+        // next VB002 on refetch.
+        { event: "session_expired" },
+        () => setExpired(true),
+      )
       .on("presence", { event: "sync" }, () => {
         setOnlineParticipantIds(new Set(Object.keys(channel.presenceState())));
       })
@@ -71,8 +81,12 @@ export function useSessionRealtime({
 
     return () => {
       void supabase.removeChannel(channel);
+      // Reset on cleanup, not at the top of the next run: a component that
+      // switches to a different session should not carry the old session's
+      // expired flag into the new one, even for a single render.
+      setExpired(false);
     };
   }, [sessionId, participantId, queryClient]);
 
-  return { status, onlineParticipantIds };
+  return { status, onlineParticipantIds, expired };
 }

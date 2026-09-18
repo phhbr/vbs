@@ -24,6 +24,7 @@
     "statusRounds": "Runden gespielt",
     "statusDeck": "Deck",
     "statusTeam": "Team",
+    "statusExpires": "Läuft ab",
     "teamCount": "{{count}} Spieler",
     "statusStory": "Story",
     "statusStatus": "Status",

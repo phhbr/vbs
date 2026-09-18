@@ -48,12 +48,14 @@ export function Session() {
   const claim = useClaimAdmin(code);
   const { mutate: claimAdmin, isIdle: claimIsIdle } = claim;
 
-  const { status: connectionStatus, onlineParticipantIds } = useSessionRealtime(
-    {
-      sessionId: state.data?.is_member ? state.data.session.id : undefined,
-      participantId: state.data?.viewer?.participant_id,
-    },
-  );
+  const {
+    status: connectionStatus,
+    onlineParticipantIds,
+    expired,
+  } = useSessionRealtime({
+    sessionId: state.data?.is_member ? state.data.session.id : undefined,
+    participantId: state.data?.viewer?.participant_id,
+  });
 
   useEffect(() => {
     // A token we did not just mint is one to redeem. Claiming is idempotent,
@@ -84,6 +86,10 @@ export function Session() {
         onRetry={() => void state.refetch()}
       />
     );
+  }
+
+  if (expired) {
+    return <SessionErrorScreen error={{ code: "VB002" }} />;
   }
 
   if (!state.data.is_member) {

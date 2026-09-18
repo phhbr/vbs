@@ -40,6 +40,7 @@
     "statusBarLabel": "Session status",
     "footerRound": "Round {{n}}",
     "footerLeave": "[ Leave session ]",
+    "expiryWarning": "[ Warning ] This session is about to expire — after that, everything in it is gone for good. Any action (voting, starting a story, revealing) extends it by another 24 hours.",
     "rulesHeading": "Rules",
     "rulesIntro": "Planning poker is an estimation method for agile teams: everyone picks a card for a story's effort in secret. Only once everyone has voted are the cards revealed together.",
     "rulesDiscussion": "Large differences between estimates are the actual point of the exercise — they show where the team holds different assumptions, and are worth a short discussion. \"Re-estimate\" then starts a fresh vote for the same story."

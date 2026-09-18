@@ -14,3 +14,12 @@
 .leaveLink:focus-visible {
   text-decoration: underline;
 }
+
+/* The [ bracket ] marker plus text is the AAA-required non-color signal —
+   the border/text color is reinforcement, not the only cue. */
+.expiryWarning {
+  border: 1px solid var(--vbs-danger);
+  color: var(--vbs-danger);
+  padding: 0.5em 0.75em;
+  font-weight: bold;
+}
