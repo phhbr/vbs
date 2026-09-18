@@ -1,68 +1,18 @@
-name: CI
+name: Deploy to production
 
+# Manual trigger only, deliberately not chained after deploy-staging.
+# GitHub's required-reviewer environment protection rule needs Enterprise on
+# a private repo (Free/Pro/Team only get it on public repos) — phhbr/vbs is
+# private, so that gate isn't available to us. Clicking "Run workflow" here
+# (Actions tab, or `gh workflow run deploy-production.yml`) is the manual
+# approval step instead. Check that the latest deploy-staging run and its
+# smoke test are green before running this.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch: {}
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test
-
-      - uses: supabase/setup-cli@v1
-        with:
-          version: 2.116.0
-
-      - run: supabase start
-      - run: supabase test db --local
-
-      # The local stack's keys are the same fixed demo values on every machine,
-      # so the example file is a working config rather than a template.
-      - run: cp apps/web/.env.example apps/web/.env.local
-
-      - run: pnpm --filter @vbs/web exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
-
-      - if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: apps/web/playwright-report/
-          retention-days: 7
-
-  # Off until the staging Supabase project exists and its secrets/variables
-  # are set (docs/runbook.md) — flip the repo variable DEPLOY_ENABLED to
-  # "true" then. Until it is, this job is skipped, not failed, since the
-  # `if:` below is false.
-  #
-  # Promoting to production is a separate, manually-triggered workflow
-  # (deploy-production.yml) rather than a job chained after this one — see
-  # that file for why.
-  #
-  # Each environment's own vars/secrets (Settings → Environments → <env>)
-  # resolve automatically from this job's `environment:` — no need to name
-  # staging vs. production anywhere in the steps below.
-  deploy-staging:
-    needs: ci
-    if: >
-      github.ref == 'refs/heads/main' && github.event_name == 'push' &&
-      vars.DEPLOY_ENABLED == 'true'
-    environment: staging
+  deploy-production:
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
