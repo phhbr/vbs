@@ -9,7 +9,6 @@ const tokensCss = readFileSync(tokensPath, "utf-8");
 const TEXT_TOKENS = [
   "--vbs-fg",
   "--vbs-fg-dim",
-  "--vbs-fg-dim-2",
   "--vbs-fg-strong",
   "--vbs-accent",
   "--vbs-danger",

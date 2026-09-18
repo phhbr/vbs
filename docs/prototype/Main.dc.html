@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    /* Grid: 14px/20px. Jeder Abstand ist 10, 20 oder 40. */
+    body { margin: 0; background: #000000; }
+    * { box-sizing: border-box; }
+
+    .vbs { font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 20px; }
+    .wrap { width: 100%; max-width: 1120px; margin: 0 auto; }
+    .prose { max-width: 80ch; }
+    .col { display: flex; flex-direction: column; }
+    .g10 { gap: 10px; } .g20 { gap: 20px; } .g40 { gap: 40px; }
+    .row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+
+    .eyebrow { font-size: 12px; line-height: 20px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-dim); }
+    .label { font-size: 12px; line-height: 20px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-dim); }
+    .value { color: var(--fg-strong); }
+    .hint { color: var(--fg-dim); }
+    .logo { margin: 0; font: 700 13px/1.05 'Courier New', Courier, monospace; white-space: pre; color: var(--fg-strong); }
+
+    .rule { border: 0; border-top: 1px dashed var(--divider); margin: 0; }
+
+    /* Ein Kastensystem: gestrichelt = Abschnitt. Sonst keine Rahmen. */
+    .panel { border: 1px dashed var(--divider); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .panel-title { margin: 0; font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-strong); }
+
+    .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 20px; }
+    .meta-item { display: flex; flex-direction: column; }
+
+    /* Aktionen: echte Flächen, Klammern sind Dekoration mit fester Weite. */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 10px 14px;
+           border: 1px solid transparent; background: transparent; color: var(--accent); font: inherit; cursor: pointer; }
+    .btn .br { color: var(--divider); }
+    .btn:hover:not(:disabled), .btn:focus-visible:not(:disabled) { background: var(--accent); color: var(--on-accent); }
+    .btn:hover:not(:disabled) .br, .btn:focus-visible:not(:disabled) .br { color: var(--on-accent); }
+    .btn:focus-visible { outline: 2px solid var(--fg-strong); outline-offset: 2px; }
+    .btn--primary { border-color: var(--accent); }
+    .btn--on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .btn--on .br { color: var(--on-accent); }
+    .btn:disabled { color: var(--disabled); cursor: default; }
+    .btn:disabled .br { color: var(--disabled); }
+
+    .card { display: inline-flex; align-items: center; justify-content: center; min-width: 56px; min-height: 56px; padding: 10px;
+            border: 1px solid var(--divider); background: transparent; color: var(--accent); font: inherit; cursor: pointer; }
+    .card:hover:not(:disabled), .card:focus-visible:not(:disabled) { border-color: var(--accent); }
+    .card:focus-visible { outline: 2px solid var(--fg-strong); outline-offset: 2px; }
+    .card--on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .card:disabled { color: var(--disabled); cursor: default; }
+
+    .dot { display: inline-block; width: 10px; height: 10px; flex: 0 0 auto; }
+
+    .field { display: flex; flex-direction: column; gap: 10px; }
+    .input { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; font: inherit;
+             background: var(--input-bg); border: 1px dashed var(--divider); color: var(--fg-strong); }
+    .input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-style: solid; }
+    .input-row { display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px; }
+    .input-row .input { flex: 1 1 260px; }
+
+    .overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
+    .modal { width: 100%; max-width: 70ch; background: var(--bg); border: 1px dashed var(--divider); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+    .cols { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+    @media (min-width: 900px) { .cols { grid-template-columns: 1.2fr 1fr; } }
+
+    ::selection { background: #ff8c1a; color: #000000; }
+  </style>
+</helmet>
+<div class="vbs col g20" style="--bg: {{bg}}; --fg: {{fg}}; --fg-dim: {{fgDim}}; --fg-strong: {{fgStrong}}; --accent: {{accent}}; --danger: {{danger}}; --divider: {{divider}}; --input-bg: {{inputBg}}; --disabled: {{disabled}}; --on-accent: {{onAccent}}; width: 100%; min-height: 100vh; background: {{bg}}; color: {{fg}}; padding: 40px 20px;">
+
+  <div class="wrap col g20">
+
+    <div class="row" style="justify-content: space-between; align-items: flex-end;">
+      <div class="col">
+        <div class="eyebrow">Vorgangsbewertungsstelle</div>
+        <pre class="logo" aria-hidden="true">{{logo}}</pre>
+        <div class="hint">Planning Poker</div>
+      </div>
+      <div class="row g20">
+        <div class="row" style="gap: 6px;">
+          <span class="label" id="lbl-theme">Darstellung</span>
+          <button type="button" class="btn {{themeDarkCls}}" onClick="{{setThemeDark}}"><span class="br" aria-hidden="true">[</span>Dunkel<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{themeLightCls}}" onClick="{{setThemeLight}}"><span class="br" aria-hidden="true">[</span>Hell<span class="br" aria-hidden="true">]</span></button>
+        </div>
+        <sc-if value="{{showApp}}" hint-placeholder-val="{{true}}">
+        <div class="row" style="gap: 6px;">
+          <span class="label">Rolle</span>
+          <button type="button" class="btn {{roleAdminCls}}" onClick="{{setRoleAdmin}}"><span class="br" aria-hidden="true">[</span>Admin<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{rolePlayerCls}}" onClick="{{setRolePlayer}}"><span class="br" aria-hidden="true">[</span>Player<span class="br" aria-hidden="true">]</span></button>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <sc-if value="{{showJoin}}" hint-placeholder-val="{{true}}">
+    <div class="panel" style="max-width: 70ch;">
+      <div class="panel-head"><h2 class="panel-title">Sitzung beitreten</h2></div>
+
+      <div class="field">
+        <label class="label" for="codeInput">Sitzungscode</label>
+        <div class="input-row">
+          <input class="input" id="codeInput" type="text" style="letter-spacing: 2px; text-transform: uppercase;" value="{{codeInput}}" onChange="{{onCodeInput}}">
+          <button type="button" class="btn" onClick="{{regenCode}}"><span class="br" aria-hidden="true">[</span>Neuer Code<span class="br" aria-hidden="true">]</span></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="nameInput">Dein Name</label>
+        <input class="input" id="nameInput" type="text" value="{{nameInput}}" onChange="{{onNameInput}}" placeholder="z.B. Philipp">
+      </div>
+
+      <div class="field">
+        <span class="label">Rolle</span>
+        <div class="row" style="gap: 6px;">
+          <button type="button" class="btn {{joinAdminCls}}" onClick="{{setJoinRoleAdmin}}"><span class="br" aria-hidden="true">[</span>Admin<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{joinPlayerCls}}" onClick="{{setJoinRolePlayer}}"><span class="br" aria-hidden="true">[</span>Player<span class="br" aria-hidden="true">]</span></button>
+        </div>
+      </div>
+
+      <div class="row" style="justify-content: space-between;">
+        <button type="button" class="btn btn--primary" onClick="{{doJoin}}" disabled="{{joinDisabled}}"><span class="br" aria-hidden="true">[</span>Beitreten<span class="br" aria-hidden="true">]</span></button>
+        <span class="hint">Prototyp — läuft lokal im Browser.</span>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{showApp}}" hint-placeholder-val="{{true}}">
+    <div class="col g20">
+
+      <div class="row" style="gap: 6px;">
+        <button type="button" class="btn {{tabMainCls}}" onClick="{{goMain}}"><span class="br" aria-hidden="true">[</span>Abstimmung<span class="br" aria-hidden="true">]</span></button>
+        <button type="button" class="btn {{tabHistoryCls}}" onClick="{{goHistory}}"><span class="br" aria-hidden="true">[</span>Verlauf<span class="br" aria-hidden="true">]</span></button>
+        <button type="button" class="btn {{tabInfoCls}}" onClick="{{goInfo}}"><span class="br" aria-hidden="true">[</span>Regeln<span class="br" aria-hidden="true">]</span></button>
+      </div>
+
+      <div class="panel">
+        <div class="meta">
+          <div class="meta-item"><span class="label">Sitzung</span><span class="value">{{sessionCode}}</span></div>
+          <div class="meta-item"><span class="label">Status</span><span class="value" style="color: {{statusColor}};">{{statusLabel}}</span></div>
+          <div class="meta-item"><span class="label">Runde</span><span class="value">{{round}}</span></div>
+          <div class="meta-item"><span class="label">Deck</span><span class="value">{{deckLabel}}</span></div>
+          <div class="meta-item"><span class="label">Abgestimmt</span><span class="value">{{votedCount}} von {{totalCount}}</span></div>
+        </div>
+      </div>
+
+      <sc-if value="{{isMain}}" hint-placeholder-val="{{true}}">
+      <div class="col g20">
+
+        <sc-if value="{{isAdmin}}" hint-placeholder-val="{{true}}">
+        <div class="panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Neue Story</h2>
+            <div class="row" style="gap: 6px;">
+              <span class="label">Deck</span>
+              <button type="button" class="btn {{deckFibCls}}" onClick="{{setDeckFib}}" disabled="{{deckLocked}}"><span class="br" aria-hidden="true">[</span>Fibonacci<span class="br" aria-hidden="true">]</span></button>
+              <button type="button" class="btn {{deckTshirtCls}}" onClick="{{setDeckTshirt}}" disabled="{{deckLocked}}"><span class="br" aria-hidden="true">[</span>T-Shirt<span class="br" aria-hidden="true">]</span></button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="storyInput">Titel</label>
+            <div class="input-row">
+              <input class="input" id="storyInput" type="text" value="{{storyInputValue}}" onChange="{{onStoryInput}}" placeholder="z.B. DSDPL-4978 Tokenisierung der Farbpalette">
+              <button type="button" class="btn btn--primary" onClick="{{startRound}}" disabled="{{startDisabled}}"><span class="br" aria-hidden="true">[</span>Runde starten<span class="br" aria-hidden="true">]</span></button>
+              <button type="button" class="btn" onClick="{{fillSample}}" disabled="{{phaseVoting}}"><span class="br" aria-hidden="true">[</span>Beispiel<span class="br" aria-hidden="true">]</span></button>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <div class="cols">
+
+          <div class="col g20">
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Abstimmung</h2></div>
+
+              <sc-if value="{{hasStory}}" hint-placeholder-val="{{true}}">
+              <div class="meta-item"><span class="label">Story</span><span class="value">{{story}}</span></div>
+              </sc-if>
+              <sc-if value="{{phaseIdleAdmin}}" hint-placeholder-val="{{true}}">
+              <p class="hint prose" style="margin: 0;">Keine aktive Runde. Trag oben einen Titel ein und starte die Abstimmung.</p>
+              </sc-if>
+              <sc-if value="{{phaseIdlePlayer}}" hint-placeholder-val="{{true}}">
+              <p class="hint prose" style="margin: 0;">Keine aktive Runde. Der Admin startet die nächste Story.</p>
+              </sc-if>
+
+              <div class="row" role="radiogroup" aria-label="Kartenwert wählen" style="gap: 10px;">
+                <sc-for list="{{cards}}" as="card" hint-placeholder-count="6">
+                  <button type="button" role="radio" aria-checked="{{card.checked}}" class="card {{card.cls}}" onClick="{{card.onClick}}" disabled="{{card.disabled}}">{{card.label}}</button>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{isAdmin}}" hint-placeholder-val="{{true}}">
+              <div class="row" style="gap: 10px;">
+                <button type="button" class="btn btn--primary" onClick="{{reveal}}" disabled="{{revealDisabled}}"><span class="br" aria-hidden="true">[</span>Karten aufdecken<span class="br" aria-hidden="true">]</span></button>
+                <button type="button" class="btn" onClick="{{reEstimate}}" disabled="{{reEstimateDisabled}}"><span class="br" aria-hidden="true">[</span>Neu schätzen<span class="br" aria-hidden="true">]</span></button>
+                <button type="button" class="btn" onClick="{{newRound}}" disabled="{{newRoundDisabled}}"><span class="br" aria-hidden="true">[</span>Nächste Story<span class="br" aria-hidden="true">]</span></button>
+              </div>
+              </sc-if>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Team</h2></div>
+              <sc-if value="{{hasPlayers}}" hint-placeholder-val="{{true}}">
+              <ul class="col g10" style="list-style: none; margin: 0; padding: 0;" aria-live="polite">
+                <sc-for list="{{players}}" as="p" hint-placeholder-count="4">
+                  <li class="row" style="gap: 10px; flex-wrap: nowrap;">
+                    <span class="dot" style="background: {{p.dotColor}};" aria-hidden="true"></span>
+                    <span class="value" style="flex: 1 1 auto;">{{p.name}}</span>
+                    <span style="color: {{p.statusColor}};">{{p.statusText}}</span>
+                  </li>
+                </sc-for>
+              </ul>
+              </sc-if>
+              <sc-if value="{{noPlayers}}" hint-placeholder-val="{{true}}">
+              <p class="hint" style="margin: 0;">Noch niemand beigetreten.</p>
+              </sc-if>
+            </div>
+          </div>
+
+          <div class="col g20">
+            <div class="panel">
+              <div class="panel-head"><h2 class="panel-title">Ergebnis</h2></div>
+              <sc-if value="{{phaseIdle}}" hint-placeholder-val="{{true}}">
+              <p class="hint" style="margin: 0;">Noch keine Runde gestartet.</p>
+              </sc-if>
+              <sc-if value="{{phaseVoting}}" hint-placeholder-val="{{true}}">
+              <p class="hint prose" style="margin: 0;">Verdeckt. Sichtbar, sobald der Admin aufdeckt.</p>
+              </sc-if>
+              <sc-if value="{{phaseRevealed}}" hint-placeholder-val="{{true}}">
+              <div class="col g10">
+                <div class="meta-item"><span class="label">{{resultLabel}}</span><span class="value" style="font-size: 28px; line-height: 40px;">{{resultValue}}</span></div>
+                <sc-if value="{{resultConsensus}}" hint-placeholder-val="{{true}}">
+                <div class="row"><span style="background: {{accent}}; color: {{onAccent}}; padding: 0 10px;">Konsens</span></div>
+                </sc-if>
+                <sc-if value="{{hasSpread}}" hint-placeholder-val="{{true}}">
+                <div class="meta-item"><span class="label">Streuung</span><span class="value" style="color: {{danger}};">{{spreadText}}</span></div>
+                </sc-if>
+              </div>
+              </sc-if>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2 class="panel-title">Rundenverlauf</h2>
+                <button type="button" class="btn" onClick="{{goHistory}}"><span class="br" aria-hidden="true">[</span>Alle<span class="br" aria-hidden="true">]</span></button>
+              </div>
+              <sc-if value="{{hasRecentHistory}}" hint-placeholder-val="{{true}}">
+              <ul class="col g10" style="list-style: none; margin: 0; padding: 0;">
+                <sc-for list="{{recentHistory}}" as="h" hint-placeholder-count="3">
+                  <li class="col"><span class="value">{{h.story}}</span><span class="hint">{{h.detail}}</span></li>
+                </sc-for>
+              </ul>
+              </sc-if>
+              <sc-if value="{{noRecentHistory}}" hint-placeholder-val="{{true}}">
+              <p class="hint" style="margin: 0;">Noch keine Runden gespielt.</p>
+              </sc-if>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{isHistory}}" hint-placeholder-val="{{true}}">
+      <div class="panel">
+        <div class="panel-head"><h2 class="panel-title">Rundenverlauf</h2></div>
+        <sc-if value="{{hasHistory}}" hint-placeholder-val="{{true}}">
+        <ul class="col g10" style="list-style: none; margin: 0; padding: 0;">
+          <sc-for list="{{historyItems}}" as="h" hint-placeholder-count="5">
+            <li class="col"><span class="value">{{h.story}}</span><span class="hint">{{h.detail}}</span></li>
+          </sc-for>
+        </ul>
+        </sc-if>
+        <sc-if value="{{noHistory}}" hint-placeholder-val="{{true}}">
+        <p class="hint" style="margin: 0;">Noch keine Runden gespielt.</p>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{isInfo}}" hint-placeholder-val="{{true}}">
+      <div class="panel">
+        <div class="panel-head"><h2 class="panel-title">Regeln</h2></div>
+        <div class="col g20 prose">
+          <p style="margin: 0;">Jede Person wählt verdeckt eine Karte für den Aufwand einer Story. Erst wenn der Admin aufdeckt, werden alle Werte gleichzeitig sichtbar.</p>
+          <p style="margin: 0;">Große Unterschiede sind der Sinn der Übung: Sie zeigen, wo das Team verschiedene Annahmen hat. „Neu schätzen“ startet danach eine zweite Abstimmung zur selben Story.</p>
+          <p style="margin: 0;">In diesem Prototyp stimmen drei simulierte Teammitglieder automatisch mit ab.</p>
+        </div>
+      </div>
+      </sc-if>
+
+      <hr class="rule">
+
+      <div class="row" style="justify-content: space-between;">
+        <span class="hint">Prototyp · Runde {{round}}</span>
+        <div class="row" style="gap: 6px;">
+          <button type="button" class="btn" onClick="{{showAdmin}}"><span class="br" aria-hidden="true">[</span>Admin-Link<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn" onClick="{{leaveSession}}"><span class="br" aria-hidden="true">[</span>Sitzung verlassen<span class="br" aria-hidden="true">]</span></button>
+        </div>
+      </div>
+
+    </div>
+    </sc-if>
+
+  </div>
+
+  <sc-if value="{{adminLinkOpen}}" hint-placeholder-val="{{true}}">
+  <div class="overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Admin-Link">
+      <h2 class="panel-title" style="margin: 0;">Admin-Link</h2>
+      <p class="prose" style="margin: 0;">Dieser Link macht ein anderes Gerät zum Admin dieser Sitzung. Er wird nur einmal angezeigt. Bewahre ihn wie ein Passwort auf und teile ihn nur mit Personen, die die Sitzung leiten sollen.</p>
+      <div class="meta-item"><span class="label">Sitzung</span><span class="value">{{sessionCode}}</span></div>
+      <div class="row" style="gap: 10px;">
+        <button type="button" class="btn btn--primary" onClick="{{copyAdminLink}}"><span class="br" aria-hidden="true">[</span>{{copyLabel}}<span class="br" aria-hidden="true">]</span></button>
+        <button type="button" class="btn" onClick="{{hideAdmin}}"><span class="br" aria-hidden="true">[</span>Verstanden<span class="br" aria-hidden="true">]</span></button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#ff8c1a","options":["#ff8c1a","#ff4433","#33cc66","#3ba7ff"]},"danger":{"editor":"color","default":"#ff6a5a"},"$preview":{"width":1200,"height":900}}'>
+const FIB = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, '?', 'PAUSE'];
+const TSHIRT = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'];
+const BOTS = [
+  { id: 'bot1', name: 'Anna' },
+  { id: 'bot2', name: 'Björn' },
+  { id: 'bot3', name: 'Cem' },
+];
+const SAMPLES = [
+  'DSDPL-4978 Tokenisierung der Farbpalette',
+  'Spam-Filter für Mailserver einbauen',
+  'Uploader-Modul refactoren',
+  'Suche: Volltextindex aufbauen',
+  'Forum: Edit-Historie anzeigen',
+];
+const LOGO_LINES = [
+  ' ####    ###  ##  ## #####  ###',
+  ' #####  ####  ##  ## ##### #####',
+  ' #####  ##### ## ##  ##### ######',
+  ' ##  ## ## ## ## ##  ##    ##  ##',
+  ' ##  ## ## ## ## #   ##    ##  ##',
+  ' ##  ## #  ## ####   ##    ##  ##',
+  ' ##  ## #  ## ####   ##### ##  ##',
+  ' #####  #  ## ####   ##### #####',
+  ' #####  #  ## ####   ##### #####',
+  ' ####   #  ## #####  ##    #####',
+  ' ##     #  ## ## ##  ##    ## ##',
+  ' ##     ## ## ## ##  ##    ##  #',
+  ' ##     ## ## ##  #  ##    ##  ##',
+  ' #####  ##### ##  ## ##### ##  ##',
+  ' #####  ####  ##  ## ##### ##  ##',
+  '  #      ###  ##   # #####  #   #',
+];
+const LOGO_TEXT = LOGO_LINES.join('\n');
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+function generateCode() {
+  let s = '';
+  for (let i = 0; i < 8; i++) {
+    s += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+    if (i === 3) s += '-';
+  }
+  return s;
+}
+
+const DARK = {
+  bg: '#000000',
+  fg: '#b7b7b7',
+  fgDim: '#9a9a9a',
+  fgStrong: '#eaeaea',
+  divider: '#7a5226',
+  inputBg: '#000000',
+  disabled: '#5a5a5a',
+};
+const LIGHT = {
+  bg: '#f7f4ec',
+  fg: '#262620',
+  fgDim: '#4a4740',
+  fgStrong: '#141310',
+  divider: '#9c7830',
+  inputBg: '#ffffff',
+  disabled: '#a8a498',
+};
+
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  const n = parseInt(full, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+function rgbToHex(r, g, b) {
+  const c = (v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
+  return '#' + c(r) + c(g) + c(b);
+}
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h /= 6;
+  }
+  return { h: h * 360, s: s * 100, l: l * 100 };
+}
+function hslToRgb(h, s, l) {
+  h /= 360; s /= 100; l /= 100;
+  let r, g, b;
+  if (s === 0) { r = g = b = l; }
+  else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+  return { r: r * 255, g: g * 255, b: b * 255 };
+}
+function relLum(hex) {
+  const { r, g, b } = hexToRgb(hex);
+  const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+function contrastRatio(a, b) {
+  const la = relLum(a), lb = relLum(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+function ensureContrast(hex, bgHex, minRatio) {
+  minRatio = minRatio || 7;
+  if (contrastRatio(hex, bgHex) >= minRatio) return hex;
+  const rgb = hexToRgb(hex);
+  const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+  const bgIsLight = relLum(bgHex) > 0.5;
+  let l = hsl.l;
+  for (let i = 0; i < 55; i++) {
+    l = bgIsLight ? Math.max(0, l - 2) : Math.min(100, l + 2);
+    const c = hslToRgb(hsl.h, hsl.s, l);
+    const hex2 = rgbToHex(c.r, c.g, c.b);
+    if (contrastRatio(hex2, bgHex) >= minRatio || l <= 0 || l >= 100) return hex2;
+  }
+  return bgIsLight ? '#000000' : '#ffffff';
+}
+function pickTextOn(bgHex) {
+  return contrastRatio('#000000', bgHex) >= contrastRatio('#ffffff', bgHex) ? '#000000' : '#ffffff';
+}
+
+function computeResult(players, deck) {
+  const votes = players.map((p) => p.vote).filter((v) => v !== null && v !== undefined);
+  const real = votes.filter((v) => v !== '?');
+  const consensus = real.length > 0 && real.every((v) => v === real[0]);
+  if (deck === 'tshirt') {
+    const counts = {};
+    real.forEach((v) => { counts[v] = (counts[v] || 0) + 1; });
+    let best = null, bestCount = 0;
+    Object.keys(counts).forEach((k) => { if (counts[k] > bestCount) { best = k; bestCount = counts[k]; } });
+    return { label: 'Mehrheit', value: best || '–', consensus, spreadText: '' };
+  }
+  const nums = real.filter((v) => typeof v === 'number');
+  const avg = nums.length ? Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 10) / 10 : null;
+  const spreadText = (!consensus && nums.length >= 2) ? (Math.min(...nums) + ' bis ' + Math.max(...nums)) : '';
+  return { label: 'Durchschnitt', value: avg !== null ? String(avg) : '–', consensus, spreadText };
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      theme: 'dark',
+      joined: false,
+      codeInput: generateCode(),
+      nameInput: '',
+      joinRole: 'admin',
+      myName: 'Du',
+      sessionCode: '',
+      role: 'admin',
+      activeTab: 'main',
+      deck: 'fib',
+      phase: 'idle',
+      storyInput: '',
+      story: '',
+      round: 0,
+      players: [],
+      myVote: null,
+      history: [],
+      adminLinkOpen: false,
+      copied: false,
+    };
+    this.timers = [];
+  }
+
+  componentWillUnmount() {
+    this.timers.forEach((t) => clearTimeout(t));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const theme = s.theme === 'light' ? 'light' : 'dark';
+    const pal = theme === 'light' ? LIGHT : DARK;
+    const bg = pal.bg;
+    const accent = ensureContrast(this.props.accent ?? '#ff8c1a', bg, 7);
+    const danger = ensureContrast(this.props.danger ?? '#ff6a5a', bg, 7);
+    const onAccent = pickTextOn(accent);
+    const deckValues = s.deck === 'tshirt' ? TSHIRT : FIB;
+    const on = (active) => (active ? 'btn--on' : '');
+
+    const setTab = (tab) => () => this.setState({ activeTab: tab });
+    const setTheme = (t) => () => this.setState({ theme: t });
+    const setRole = (r) => () => this.setState({ role: r });
+    const setJoinRole = (r) => () => this.setState({ joinRole: r });
+    const onCodeInput = (e) => this.setState({ codeInput: e.target.value });
+    const onNameInput = (e) => this.setState({ nameInput: e.target.value });
+    const regenCode = () => this.setState({ codeInput: generateCode() });
+
+    const doJoin = () => {
+      if (!this.state.nameInput.trim() || !this.state.codeInput.trim()) return;
+      this.setState({
+        joined: true,
+        role: this.state.joinRole,
+        myName: this.state.nameInput.trim(),
+        sessionCode: this.state.codeInput.trim().toUpperCase(),
+        adminLinkOpen: this.state.joinRole === 'admin',
+        copied: false,
+      });
+    };
+
+    const leaveSession = () => {
+      this.timers.forEach((t) => clearTimeout(t));
+      this.timers = [];
+      this.setState({ joined: false, phase: 'idle', story: '', myVote: null, players: [], adminLinkOpen: false });
+    };
+
+    const setDeck = (d) => () => {
+      if (this.state.phase !== 'idle' || this.state.role !== 'admin') return;
+      this.setState({ deck: d });
+    };
+
+    const onStoryInput = (e) => this.setState({ storyInput: e.target.value });
+
+    const fillSample = () => {
+      if (this.state.phase === 'voting' || this.state.role !== 'admin') return;
+      this.setState({ storyInput: SAMPLES[Math.floor(Math.random() * SAMPLES.length)] });
+    };
+
+    const spawnBotVotes = () => {
+      const values = this.state.deck === 'tshirt' ? TSHIRT : FIB;
+      BOTS.forEach((b, i) => {
+        const t = setTimeout(() => {
+          const pool = values.filter((v) => v !== '?');
+          const v = pool[Math.floor(Math.random() * pool.length)];
+          this.setState((prev) => ({
+            players: prev.players.map((p) => (p.id === b.id ? { ...p, vote: v, voted: true } : p)),
+          }));
+        }, 700 + Math.random() * 1800 + i * 250);
+        this.timers.push(t);
+      });
+    };
+
+    const startRound = () => {
+      const title = this.state.storyInput.trim();
+      if (!title || this.state.phase === 'voting' || this.state.role !== 'admin') return;
+      this.timers.forEach((t) => clearTimeout(t));
+      this.timers = [];
+      const players = [
+        { id: 'you', name: this.state.myName || 'Du', isYou: true, vote: null, voted: false },
+        ...BOTS.map((b) => ({ id: b.id, name: b.name, isYou: false, vote: null, voted: false })),
+      ];
+      this.setState((prev) => ({
+        story: title, storyInput: '', phase: 'voting', players, myVote: null, round: prev.round + 1,
+      }));
+      spawnBotVotes();
+    };
+
+    const reEstimate = () => {
+      if (this.state.role !== 'admin' || this.state.phase !== 'revealed') return;
+      this.timers.forEach((t) => clearTimeout(t));
+      this.timers = [];
+      this.setState((prev) => ({
+        phase: 'voting', myVote: null, round: prev.round + 1,
+        players: prev.players.map((p) => ({ ...p, vote: null, voted: false })),
+      }));
+      spawnBotVotes();
+    };
+
+    const selectCard = (v) => {
+      if (this.state.phase !== 'voting') return;
+      this.setState((prev) => ({
+        myVote: v,
+        players: prev.players.map((p) => (p.isYou ? { ...p, vote: v, voted: true } : p)),
+      }));
+    };
+
+    const reveal = () => {
+      if (this.state.phase !== 'voting' || this.state.role !== 'admin') return;
+      this.setState((prev) => {
+        const result = computeResult(prev.players, prev.deck);
+        const entry = {
+          round: prev.round, story: prev.story, label: result.label, value: result.value,
+          consensus: result.consensus, count: prev.players.filter((p) => p.voted).length,
+        };
+        return { phase: 'revealed', history: [entry, ...prev.history].slice(0, 20) };
+      });
+    };
+
+    const newRound = () => {
+      if (this.state.role !== 'admin' || this.state.phase !== 'revealed') return;
+      this.setState({ phase: 'idle', story: '', myVote: null, players: [] });
+    };
+
+    const showAdmin = () => this.setState({ adminLinkOpen: true, copied: false });
+    const hideAdmin = () => this.setState({ adminLinkOpen: false });
+    const copyAdminLink = () => {
+      const link = 'https://vbs.bruchner.dev/s/' + (this.state.sessionCode || 'CODE') + '#admin=…';
+      try {
+        if (navigator.clipboard) navigator.clipboard.writeText(link);
+      } catch (err) { /* im Prototyp egal */ }
+      this.setState({ copied: true });
+    };
+
+    const cards = deckValues.map((v) => {
+      const selected = s.myVote === v;
+      const disabled = s.phase !== 'voting';
+      return {
+        key: String(v),
+        label: String(v),
+        checked: selected,
+        cls: selected ? 'card--on' : '',
+        disabled,
+        onClick: () => selectCard(v),
+      };
+    });
+
+    const players = s.players.map((p) => {
+      let statusText, statusColor, dotColor;
+      if (s.phase === 'revealed') {
+        statusText = p.vote === null ? 'keine Karte' : String(p.vote);
+        statusColor = pal.fgStrong;
+        dotColor = accent;
+      } else if (p.voted) {
+        statusText = 'hat abgestimmt';
+        statusColor = pal.fgDim;
+        dotColor = accent;
+      } else {
+        statusText = 'wartet';
+        statusColor = danger;
+        dotColor = danger;
+      }
+      return { id: p.id, name: p.isYou ? p.name + ' (du)' : p.name, statusText, statusColor, dotColor };
+    });
+
+    const votedCount = s.players.filter((p) => p.voted).length;
+    const totalCount = s.players.length;
+
+    let resultLabel = '', resultValue = '', resultConsensus = false, hasSpread = false, spreadText = '';
+    if (s.phase === 'revealed') {
+      const r = computeResult(s.players, s.deck);
+      resultLabel = r.label; resultValue = r.value; resultConsensus = r.consensus;
+      spreadText = r.spreadText; hasSpread = !!r.spreadText;
+    }
+
+    const historyItems = s.history.map((h) => ({
+      key: 'r' + h.round,
+      story: h.story,
+      detail: h.label + ' ' + h.value + ' · ' + h.count + ' Stimmen' + (h.consensus ? ' · Konsens' : ''),
+    }));
+
+    const statusLabelMap = { idle: 'Bereit', voting: 'Abstimmung läuft', revealed: 'Aufgedeckt' };
+
+    return {
+      logo: LOGO_TEXT,
+      bg, fg: pal.fg, fgDim: pal.fgDim, fgStrong: pal.fgStrong, divider: pal.divider,
+      inputBg: pal.inputBg, disabled: pal.disabled, accent, danger, onAccent,
+
+      themeDarkCls: on(theme === 'dark'), themeLightCls: on(theme === 'light'),
+      setThemeDark: setTheme('dark'), setThemeLight: setTheme('light'),
+
+      showJoin: !s.joined, showApp: s.joined,
+      codeInput: s.codeInput, onCodeInput, regenCode,
+      nameInput: s.nameInput, onNameInput,
+      joinAdminCls: on(s.joinRole === 'admin'), joinPlayerCls: on(s.joinRole !== 'admin'),
+      setJoinRoleAdmin: setJoinRole('admin'), setJoinRolePlayer: setJoinRole('player'),
+      doJoin, joinDisabled: !s.nameInput.trim() || !s.codeInput.trim(),
+      leaveSession, sessionCode: s.sessionCode,
+
+      isAdmin: s.role === 'admin', isPlayer: s.role !== 'admin',
+      roleAdminCls: on(s.role === 'admin'), rolePlayerCls: on(s.role !== 'admin'),
+      setRoleAdmin: setRole('admin'), setRolePlayer: setRole('player'),
+
+      isMain: s.activeTab === 'main', isHistory: s.activeTab === 'history', isInfo: s.activeTab === 'info',
+      tabMainCls: on(s.activeTab === 'main'), tabHistoryCls: on(s.activeTab === 'history'), tabInfoCls: on(s.activeTab === 'info'),
+      goMain: setTab('main'), goHistory: setTab('history'), goInfo: setTab('info'),
+
+      deckLabel: s.deck === 'tshirt' ? 'T-Shirt' : 'Fibonacci',
+      deckFibCls: on(s.deck === 'fib'), deckTshirtCls: on(s.deck === 'tshirt'),
+      setDeckFib: setDeck('fib'), setDeckTshirt: setDeck('tshirt'), deckLocked: s.phase !== 'idle',
+
+      statusLabel: statusLabelMap[s.phase],
+      statusColor: s.phase === 'voting' ? danger : pal.fgStrong,
+      storyInputValue: s.storyInput, onStoryInput, fillSample, startRound,
+      startDisabled: !s.storyInput.trim() || s.phase === 'voting',
+
+      phaseIdle: s.phase === 'idle', phaseVoting: s.phase === 'voting', phaseRevealed: s.phase === 'revealed',
+      phaseIdleAdmin: s.phase === 'idle' && s.role === 'admin',
+      phaseIdlePlayer: s.phase === 'idle' && s.role !== 'admin',
+      hasStory: !!s.story, story: s.story,
+
+      cards, players, hasPlayers: s.players.length > 0, noPlayers: s.players.length === 0,
+      votedCount, totalCount,
+
+      reveal, revealDisabled: s.phase !== 'voting',
+      reEstimate, reEstimateDisabled: s.phase !== 'revealed',
+      newRound, newRoundDisabled: s.phase !== 'revealed',
+
+      resultLabel, resultValue, resultConsensus, hasSpread, spreadText,
+      round: s.round,
+      recentHistory: historyItems.slice(0, 3),
+      hasRecentHistory: historyItems.length > 0, noRecentHistory: historyItems.length === 0,
+      historyItems, hasHistory: historyItems.length > 0, noHistory: historyItems.length === 0,
+
+      adminLinkOpen: s.adminLinkOpen, showAdmin, hideAdmin, copyAdminLink,
+      copyLabel: s.copied ? 'Kopiert' : 'Link kopieren',
+    };
+  }
+}
+</script>
+</body>
+</html>

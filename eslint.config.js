@@ -12,6 +12,10 @@ export default tseslint.config(
       "**/dist/**",
       "**/node_modules/**",
       "**/public/**",
+      // Vendored design-canvas runtime (Main.dc.html's own dependencies),
+      // not our code — same reasoning as public/.
+      "docs/prototype/support.js",
+      "docs/prototype/vendor/**",
       "supabase/.branches/**",
       "supabase/.temp/**",
       "packages/core/src/database.types.ts",

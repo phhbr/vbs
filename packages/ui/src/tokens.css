@@ -1,42 +1,52 @@
 /*
- * VBS design tokens, derived from the canvas prototype
- * (docs/prototype/prototype.dc.html).
+ * VBS design tokens, derived from the design revision prototype
+ * (docs/prototype/Main.dc.html). See docs/prototype/STYLE.md for the full
+ * system this backs: the 14/20 type grid, the 10/20/40 spacing scale, the
+ * single border system, and the color roles.
  *
- * Text colors are raised to WCAG AAA (7:1) compared to the prototype. The ratios
- * below were computed by hand and MUST be confirmed by the contrast unit test in
- * packages/ui ("token contrast"). Decorative rules and borders sit at 3:1 or
- * better — there is no AAA tier for non-text — and disabled controls are exempt
- * per WCAG.
+ * Text colors reach WCAG AAA (7:1) against the page background; the
+ * on-accent pair reaches AAA against the accent fill instead (buttons,
+ * cards, and the consensus badge print text there, not on the page
+ * background). Both are confirmed by packages/ui/src/tokens.contrast.test.ts.
+ * Decorative rules and borders sit at 3:1 or better — there is no AAA tier
+ * for non-text — and disabled controls are exempt per WCAG.
  */
 
 :root {
-  /* Typography: deliberately the system-monospace look of the prototype */
+  /* Type grid: 14px text, 20px line-height. Every gap in the app is a
+     multiple of this rhythm — see the spacing scale below. */
   --vbs-font-mono: "Courier New", Courier, monospace;
-  --vbs-font-size: 13px;
-  --vbs-font-size-small: 11px;
+  --vbs-font-size: 14px;
+  --vbs-font-size-small: 12px;
   --vbs-font-size-label: 12px;
-  --vbs-line-height: 1.55;
+  --vbs-line-height: 20px;
   --vbs-logo-line-height: 1.05;
 
-  /* Spacing, carried over from the prototype */
-  --vbs-gap-row: 14px;
-  --vbs-gap-cards: 8px;
-  --vbs-gap-columns: 26px;
-  --vbs-pad-bar: 6px 12px;
-  --vbs-pad-panel: 12px 14px;
-  --vbs-pad-page: 24px 32px 48px;
+  /* Spacing scale: 10, 20, 40px, no other values. Enforced by
+     packages/ui/src/spacing.scale.test.ts — a stray value fails CI. */
+  --vbs-space-10: 10px;
+  --vbs-space-20: 20px;
+  --vbs-space-40: 40px;
+
+  /* Fixed component dimensions — not "gaps," so exempt from the scale above,
+     same as the 1-2px border widths used throughout. */
+  --vbs-touch-target: 44px;
+  --vbs-card-min-size: 56px;
 
   /* Surfaces: no radii, no shadows, no gradients */
   --vbs-radius: 0;
   --vbs-border-style: 1px dashed var(--vbs-divider);
-  --vbs-touch-target: 44px;
-  --vbs-focus-ring: 2px dashed currentColor;
 }
 
-/* 32px of side padding eats 18% of a 360px screen — halved below 480px. */
+/* 40px of side padding eats 22% of a 360px screen — halved below 480px. */
 @media (max-width: 480px) {
   :root {
-    --vbs-pad-page: 20px 16px 32px;
+    --vbs-space-page-x: var(--vbs-space-20);
+  }
+}
+@media (min-width: 481px) {
+  :root {
+    --vbs-space-page-x: var(--vbs-space-40);
   }
 }
 
@@ -58,32 +68,37 @@
 :root[data-theme="dark"] {
   --vbs-bg: #000000;          /* ground */
   --vbs-fg: #b7b7b7;          /* body text        10.5:1 */
-  --vbs-fg-dim: #9a9a9a;      /* secondary         7.5:1 */
-  --vbs-fg-dim-2: #a2a2a2;    /* section labels    8.2:1 */
-  --vbs-fg-strong: #eaeaea;   /* values, logo     18:1   */
-  --vbs-accent: #ff8c1a;      /* links, active     9.0:1 */
-  --vbs-danger: #ff6a5a;      /* warning, waiting  7.5:1 */
-  --vbs-divider: #7a5226;     /* rules, borders    3.1:1 */
+  --vbs-fg-dim: #9a9a9a;      /* meta labels, hints 7.5:1 */
+  --vbs-fg-strong: #eaeaea;   /* values, logo, headings, panel titles  18:1 */
+  --vbs-accent: #ff8c1a;      /* interactive only: buttons, cards, active 9.0:1 */
+  --vbs-danger: #ff6a5a;      /* warnings           7.5:1 */
+  --vbs-divider: #7a5226;     /* rules, panel borders 3.1:1 */
   --vbs-input-bg: #000000;
   --vbs-input-fg: #eaeaea;
   --vbs-disabled: #5a5a5a;    /* exempt */
   --vbs-on-accent: #000000;  /* text on an accent fill    9.0:1 */
+  /* One shared focus ring for every focusable element (global.css), so it
+     can't drift component by component. The Input component is the one
+     documented exception — it outlines in --vbs-accent instead, matching
+     the prototype, since a dashed border plus a same-color solid ring
+     would read as one blurred shape rather than two distinct signals. */
+  --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
 }
 
 /* Light */
 :root[data-theme="light"] {
   --vbs-bg: #f7f4ec;          /* warm paper white */
   --vbs-fg: #262620;          /* body text        13.8:1 */
-  --vbs-fg-dim: #4a4740;      /* secondary         8.4:1 */
-  --vbs-fg-dim-2: #3d3a34;    /* section labels   10:1   */
-  --vbs-fg-strong: #141310;   /* values, logo     17:1   */
-  --vbs-accent: #6e3a00;      /* links, active     8.4:1 */
-  --vbs-danger: #8a1f14;      /* warning, waiting  8.3:1 */
-  --vbs-divider: #9c7830;     /* rules, borders    3.7:1 */
+  --vbs-fg-dim: #4a4740;      /* meta labels, hints 8.4:1 */
+  --vbs-fg-strong: #141310;   /* values, logo, headings, panel titles  17:1 */
+  --vbs-accent: #6e3a00;      /* interactive only: buttons, cards, active 8.4:1 */
+  --vbs-danger: #8a1f14;      /* warnings           8.3:1 */
+  --vbs-divider: #9c7830;     /* rules, panel borders 3.7:1 */
   --vbs-input-bg: #ffffff;
   --vbs-input-fg: #141310;
   --vbs-disabled: #a8a498;    /* exempt */
   --vbs-on-accent: #ffffff;  /* text on an accent fill    9.3:1 */
+  --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
 }
 
 /* With no stored choice, follow the system. */
@@ -92,7 +107,6 @@
     --vbs-bg: #f7f4ec;
     --vbs-fg: #262620;
     --vbs-fg-dim: #4a4740;
-    --vbs-fg-dim-2: #3d3a34;
     --vbs-fg-strong: #141310;
     --vbs-accent: #6e3a00;
     --vbs-danger: #8a1f14;
@@ -101,14 +115,14 @@
     --vbs-input-fg: #141310;
     --vbs-disabled: #a8a498;
     --vbs-on-accent: #ffffff;
+    --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
   }
 }
 
 /*
- * The selected card and the consensus badge fill an area with --vbs-accent.
- * --vbs-on-accent (confirmed by the contrast test) reaches AAA against it in
- * both themes, but the selection still carries a distinct border as well —
- * STYLE.md's rule that selection is never signalled by color alone is a
- * design principle, not just a contrast fallback, and holds even where the
- * numbers alone would pass.
+ * The selected card, an "on" button/tab, and the consensus badge fill an
+ * area with --vbs-accent and print --vbs-on-accent on top of it — confirmed
+ * by the contrast test to reach AAA in both themes. These states are signalled
+ * by the fill/inversion itself plus real state (aria-checked/aria-selected/
+ * aria-pressed), not by color alone.
  */
