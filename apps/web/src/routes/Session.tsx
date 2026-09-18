@@ -49,11 +49,12 @@ export function Session() {
   const claim = useClaimAdmin(code);
   const { mutate: claimAdmin, isIdle: claimIsIdle } = claim;
 
-  const { status: connectionStatus, onlineParticipantIds } =
-    useSessionRealtime({
+  const { status: connectionStatus, onlineParticipantIds } = useSessionRealtime(
+    {
       sessionId: state.data?.is_member ? state.data.session.id : undefined,
       participantId: state.data?.viewer?.participant_id,
-    });
+    },
+  );
 
   useEffect(() => {
     // A token we did not just mint is one to redeem. Claiming is idempotent,

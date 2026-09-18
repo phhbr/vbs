@@ -13,13 +13,11 @@ function createFakeChannel() {
   let presenceState: Record<string, unknown[]> = {};
 
   const channel = {
-    on: vi.fn(
-      (type: string, filter: { event: string }, handler: Handler) => {
-        if (type === "broadcast") broadcastHandlers.set(filter.event, handler);
-        if (type === "presence") presenceHandlers.set(filter.event, handler);
-        return channel;
-      },
-    ),
+    on: vi.fn((type: string, filter: { event: string }, handler: Handler) => {
+      if (type === "broadcast") broadcastHandlers.set(filter.event, handler);
+      if (type === "presence") presenceHandlers.set(filter.event, handler);
+      return channel;
+    }),
     subscribe: vi.fn((callback: (status: string) => void) => {
       subscribeCallback = callback;
       return channel;

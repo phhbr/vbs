@@ -55,9 +55,7 @@ test("no vote value ever appears in a player's realtime frames", async ({
   expect(frames.length).toBeGreaterThan(0);
   // The capture must have caught real traffic, or the assertion below would
   // pass vacuously.
-  expect(frames.some((frame) => frame.includes("session_changed"))).toBe(
-    true,
-  );
+  expect(frames.some((frame) => frame.includes("session_changed"))).toBe(true);
 
   for (const frame of frames) {
     let parsed: unknown;

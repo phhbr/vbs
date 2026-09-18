@@ -12,7 +12,9 @@ const cards = ["1", "2", "3"] as const;
 
 describe("CardRow", () => {
   it("renders one radio per card with the current value checked", () => {
-    render(<CardRow cards={cards} value="2" onChange={vi.fn()} disabled={false} />);
+    render(
+      <CardRow cards={cards} value="2" onChange={vi.fn()} disabled={false} />,
+    );
 
     expect(screen.getByRole("radio", { name: "1" })).toHaveAttribute(
       "aria-checked",
@@ -27,7 +29,14 @@ describe("CardRow", () => {
   it("selects a card on click", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<CardRow cards={cards} value={null} onChange={onChange} disabled={false} />);
+    render(
+      <CardRow
+        cards={cards}
+        value={null}
+        onChange={onChange}
+        disabled={false}
+      />,
+    );
 
     await user.click(screen.getByRole("radio", { name: "3" }));
 
@@ -37,7 +46,9 @@ describe("CardRow", () => {
   it("moves focus and selects with the arrow keys", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<CardRow cards={cards} value="1" onChange={onChange} disabled={false} />);
+    render(
+      <CardRow cards={cards} value="1" onChange={onChange} disabled={false} />,
+    );
 
     screen.getByRole("radio", { name: "1" }).focus();
     await user.keyboard("{ArrowRight}");
@@ -49,7 +60,9 @@ describe("CardRow", () => {
   it("wraps from the last card back to the first", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<CardRow cards={cards} value="3" onChange={onChange} disabled={false} />);
+    render(
+      <CardRow cards={cards} value="3" onChange={onChange} disabled={false} />,
+    );
 
     screen.getByRole("radio", { name: "3" }).focus();
     await user.keyboard("{ArrowRight}");
@@ -60,7 +73,9 @@ describe("CardRow", () => {
   it("jumps to the first and last card with Home and End", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<CardRow cards={cards} value="2" onChange={onChange} disabled={false} />);
+    render(
+      <CardRow cards={cards} value="2" onChange={onChange} disabled={false} />,
+    );
 
     screen.getByRole("radio", { name: "2" }).focus();
     await user.keyboard("{End}");
@@ -71,7 +86,9 @@ describe("CardRow", () => {
   });
 
   it("disables every card when the round is not accepting votes", () => {
-    render(<CardRow cards={cards} value={null} onChange={vi.fn()} disabled={true} />);
+    render(
+      <CardRow cards={cards} value={null} onChange={vi.fn()} disabled={true} />,
+    );
 
     for (const card of cards) {
       expect(screen.getByRole("radio", { name: card })).toBeDisabled();
@@ -79,7 +96,9 @@ describe("CardRow", () => {
   });
 
   it("makes only the selected (or first) card tab-reachable", () => {
-    render(<CardRow cards={cards} value="2" onChange={vi.fn()} disabled={false} />);
+    render(
+      <CardRow cards={cards} value="2" onChange={vi.fn()} disabled={false} />,
+    );
 
     expect(screen.getByRole("radio", { name: "1" })).toHaveAttribute(
       "tabindex",

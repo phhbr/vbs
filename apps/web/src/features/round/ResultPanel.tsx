@@ -7,8 +7,8 @@ export function ResultPanel({ result }: { result: RoundResult }) {
   return (
     <div>
       <p>
-        {result.type === "average" ? t("round.average") : t("round.majority")}
-        : <strong>{result.value ?? "–"}</strong>
+        {result.type === "average" ? t("round.average") : t("round.majority")}:{" "}
+        <strong>{result.value ?? "–"}</strong>
       </p>
       {result.consensus ? (
         <p>

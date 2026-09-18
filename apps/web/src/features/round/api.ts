@@ -26,9 +26,7 @@ export async function setDeck(
   code: string,
   deck: Deck,
 ): Promise<{ code: string; deck: Deck }> {
-  return unwrap(
-    await supabase.rpc("set_deck", { p_code: code, p_deck: deck }),
-  );
+  return unwrap(await supabase.rpc("set_deck", { p_code: code, p_deck: deck }));
 }
 
 export async function vote(

@@ -67,10 +67,7 @@ export function AdminControls({
           disabled={!canStart}
           maxLength={200}
         />{" "}
-        <button
-          type="submit"
-          disabled={!canStart || !titleValid || isStarting}
-        >
+        <button type="submit" disabled={!canStart || !titleValid || isStarting}>
           {t("round.start")}
         </button>
       </form>
@@ -94,7 +91,11 @@ export function AdminControls({
       </fieldset>
 
       <p>
-        <button type="button" disabled={!canReveal || isRevealing} onClick={onReveal}>
+        <button
+          type="button"
+          disabled={!canReveal || isRevealing}
+          onClick={onReveal}
+        >
           {t("round.reveal")}
         </button>{" "}
         <button

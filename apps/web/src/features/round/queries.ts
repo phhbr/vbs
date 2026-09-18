@@ -55,8 +55,7 @@ export function useVote(roundId: string | undefined) {
   return useMutation({
     mutationFn: (value: string) => vote(roundId!, value),
     onSuccess: () =>
-      roundId &&
-      queryClient.invalidateQueries({ queryKey: roundKey(roundId) }),
+      roundId && queryClient.invalidateQueries({ queryKey: roundKey(roundId) }),
   });
 }
 
@@ -65,8 +64,7 @@ export function useReveal(roundId: string | undefined) {
   return useMutation({
     mutationFn: () => reveal(roundId!),
     onSuccess: () =>
-      roundId &&
-      queryClient.invalidateQueries({ queryKey: roundKey(roundId) }),
+      roundId && queryClient.invalidateQueries({ queryKey: roundKey(roundId) }),
   });
 }
 
