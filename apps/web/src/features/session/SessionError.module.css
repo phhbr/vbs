@@ -1,0 +1,17 @@
+/* A bracket action, but as a real <a> — CLAUDE.md treats <button> and
+   <a href> as distinct real elements, and "back to the start" is genuine
+   navigation, not an action, so it stays a link rather than a button that
+   calls navigate(). Visually identical to BracketButton. */
+.backLink {
+  color: var(--vbs-accent);
+  text-decoration: none;
+}
+
+.backLink:hover,
+.backLink:focus-visible {
+  text-decoration: underline;
+}
+
+.message {
+  color: var(--vbs-danger);
+}

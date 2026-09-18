@@ -1,6 +1,8 @@
 import { formatSessionCode } from "@vbs/core";
+import { BracketButton, Panel } from "@vbs/ui";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "../../lib/useDocumentTitle";
 import { useJoinSession } from "./queries";
 import { useErrorMessage } from "./useErrorMessage";
 
@@ -9,6 +11,7 @@ export function JoinSessionForm({ code }: { code: string }) {
   const { t } = useTranslation();
   const join = useJoinSession(code);
   const describeError = useErrorMessage();
+  useDocumentTitle(`${t("app.title")} — ${t("join.title")}`);
 
   const nicknameId = useId();
   const [nickname, setNickname] = useState("");
@@ -25,31 +28,33 @@ export function JoinSessionForm({ code }: { code: string }) {
   return (
     <main>
       <h1>{t("join.title")}</h1>
-      <p>{t("join.forSession", { code: formatSessionCode(code) })}</p>
+      <Panel>
+        <p>{t("join.forSession", { code: formatSessionCode(code) })}</p>
 
-      <form onSubmit={onSubmit}>
-        <p>
-          <label htmlFor={nicknameId}>{t("join.nickname")}</label>
-          <br />
-          <input
-            id={nicknameId}
-            name="nickname"
-            value={nickname}
-            onChange={(event) => setNickname(event.target.value)}
-            maxLength={24}
-            required
-            autoComplete="nickname"
-          />
-        </p>
+        <form onSubmit={onSubmit}>
+          <p>
+            <label htmlFor={nicknameId}>{t("join.nickname")}</label>
+            <br />
+            <input
+              id={nicknameId}
+              name="nickname"
+              value={nickname}
+              onChange={(event) => setNickname(event.target.value)}
+              maxLength={24}
+              required
+              autoComplete="nickname"
+            />
+          </p>
 
-        <p>
-          <button type="submit" disabled={!valid || join.isPending}>
-            {join.isPending ? t("join.submitting") : t("join.submit")}
-          </button>
-        </p>
+          <p>
+            <BracketButton type="submit" disabled={!valid || join.isPending}>
+              {join.isPending ? t("join.submitting") : t("join.submit")}
+            </BracketButton>
+          </p>
 
-        {join.isError && <p role="alert">{describeError(join.error)}</p>}
-      </form>
+          {join.isError && <p role="alert">{describeError(join.error)}</p>}
+        </form>
+      </Panel>
     </main>
   );
 }
