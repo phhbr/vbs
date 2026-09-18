@@ -1,0 +1,6 @@
+/* The form is a semantic wrapper only — its children participate directly
+   in the Panel's own flex column, inheriting its gap:20 rather than
+   collapsing it. */
+.form {
+  display: contents;
+}

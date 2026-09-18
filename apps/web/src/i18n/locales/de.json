@@ -9,12 +9,13 @@
     "captchaLabel": "Bitte bestätige, dass du kein Bot bist."
   },
   "theme": {
-    "label": "Darstellung:",
-    "light": "[ Hell ]",
-    "dark": "[ Dunkel ]"
+    "label": "Darstellung",
+    "light": "Hell",
+    "dark": "Dunkel"
   },
   "language": {
-    "de": "[ Deutsch ]",
-    "en": "[ Englisch ]"
+    "label": "Sprache",
+    "de": "Deutsch",
+    "en": "Englisch"
   }
 }

@@ -42,7 +42,7 @@ describe("home screen", () => {
     expect(screen.getByLabelText("Dein Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Sitzungs-Code")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "[ Fibonacci ]", pressed: true }),
+      screen.getByRole("button", { name: "Fibonacci", pressed: true }),
     ).toBeInTheDocument();
   });
 
@@ -50,7 +50,7 @@ describe("home screen", () => {
     const user = userEvent.setup();
     renderApp("/");
 
-    const submit = screen.getByRole("button", { name: "[ Sitzung eröffnen ]" });
+    const submit = screen.getByRole("button", { name: "Sitzung eröffnen" });
     expect(submit).toBeDisabled();
 
     await user.type(screen.getByLabelText("Dein Name"), "Ada");
@@ -62,7 +62,7 @@ describe("home screen", () => {
     renderApp("/");
 
     await user.type(screen.getByLabelText("Sitzungs-Code"), "NOPE");
-    await user.click(screen.getByRole("button", { name: "[ Beitreten ]" }));
+    await user.click(screen.getByRole("button", { name: "Beitreten" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Ein Code besteht aus 12 Zeichen",
@@ -77,7 +77,7 @@ describe("home screen", () => {
     renderApp("/");
 
     await user.type(screen.getByLabelText("Sitzungs-Code"), "abcd-efgh-jklm");
-    await user.click(screen.getByRole("button", { name: "[ Beitreten ]" }));
+    await user.click(screen.getByRole("button", { name: "Beitreten" }));
 
     // Only the inline format check is this test's concern — not whatever the
     // join request that fires next does. Asserting "no alert at all" was

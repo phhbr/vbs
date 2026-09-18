@@ -6,11 +6,11 @@
     "title": "Open a new session",
     "nickname": "Your name",
     "nicknameHint": "1 to 24 characters.",
-    "deck": "Card deck:",
-    "deckFibonacci": "[ Fibonacci ]",
-    "deckTshirt": "[ T-shirt ]",
-    "submit": "[ Open session ]",
-    "submitting": "[ opening … ]"
+    "deck": "Card deck",
+    "deckFibonacci": "Fibonacci",
+    "deckTshirt": "T-shirt",
+    "submit": "Open session",
+    "submitting": "opening …"
   },
   "join": {
     "title": "Join a session",
@@ -18,14 +18,14 @@
     "codeHint": "12 characters, case does not matter.",
     "codeInvalid": "A code is 12 characters long — without I, O, 0 and 1.",
     "nickname": "Your name",
-    "submit": "[ Join ]",
-    "submitting": "[ joining … ]",
+    "submit": "Join",
+    "submitting": "joining …",
     "forSession": "You are joining session {{code}}."
   },
   "lobby": {
     "link": "Link to share",
-    "copy": "[Copy]",
-    "copied": "[Copied]",
+    "copy": "Copy",
+    "copied": "Copied",
     "qrCaption": "QR code for the session link",
     "you": "you",
     "connected": "Connected",
@@ -39,14 +39,14 @@
     "navRules": "Rules",
     "statusBarLabel": "Session status",
     "footerRound": "Round {{n}}",
-    "footerLeave": "[ Leave session ]",
-    "remove": "[ Remove ]",
+    "footerLeave": "Leave session",
+    "remove": "Remove",
     "removeConfirm": "Remove {{name}}?",
-    "removeConfirmYes": "[ Yes, remove ]",
-    "removeConfirmNo": "[ Cancel ]",
+    "removeConfirmYes": "Yes, remove",
+    "removeConfirmNo": "Cancel",
     "leaveConfirm": "Leave this session?",
-    "leaveConfirmYes": "[ Yes, leave ]",
-    "leaveConfirmNo": "[ Cancel ]",
+    "leaveConfirmYes": "Yes, leave",
+    "leaveConfirmNo": "Cancel",
     "expiryWarning": "[ Warning ] This session is about to expire — after that, everything in it is gone for good. Any action (voting, starting a story, revealing) extends it by another 24 hours.",
     "rulesHeading": "Rules",
     "rulesIntro": "Planning poker is an estimation method for agile teams: everyone picks a card for a story's effort in secret. Only once everyone has voted are the cards revealed together.",
@@ -55,7 +55,7 @@
   "admin": {
     "recoveryTitle": "Recovery link",
     "recoveryWarning": "This link is shown exactly once. Use it to take the chair back if you switch browsers or clear your data. Save it now — after this it is gone.",
-    "recoveryAcknowledge": "[ Understood, continue ]",
+    "recoveryAcknowledge": "Understood, continue",
     "claimed": "You have taken the chair.",
     "claiming": "Taking the chair …"
   },
@@ -85,7 +85,7 @@
     "vote_rate_limited": "Too many votes in a short time. Give it a moment.",
     "unknown": "Something went wrong. Try again.",
     "title": "That did not work",
-    "back": "[ Back to the start ]",
-    "retry": "[ Try again ]"
+    "back": "Back to the start",
+    "retry": "Try again"
   }
 }

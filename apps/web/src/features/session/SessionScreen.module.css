@@ -1,12 +1,8 @@
-.heading {
-  text-align: center;
-}
-
 /* The [ bracket ] marker plus text is the AAA-required non-color signal —
    the border/text color is reinforcement, not the only cue. */
 .expiryWarning {
   border: 1px solid var(--vbs-danger);
   color: var(--vbs-danger);
-  padding: 0.5em 0.75em;
+  padding: var(--vbs-space-10) var(--vbs-space-20);
   font-weight: bold;
 }

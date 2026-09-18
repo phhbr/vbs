@@ -1,3 +1,4 @@
+import { Panel } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
 import { useRoundHistory } from "./queries";
 
@@ -43,22 +44,24 @@ export function RoundHistory({ sessionId }: { sessionId: string }) {
   const history = useRoundHistory(sessionId);
   const revealed = (history.data ?? []).filter((round) => round.result);
 
-  if (revealed.length === 0) {
-    return <p>{t("round.historyEmptyFull")}</p>;
-  }
-
   return (
-    <ul>
-      {revealed.map((round) => (
-        <HistoryLine
-          key={round.id}
-          story={round.story}
-          type={round.result!.type}
-          value={round.result!.value}
-          voteCount={round.result!.vote_count}
-          consensus={round.result!.consensus}
-        />
-      ))}
-    </ul>
+    <Panel heading={t("round.historyHeading")}>
+      {revealed.length === 0 ? (
+        <p>{t("round.historyEmptyFull")}</p>
+      ) : (
+        <ul>
+          {revealed.map((round) => (
+            <HistoryLine
+              key={round.id}
+              story={round.story}
+              type={round.result!.type}
+              value={round.result!.value}
+              voteCount={round.result!.vote_count}
+              consensus={round.result!.consensus}
+            />
+          ))}
+        </ul>
+      )}
+    </Panel>
   );
 }

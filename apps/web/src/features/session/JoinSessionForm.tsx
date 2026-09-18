@@ -1,10 +1,11 @@
 import { formatSessionCode } from "@vbs/core";
-import { BracketButton, Panel } from "@vbs/ui";
+import { BracketButton, Field, Input, Panel } from "@vbs/ui";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "../../lib/useDocumentTitle";
 import { useJoinSession } from "./queries";
 import { useErrorMessage } from "./useErrorMessage";
+import styles from "./JoinSessionForm.module.css";
 
 /** Shown on /s/:code when the visitor has not joined this session yet. */
 export function JoinSessionForm({ code }: { code: string }) {
@@ -26,16 +27,15 @@ export function JoinSessionForm({ code }: { code: string }) {
   };
 
   return (
-    <main>
-      <h1>{t("join.title")}</h1>
+    <main className="page-main">
+      <h1 className="page-heading">{t("join.title")}</h1>
       <Panel>
         <p>{t("join.forSession", { code: formatSessionCode(code) })}</p>
 
-        <form onSubmit={onSubmit}>
-          <p>
+        <form onSubmit={onSubmit} className={styles.form}>
+          <Field>
             <label htmlFor={nicknameId}>{t("join.nickname")}</label>
-            <br />
-            <input
+            <Input
               id={nicknameId}
               name="nickname"
               value={nickname}
@@ -44,13 +44,15 @@ export function JoinSessionForm({ code }: { code: string }) {
               required
               autoComplete="nickname"
             />
-          </p>
+          </Field>
 
-          <p>
-            <BracketButton type="submit" disabled={!valid || join.isPending}>
-              {join.isPending ? t("join.submitting") : t("join.submit")}
-            </BracketButton>
-          </p>
+          <BracketButton
+            type="submit"
+            variant="primary"
+            disabled={!valid || join.isPending}
+          >
+            {join.isPending ? t("join.submitting") : t("join.submit")}
+          </BracketButton>
 
           {join.isError && <p role="alert">{describeError(join.error)}</p>}
         </form>

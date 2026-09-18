@@ -15,13 +15,13 @@ test("start, vote, reveal and re-estimate across three participants", async ({
   await join(bob, code, "Bob");
   await join(cy, code, "Cy");
 
-  await admin.getByLabel("Story").fill("Login redesign");
-  await admin.getByRole("button", { name: "[ Runde starten ]" }).click();
+  await admin.getByRole("textbox", { name: "Story" }).fill("Login redesign");
+  await admin.getByRole("button", { name: "Runde starten" }).click();
 
   // The story reaches both players through realtime, with no reload.
-  await expect(admin.getByText("Story: Login redesign")).toBeVisible();
-  await expect(bob.getByText("Story: Login redesign")).toBeVisible();
-  await expect(cy.getByText("Story: Login redesign")).toBeVisible();
+  await expect(admin.getByText("Login redesign")).toBeVisible();
+  await expect(bob.getByText("Login redesign")).toBeVisible();
+  await expect(cy.getByText("Login redesign")).toBeVisible();
 
   await bob.getByRole("radio", { name: "5", exact: true }).click();
   await cy.getByRole("radio", { name: "8", exact: true }).click();
@@ -43,7 +43,7 @@ test("start, vote, reveal and re-estimate across three participants", async ({
   await expect(cyStatus).not.toContainText("8");
 
   await admin.getByRole("radio", { name: "13", exact: true }).click();
-  await admin.getByRole("button", { name: "[ Karten aufdecken ]" }).click();
+  await admin.getByRole("button", { name: "Karten aufdecken" }).click();
 
   // (5 + 8 + 13) / 3 = 8.6666… → 8.7, no consensus, spread 5–13.
   // The result panel specifically — "Ø Durchschnitt" alone would also match
@@ -63,7 +63,7 @@ test("start, vote, reveal and re-estimate across three participants", async ({
   await expect(bobStatus).toContainText("5");
   await expect(cyStatus).toContainText("8");
 
-  await admin.getByRole("button", { name: "[ Neu schätzen ]" }).click();
+  await admin.getByRole("button", { name: "Neu schätzen" }).click();
 
   // A fresh attempt at the same story: votes are cleared for everyone.
   // Scoped to the round's status bar — the history preview shows the same

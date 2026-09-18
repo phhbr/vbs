@@ -42,7 +42,7 @@ test("the recovery link makes a third browser the admin and demotes the first", 
   await expect(heading(pageA, "Wiederherstellungs-Link")).toBeVisible();
   await expect(pageA.getByRole("alert")).toContainText("genau einmal");
 
-  await pageA.getByRole("button", { name: "[ Verstanden, weiter ]" }).click();
+  await pageA.getByRole("button", { name: "Verstanden, weiter" }).click();
   await expect(heading(pageA, "Wiederherstellungs-Link")).toBeHidden();
   // Acknowledging strips the token from the URL.
   expect(new URL(pageA.url()).hash).toBe("");
@@ -61,7 +61,7 @@ test("the recovery link makes a third browser the admin and demotes the first", 
   await expect(
     pageC.getByRole("listitem").filter({ hasText: "Ada" }),
   ).toContainText("du");
-  await expect(pageC.getByLabel("Story")).toBeVisible();
+  await expect(pageC.getByRole("textbox", { name: "Story" })).toBeVisible();
 
   // A lost the session with the row, so A is no longer a member of it.
   await pageA.reload();
@@ -72,7 +72,7 @@ test("the recovery link makes a third browser the admin and demotes the first", 
   // (010_session_codes_and_admin_invariant.sql); B never had the story
   // form either way, so it isn't a differential check here.
   await expect(pageB.getByRole("listitem")).toHaveCount(2);
-  await expect(pageB.getByLabel("Story")).toBeHidden();
+  await expect(pageB.getByRole("textbox", { name: "Story" })).toBeHidden();
 
   await contextA.close();
   await contextB.close();
@@ -82,7 +82,7 @@ test("the recovery link makes a third browser the admin and demotes the first", 
 test("a wrong recovery token lands on the error screen", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel("Dein Name").fill("Ada");
-  await page.getByRole("button", { name: "[ Sitzung eröffnen ]" }).click();
+  await page.getByRole("button", { name: "Sitzung eröffnen" }).click();
   await page.waitForURL(/\/s\/[A-Z2-9]{12}/);
   const code = new URL(page.url()).pathname.split("/").pop()!;
 
@@ -103,13 +103,13 @@ test("an unknown code and a taken nickname each get a way forward", async ({
 
   await pageB.goto(`/s/${code}`);
   await pageB.getByLabel("Dein Name").fill("ada");
-  await pageB.getByRole("button", { name: "[ Beitreten ]" }).click();
+  await pageB.getByRole("button", { name: "Beitreten" }).click();
   await expect(pageB.getByRole("alert")).toContainText("gibt es hier schon");
 
   await pageB.goto("/s/MMMMMMMMMMMM");
   await expect(heading(pageB, "Das hat nicht geklappt")).toBeVisible();
   await expect(pageB.getByRole("alert")).toContainText("Code kennen wir nicht");
-  await pageB.getByRole("link", { name: "[ Zurück zum Anfang ]" }).click();
+  await pageB.getByRole("link", { name: "Zurück zum Anfang" }).click();
   await expect(heading(pageB, "Neue Sitzung eröffnen")).toBeVisible();
 
   await contextA.close();

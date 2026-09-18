@@ -1,9 +1,9 @@
-import { BracketButton } from "@vbs/ui";
+import { BracketButton, Panel } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
 import { HistoryLine } from "./RoundHistory";
 import { useRoundHistory } from "./queries";
 
-/** The Main tab's "Rundenverlauf [ Alle ]" preview: the 3 most recent
+/** The Main tab's "Rundenverlauf [ Alle ]" panel: the 3 most recent
  * completed rounds, with a link to the full history tab. */
 export function RecentRounds({
   sessionId,
@@ -19,13 +19,14 @@ export function RecentRounds({
     .slice(0, 3);
 
   return (
-    <div>
-      <p>
-        {t("round.historyHeading")}{" "}
+    <Panel
+      heading={t("round.historyHeading")}
+      headingAction={
         <BracketButton onClick={onShowAll}>
           {t("round.historyAll")}
         </BracketButton>
-      </p>
+      }
+    >
       {recent.length === 0 ? (
         <p>{t("round.historyEmpty")}</p>
       ) : (
@@ -42,6 +43,6 @@ export function RecentRounds({
           ))}
         </ul>
       )}
-    </div>
+    </Panel>
   );
 }

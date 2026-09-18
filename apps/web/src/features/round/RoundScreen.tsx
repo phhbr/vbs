@@ -88,23 +88,30 @@ export function RoundScreen({
       : t("round.phaseIdle");
 
   return (
-    <div id="tabpanel-main" role="tabpanel" aria-labelledby="tab-main">
-      <StatusBar
-        ariaLabel={t("round.statusBarLabel")}
-        items={[
-          {
-            label: t("round.statusStory"),
-            value: currentRound ? currentRound.story : "–",
-          },
-          { label: t("round.statusStatus"), value: phaseLabel },
-          {
-            label: t("round.statusVoted"),
-            value: currentRound
-              ? `${votedCount}/${eligibleVoters.length}`
-              : "–",
-          },
-        ]}
-      />
+    <div
+      id="tabpanel-main"
+      role="tabpanel"
+      aria-labelledby="tab-main"
+      className={styles.tab}
+    >
+      <Panel>
+        <StatusBar
+          ariaLabel={t("round.statusBarLabel")}
+          items={[
+            {
+              label: t("round.statusStory"),
+              value: currentRound ? currentRound.story : "–",
+            },
+            { label: t("round.statusStatus"), value: phaseLabel },
+            {
+              label: t("round.statusVoted"),
+              value: currentRound
+                ? `${votedCount}/${eligibleVoters.length}`
+                : "–",
+            },
+          ]}
+        />
+      </Panel>
 
       {mutationError !== null && (
         <p role="alert">{describeError(mutationError)}</p>
@@ -123,62 +130,61 @@ export function RoundScreen({
 
       <div className={styles.grid}>
         <div className={styles.column}>
-          <h2 className={styles.sectionHeading}>
-            <span aria-hidden="true">&raquo; </span>
-            {t("round.title")}
-          </h2>
+          <Panel heading={t("round.title")}>
+            {!currentRound && (
+              <p>{isAdmin ? t("round.emptyAdmin") : t("round.emptyPlayer")}</p>
+            )}
 
-          {!currentRound && (
-            <p>{isAdmin ? t("round.emptyAdmin") : t("round.emptyPlayer")}</p>
-          )}
+            {currentRound && isVoting && (
+              <p>
+                {t("round.progress", {
+                  voted: votedCount,
+                  total: eligibleVoters.length,
+                })}
+              </p>
+            )}
 
-          {currentRound && isVoting && (
-            <p>
-              {t("round.progress", {
-                voted: votedCount,
-                total: eligibleVoters.length,
-              })}
-            </p>
-          )}
+            {canVote && isVoting && (
+              <CardDeck
+                cards={cardsForDeck(state.session.deck)}
+                value={myVote?.value ?? null}
+                disabled={castVote.isPending}
+                onChange={(value) => castVote.mutate(value)}
+                ariaLabel={t("round.cards")}
+              />
+            )}
 
-          {canVote && isVoting && (
-            <CardDeck
-              cards={cardsForDeck(state.session.deck)}
-              value={myVote?.value ?? null}
-              disabled={castVote.isPending}
-              onChange={(value) => castVote.mutate(value)}
-              ariaLabel={t("round.cards")}
+            {isAdmin && (
+              <AdminActions
+                canReveal={isVoting ?? false}
+                onReveal={() => reveal.mutate()}
+                isRevealing={reveal.isPending}
+                canReEstimate={isRevealed ?? false}
+                onReEstimate={() => reEstimate.mutate()}
+                isReEstimating={reEstimate.isPending}
+                canNewStory={isRevealed ?? false}
+                onNewStory={() => newStory.mutate()}
+                isClearingStory={newStory.isPending}
+              />
+            )}
+          </Panel>
+
+          <Panel heading={t("round.teamHeading")}>
+            <ParticipantVotes
+              participants={participants}
+              roundStatus={roundStatus.data}
+              onlineParticipantIds={onlineParticipantIds}
+              isAdmin={isAdmin}
+              onRemove={(participantId) =>
+                removeParticipant.mutate(participantId)
+              }
+              removingId={
+                removeParticipant.isPending
+                  ? removeParticipant.variables
+                  : undefined
+              }
             />
-          )}
-
-          <ParticipantVotes
-            participants={participants}
-            roundStatus={roundStatus.data}
-            onlineParticipantIds={onlineParticipantIds}
-            isAdmin={isAdmin}
-            onRemove={(participantId) =>
-              removeParticipant.mutate(participantId)
-            }
-            removingId={
-              removeParticipant.isPending
-                ? removeParticipant.variables
-                : undefined
-            }
-          />
-
-          {isAdmin && (
-            <AdminActions
-              canReveal={isVoting ?? false}
-              onReveal={() => reveal.mutate()}
-              isRevealing={reveal.isPending}
-              canReEstimate={isRevealed ?? false}
-              onReEstimate={() => reEstimate.mutate()}
-              isReEstimating={reEstimate.isPending}
-              canNewStory={isRevealed ?? false}
-              onNewStory={() => newStory.mutate()}
-              isClearingStory={newStory.isPending}
-            />
-          )}
+          </Panel>
         </div>
 
         <div className={styles.column}>

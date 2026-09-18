@@ -54,8 +54,8 @@ export function SessionScreen({
   ] as const;
 
   return (
-    <main>
-      <h1 className={styles.heading}>{t("session.heading")}</h1>
+    <main className="page-main">
+      <h1 className="page-heading">{t("session.heading")}</h1>
       <p aria-live="polite">
         {connectionStatus === "connected"
           ? t("lobby.connected")
@@ -114,7 +114,6 @@ export function SessionScreen({
           role="tabpanel"
           aria-labelledby="tab-history"
         >
-          <h2>{t("round.historyHeading")}</h2>
           <RoundHistory sessionId={state.session.id} />
         </div>
       )}

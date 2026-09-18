@@ -24,8 +24,8 @@ export function SessionErrorScreen({
   useDocumentTitle(`${t("app.title")} — ${t("errors.title")}`);
 
   return (
-    <main>
-      <h1>{t("errors.title")}</h1>
+    <main className="page-main">
+      <h1 className="page-heading">{t("errors.title")}</h1>
       <Panel>
         <p role="alert" className={styles.message}>
           {message}

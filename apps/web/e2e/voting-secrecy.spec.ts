@@ -31,9 +31,9 @@ test("no vote value ever appears in a player's realtime frames", async ({
   await join(bob, code, "Bob");
   await join(cy, code, "Cy");
 
-  await admin.getByLabel("Story").fill("Login redesign");
-  await admin.getByRole("button", { name: "[ Runde starten ]" }).click();
-  await expect(bob.getByText("Story: Login redesign")).toBeVisible();
+  await admin.getByRole("textbox", { name: "Story" }).fill("Login redesign");
+  await admin.getByRole("button", { name: "Runde starten" }).click();
+  await expect(bob.getByText("Login redesign")).toBeVisible();
 
   // Distinctive fibonacci values, unlikely to collide with a small
   // sessions.version counter or a coincidental hex run in a session id.
@@ -47,7 +47,7 @@ test("no vote value ever appears in a player's realtime frames", async ({
       .filter({ hasText: "Cy" }),
   ).toContainText("hat abgestimmt");
 
-  await admin.getByRole("button", { name: "[ Karten aufdecken ]" }).click();
+  await admin.getByRole("button", { name: "Karten aufdecken" }).click();
   // Confirms Bob actually received the reveal over the socket, so the
   // capture window covers the moment values became public knowledge too.
   // Scoped to the result panel: the recent-rounds preview shows the same

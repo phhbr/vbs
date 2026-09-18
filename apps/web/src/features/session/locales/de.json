@@ -6,11 +6,11 @@
     "title": "Neue Sitzung eröffnen",
     "nickname": "Dein Name",
     "nicknameHint": "1 bis 24 Zeichen.",
-    "deck": "Kartensatz:",
-    "deckFibonacci": "[ Fibonacci ]",
-    "deckTshirt": "[ T-Shirt ]",
-    "submit": "[ Sitzung eröffnen ]",
-    "submitting": "[ wird eröffnet … ]"
+    "deck": "Kartensatz",
+    "deckFibonacci": "Fibonacci",
+    "deckTshirt": "T-Shirt",
+    "submit": "Sitzung eröffnen",
+    "submitting": "wird eröffnet …"
   },
   "join": {
     "title": "Sitzung beitreten",
@@ -18,14 +18,14 @@
     "codeHint": "12 Zeichen, Schreibweise egal.",
     "codeInvalid": "Ein Code besteht aus 12 Zeichen — ohne I, O, 0 und 1.",
     "nickname": "Dein Name",
-    "submit": "[ Beitreten ]",
-    "submitting": "[ tritt bei … ]",
+    "submit": "Beitreten",
+    "submitting": "tritt bei …",
     "forSession": "Du trittst der Sitzung {{code}} bei."
   },
   "lobby": {
     "link": "Link zum Teilen",
-    "copy": "[Kopieren]",
-    "copied": "[Kopiert]",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
     "qrCaption": "QR-Code für den Sitzungslink",
     "you": "du",
     "connected": "Verbunden",
@@ -39,14 +39,14 @@
     "navRules": "Regeln",
     "statusBarLabel": "Sitzungsstatus",
     "footerRound": "Runde {{n}}",
-    "footerLeave": "[ Sitzung verlassen ]",
-    "remove": "[ Entfernen ]",
+    "footerLeave": "Sitzung verlassen",
+    "remove": "Entfernen",
     "removeConfirm": "{{name}} wirklich entfernen?",
-    "removeConfirmYes": "[ Ja, entfernen ]",
-    "removeConfirmNo": "[ Abbrechen ]",
+    "removeConfirmYes": "Ja, entfernen",
+    "removeConfirmNo": "Abbrechen",
     "leaveConfirm": "Sitzung wirklich verlassen?",
-    "leaveConfirmYes": "[ Ja, verlassen ]",
-    "leaveConfirmNo": "[ Abbrechen ]",
+    "leaveConfirmYes": "Ja, verlassen",
+    "leaveConfirmNo": "Abbrechen",
     "expiryWarning": "[ Achtung ] Diese Sitzung läuft in Kürze ab — danach sind alle Daten unwiederbringlich gelöscht. Jede Aktion (Abstimmen, Story starten, aufdecken …) verlängert sie um weitere 24 Stunden.",
     "rulesHeading": "Regeln",
     "rulesIntro": "Planning Poker ist eine Schätzmethode für agile Teams: Jede*r wählt verdeckt eine Karte für den Aufwand einer Story. Erst wenn alle abgestimmt haben, werden die Karten gemeinsam aufgedeckt.",
@@ -55,7 +55,7 @@
   "admin": {
     "recoveryTitle": "Wiederherstellungs-Link",
     "recoveryWarning": "Dieser Link wird genau einmal angezeigt. Mit ihm holst du dir die Leitung zurück, falls du den Browser wechselst oder deine Daten löschst. Bewahre ihn jetzt auf — danach ist er weg.",
-    "recoveryAcknowledge": "[ Verstanden, weiter ]",
+    "recoveryAcknowledge": "Verstanden, weiter",
     "claimed": "Du hast die Leitung übernommen.",
     "claiming": "Leitung wird übernommen …"
   },
@@ -85,7 +85,7 @@
     "vote_rate_limited": "Zu viele Stimmabgaben in kurzer Zeit. Einen Moment bitte.",
     "unknown": "Etwas ist schiefgelaufen. Versuch es noch einmal.",
     "title": "Das hat nicht geklappt",
-    "back": "[ Zurück zum Anfang ]",
-    "retry": "[ Noch einmal versuchen ]"
+    "back": "Zurück zum Anfang",
+    "retry": "Noch einmal versuchen"
   }
 }

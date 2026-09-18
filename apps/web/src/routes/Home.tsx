@@ -9,8 +9,8 @@ export function Home() {
   useDocumentTitle(`${t("app.title")} — ${t("home.heading")}`);
 
   return (
-    <main>
-      <h1 className={styles.heading}>{t("home.heading")}</h1>
+    <main className="page-main">
+      <h1 className="page-heading">{t("home.heading")}</h1>
       <div className={styles.panels}>
         <CreateSessionForm />
         <JoinByCodeForm />

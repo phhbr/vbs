@@ -1,8 +1,9 @@
 import { isValidSessionCode, normalizeSessionCode } from "@vbs/core";
-import { BracketButton, Panel } from "@vbs/ui";
+import { BracketButton, Field, Input, Panel } from "@vbs/ui";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import styles from "./JoinByCodeForm.module.css";
 
 /** Only routes to the session; the nickname is asked for there. */
 export function JoinByCodeForm() {
@@ -27,11 +28,10 @@ export function JoinByCodeForm() {
 
   return (
     <Panel heading={t("join.title")} headingLevel="h2">
-      <form onSubmit={onSubmit}>
-        <p>
+      <form onSubmit={onSubmit} className={styles.form}>
+        <Field>
           <label htmlFor={codeId}>{t("join.code")}</label>
-          <br />
-          <input
+          <Input
             id={codeId}
             name="code"
             value={code}
@@ -46,9 +46,8 @@ export function JoinByCodeForm() {
             aria-describedby={showError ? errorId : hintId}
             aria-invalid={showError || undefined}
           />
-          <br />
           <small id={hintId}>{t("join.codeHint")}</small>
-        </p>
+        </Field>
 
         {showError && (
           <p id={errorId} role="alert">
@@ -56,9 +55,9 @@ export function JoinByCodeForm() {
           </p>
         )}
 
-        <p>
-          <BracketButton type="submit">{t("join.submit")}</BracketButton>
-        </p>
+        <BracketButton type="submit" variant="primary">
+          {t("join.submit")}
+        </BracketButton>
       </form>
     </Panel>
   );
