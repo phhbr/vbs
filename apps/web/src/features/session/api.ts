@@ -86,3 +86,13 @@ export async function leaveSession(code: string): Promise<LeaveSessionResult> {
     await supabase.rpc("leave_session", { p_code: code }),
   );
 }
+
+/**
+ * Called after join_session fails with session_not_found/session_expired.
+ * join_session cannot record its own failure — PostgREST rolls the whole
+ * call's transaction back along with any insert made on the way out — so
+ * this is its own, separate, always-succeeding call instead.
+ */
+export async function recordJoinFailure(): Promise<void> {
+  unwrap<null>(await supabase.rpc("record_join_failure"));
+}

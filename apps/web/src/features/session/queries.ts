@@ -1,4 +1,5 @@
 import type { SessionState } from "@vbs/core";
+import { vbsErrorReason } from "@vbs/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   claimAdmin,
@@ -6,6 +7,7 @@ import {
   fetchSessionState,
   joinSession,
   leaveSession,
+  recordJoinFailure,
   removeParticipant,
   transferAdmin,
 } from "./api";
@@ -32,6 +34,12 @@ export function useJoinSession(code: string) {
     mutationFn: (nickname: string) => joinSession(code, nickname),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+    onError: (error: unknown) => {
+      const reason = vbsErrorReason(error);
+      if (reason === "session_not_found" || reason === "session_expired") {
+        void recordJoinFailure();
+      }
+    },
   });
 }
 

@@ -78,6 +78,27 @@ export type Database = {
           },
         ]
       }
+      rate_limit_events: {
+        Row: {
+          created_at: string
+          id: number
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       rounds: {
         Row: {
           attempt: number
@@ -254,6 +275,16 @@ export type Database = {
         Args: { p_session: Database["public"]["Tables"]["sessions"]["Row"] }
         Returns: undefined
       }
+      assert_rate_limit: {
+        Args: {
+          p_errcode: string
+          p_kind: string
+          p_max: number
+          p_user_id: string
+          p_window: string
+        }
+        Returns: undefined
+      }
       can_read_vote: {
         Args: { p_participant_id: string; p_round_id: string }
         Returns: boolean
@@ -325,6 +356,7 @@ export type Database = {
       new_story: { Args: { p_code: string }; Returns: Json }
       normalize_session_code: { Args: { p_code: string }; Returns: string }
       re_estimate: { Args: { p_round_id: string }; Returns: Json }
+      record_join_failure: { Args: never; Returns: undefined }
       remove_participant: { Args: { p_participant_id: string }; Returns: Json }
       reveal: { Args: { p_round_id: string }; Returns: Json }
       round_status: { Args: { p_round_id: string }; Returns: Json }

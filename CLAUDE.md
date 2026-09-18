@@ -143,8 +143,8 @@ adding a policy, not by changing grants.
 
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
 `new_story`, `set_deck`, `remove_participant`, `leave_session`, `transfer_admin`,
-`claim_admin`, `set_can_vote`, `round_status` (read-only; before reveal it
-returns only who has voted, never values).
+`claim_admin`, `set_can_vote`, `record_join_failure`, `round_status`
+(read-only; before reveal it returns only who has voted, never values).
 
 Every mutating function goes through `lock_live_session()`, which takes a row
 lock on the session and raises on unknown or expired codes. The lock is what
@@ -217,6 +217,9 @@ message text.
 | `VB017` | round_not_revealed             |
 | `VB018` | invalid_story                  |
 | `VB019` | participant_removed            |
+| `VB020` | session_create_rate_limited    |
+| `VB021` | join_rate_limited              |
+| `VB022` | vote_rate_limited              |
 | `VB023` | cannot_remove_admin            |
 
 ## Roles
@@ -266,6 +269,31 @@ left, the session ends outright (the row is deleted, cascading like
 expiry does) rather than sitting around adminless. Like
 `claim_admin`/`transfer_admin`, the hand-off demotes the outgoing admin
 before promoting the successor.
+
+## Rate limits
+
+One table, `rate_limit_events (user_id, kind, created_at)`, backs all three
+limits — a shared `assert_rate_limit()` helper counts a user's recent rows
+of one `kind` and raises if at or over the max, otherwise records this
+attempt. Current numbers, all easy to retune: session creation 10/user/hour
+(`VB020`), voting 10/participant/round per 10 seconds (`VB022`). Pruned by
+the `expire-stale-sessions` cron job's schedule, via its own
+`prune-rate-limit-events` job (rows older than 2 days).
+
+The join cooldown (5 bad codes per 5 minutes, `VB021`) works differently,
+for a reason worth knowing before changing it: a Postgres function that
+raises an error cannot also persist a record of that failure, because
+PostgREST (and pgTAP's `throws_ok`) run each call in one transaction and
+roll the _whole thing_ back when it raises — any insert made on the way
+out is undone along with everything else. `join_session` only ever
+performs the (read-only) cooldown _check_; the client calls the separate,
+always-succeeding `record_join_failure()` after catching
+`session_not_found`/`session_expired` from it
+(`useJoinSession`'s `onError` in `apps/web`). A client that skips that
+call simply never trips the cooldown — this is a best-effort layer, not
+the primary defense; see `docs/security.md` for what still closes the gap
+(the 12-character code space, Supabase's own per-IP anonymous sign-in
+rate limit, Turnstile).
 
 ## i18n
 
