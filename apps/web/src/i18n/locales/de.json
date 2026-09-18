@@ -5,7 +5,8 @@
   },
   "auth": {
     "signingIn": "Anmeldung läuft …",
-    "failed": "Anmeldung fehlgeschlagen. Lade die Seite neu."
+    "failed": "Anmeldung fehlgeschlagen. Lade die Seite neu.",
+    "captchaLabel": "Bitte bestätige, dass du kein Bot bist."
   },
   "theme": {
     "label": "Darstellung:",

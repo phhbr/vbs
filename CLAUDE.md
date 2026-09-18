@@ -295,6 +295,26 @@ the primary defense; see `docs/security.md` for what still closes the gap
 (the 12-character code space, Supabase's own per-IP anonymous sign-in
 rate limit, Turnstile).
 
+## Captcha
+
+Cloudflare Turnstile gates anonymous sign-in, but only when
+`VITE_TURNSTILE_SITE_KEY` is set — `AuthGate` renders the widget first and
+signs in with its token only once it succeeds; unset, it signs in exactly
+as before, no widget at all. Left unset locally and in CI (`.env.example`
+documents it commented out) so both stay hermetic by omission, matching
+how the pg_cron jobs and every rate limit above are also disabled or
+inert until deliberately exercised — no `if (import.meta.env.DEV)`-style
+branch anywhere.
+
+The server side has no local equivalent to test against: Supabase's
+bot-protection toggle (Dashboard → Authentication → Attack Protection →
+Enable CAPTCHA protection, provider "Turnstile", plus the Turnstile
+**secret** key, not the site key) is configured per hosted project, for
+staging and production only. The secret key lives in that dashboard, never
+in this repo. `supabase/config.toml`'s `[auth.captcha]` block stays
+commented out — it only affects `supabase start`'s local stack, which must
+stay open for the Playwright suite to run unattended.
+
 ## i18n
 
 - Two locales, `de` and `en`, both complete. German copy from the prototype is the
