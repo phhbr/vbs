@@ -142,9 +142,9 @@ adding a policy, not by changing grants.
 ## RPC functions
 
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
-`new_story`, `set_deck`, `remove_participant`, `transfer_admin`, `claim_admin`,
-`set_can_vote`, `round_status` (read-only; before reveal it returns only who has
-voted, never values).
+`new_story`, `set_deck`, `remove_participant`, `leave_session`, `transfer_admin`,
+`claim_admin`, `set_can_vote`, `round_status` (read-only; before reveal it
+returns only who has voted, never values).
 
 Every mutating function goes through `lock_live_session()`, which takes a row
 lock on the session and raises on unknown or expired codes. The lock is what
@@ -216,6 +216,8 @@ message text.
 | `VB016` | invalid_vote_value             |
 | `VB017` | round_not_revealed             |
 | `VB018` | invalid_story                  |
+| `VB019` | participant_removed            |
+| `VB023` | cannot_remove_admin            |
 
 ## Roles
 
@@ -242,6 +244,28 @@ its anonymous session and is therefore a stranger to the session:
 Both `claim_admin` and `transfer_admin` **demote before they promote**: the
 partial unique index on admin rows cannot be deferred, so the reverse order
 would collide with the outgoing admin.
+
+## Removing and leaving
+
+`participants.removed_at` is a soft delete, shared by `remove_participant`
+(admin only, cannot target the admin) and `leave_session` (voluntary) — a
+hard delete would cascade and take the participant's past votes with it,
+and those must stay in round history. Every membership check, the
+50-participant cap, and the per-session nickname uniqueness index all
+filter on `removed_at is null`, so a removed or left participant is
+immediately excluded everywhere and their nickname is free for someone
+else to take. `join_session` distinguishes a removed row from an ordinary
+"already joined" one and refuses with `VB019` rather than silently
+reviving membership — a removed participant gets a "you were removed"
+screen on their next visit, not a rejoin.
+
+When the admin leaves via `leave_session`, the chair passes to the
+remaining active participant with the earliest `joined_at` — the
+longest-present one, not an arbitrary or most-recent one. If nobody is
+left, the session ends outright (the row is deleted, cascading like
+expiry does) rather than sitting around adminless. Like
+`claim_admin`/`transfer_admin`, the hand-off demotes the outgoing admin
+before promoting the successor.
 
 ## i18n
 

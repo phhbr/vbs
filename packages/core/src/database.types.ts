@@ -41,6 +41,7 @@ export type Database = {
           joined_at: string
           last_activity_at: string
           name: string
+          removed_at: string | null
           role: string
           session_id: string
           user_id: string
@@ -51,6 +52,7 @@ export type Database = {
           joined_at?: string
           last_activity_at?: string
           name: string
+          removed_at?: string | null
           role: string
           session_id: string
           user_id: string
@@ -61,6 +63,7 @@ export type Database = {
           joined_at?: string
           last_activity_at?: string
           name?: string
+          removed_at?: string | null
           role?: string
           session_id?: string
           user_id?: string
@@ -207,6 +210,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      active_participant: {
+        Args: { p_session_id: string; p_user_id: string }
+        Returns: {
+          can_vote: boolean
+          id: string
+          joined_at: string
+          last_activity_at: string
+          name: string
+          removed_at: string | null
+          role: string
+          session_id: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "participants"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       assert_is_admin: {
         Args: { p_session_id: string; p_user_id: string }
         Returns: {
@@ -215,6 +238,7 @@ export type Database = {
           joined_at: string
           last_activity_at: string
           name: string
+          removed_at: string | null
           role: string
           session_id: string
           user_id: string
@@ -235,6 +259,7 @@ export type Database = {
         Returns: boolean
       }
       claim_admin: { Args: { p_code: string; p_token: string }; Returns: Json }
+      cleanup_abandoned_anonymous_users: { Args: never; Returns: number }
       compute_round_result: {
         Args: { p_deck: string; p_round_id: string }
         Returns: Json
@@ -245,6 +270,7 @@ export type Database = {
       }
       current_user_id: { Args: never; Returns: string }
       deck_card_values: { Args: { p_deck: string }; Returns: string[] }
+      expire_stale_sessions: { Args: never; Returns: number }
       generate_session_code: { Args: never; Returns: string }
       is_active_session_member: {
         Args: { p_session_id: string }
@@ -255,6 +281,7 @@ export type Database = {
         Args: { p_code: string; p_nickname: string }
         Returns: Json
       }
+      leave_session: { Args: { p_code: string }; Returns: Json }
       lock_active_round: {
         Args: { p_round_id: string }
         Returns: {
@@ -298,6 +325,7 @@ export type Database = {
       new_story: { Args: { p_code: string }; Returns: Json }
       normalize_session_code: { Args: { p_code: string }; Returns: string }
       re_estimate: { Args: { p_round_id: string }; Returns: Json }
+      remove_participant: { Args: { p_participant_id: string }; Returns: Json }
       reveal: { Args: { p_round_id: string }; Returns: Json }
       round_status: { Args: { p_round_id: string }; Returns: Json }
       session_state: { Args: { p_code: string }; Returns: Json }

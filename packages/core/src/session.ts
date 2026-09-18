@@ -41,6 +41,8 @@ export type SessionViewer = {
 export type SessionState = {
   session: SessionSummary;
   is_member: boolean;
+  /** True only when the caller was a member and was removed or left. */
+  removed: boolean;
   viewer: SessionViewer | null;
   participants: SessionParticipant[] | null;
   current_round: CurrentRound | null;
@@ -65,4 +67,14 @@ export type ClaimAdminResult = {
   participant_id: string;
   /** True when an existing admin row was taken over rather than promoted. */
   adopted: boolean;
+};
+
+export type RemoveParticipantResult = {
+  participant_id: string;
+};
+
+export type LeaveSessionResult = {
+  session_ended: boolean;
+  /** Present only when the leaving admin handed off to a successor. */
+  new_admin_id?: string;
 };

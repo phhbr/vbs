@@ -18,6 +18,8 @@ export const VBS_ERROR_CODES = {
   VB016: "invalid_vote_value",
   VB017: "round_not_revealed",
   VB018: "invalid_story",
+  VB019: "participant_removed",
+  VB023: "cannot_remove_admin",
 } as const;
 
 export type VbsErrorCode = keyof typeof VBS_ERROR_CODES;
