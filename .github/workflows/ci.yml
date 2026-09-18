@@ -44,3 +44,146 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           retention-days: 7
+
+  # Off until the staging Supabase project exists and its secrets/variables
+  # are set (docs/runbook.md) — flip the repo variable DEPLOY_ENABLED to
+  # "true" then. Until it is, deploy-staging and everything after it is
+  # skipped, not failed, since GitHub Actions propagates a skipped `needs`.
+  #
+  # Each environment's own vars/secrets (Settings → Environments → <env>)
+  # resolve automatically from this job's `environment:` — no need to name
+  # staging vs. production anywhere in the steps below.
+  deploy-staging:
+    needs: ci
+    if: >
+      github.ref == 'refs/heads/main' && github.event_name == 'push' &&
+      vars.DEPLOY_ENABLED == 'true'
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.116.0
+
+      - name: Apply database migrations
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          supabase db push --linked
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
+          VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Deploy release and switch symlink
+        run: |
+          # $release/$RELEASE_PATH are built on the runner and meant to
+          # expand client-side before reaching ssh, hence the disables below.
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+          release="$RELEASE_PATH/releases/${{ github.sha }}"
+          # shellcheck disable=SC2029
+          ssh "$VPS_USER@$VPS_HOST" "mkdir -p '$release'"
+          rsync -az --delete apps/web/dist/ "$VPS_USER@$VPS_HOST:$release/"
+          # shellcheck disable=SC2029
+          ssh "$VPS_USER@$VPS_HOST" "
+            ln -sfn '$release' '$RELEASE_PATH/current' &&
+            cd '$RELEASE_PATH/releases' &&
+            ls -1t | tail -n +6 | xargs -r rm -rf
+          "
+        env:
+          VPS_HOST: ${{ vars.VPS_HOST }}
+          VPS_USER: ${{ vars.VPS_USER }}
+          RELEASE_PATH: ${{ vars.RELEASE_PATH }}
+
+      - run: pnpm --filter @vbs/web exec playwright install --with-deps chromium
+      - name: Smoke test
+        run: pnpm --filter @vbs/web test:smoke
+        env:
+          SMOKE_BASE_URL: ${{ vars.SITE_URL }}
+
+  # The "production" GitHub Environment carries the required-reviewer rule —
+  # this job pauses for manual approval here before running anything below.
+  deploy-production:
+    needs: deploy-staging
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.116.0
+
+      - name: Apply database migrations
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          supabase db push --linked
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
+          VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Deploy release and switch symlink
+        run: |
+          # $release/$RELEASE_PATH are built on the runner and meant to
+          # expand client-side before reaching ssh, hence the disables below.
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+          release="$RELEASE_PATH/releases/${{ github.sha }}"
+          # shellcheck disable=SC2029
+          ssh "$VPS_USER@$VPS_HOST" "mkdir -p '$release'"
+          rsync -az --delete apps/web/dist/ "$VPS_USER@$VPS_HOST:$release/"
+          # shellcheck disable=SC2029
+          ssh "$VPS_USER@$VPS_HOST" "
+            ln -sfn '$release' '$RELEASE_PATH/current' &&
+            cd '$RELEASE_PATH/releases' &&
+            ls -1t | tail -n +6 | xargs -r rm -rf
+          "
+        env:
+          VPS_HOST: ${{ vars.VPS_HOST }}
+          VPS_USER: ${{ vars.VPS_USER }}
+          RELEASE_PATH: ${{ vars.RELEASE_PATH }}
+
+      - run: pnpm --filter @vbs/web exec playwright install --with-deps chromium
+      - name: Smoke test
+        run: pnpm --filter @vbs/web test:smoke
+        env:
+          SMOKE_BASE_URL: ${{ vars.SITE_URL }}
