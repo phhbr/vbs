@@ -77,6 +77,28 @@ strips anything outside the alphabet and upper-cases, so pasted codes with
 dashes or spaces still resolve. The UI displays them grouped as `XXXX-XXXX-XXXX`
 while URLs carry the bare 12 characters.
 
+## Expiry
+
+Two `pg_cron` jobs, both calling a single-purpose SQL function rather than
+embedding logic in the cron body, so pgTAP can call the same function
+directly instead of waiting on the scheduler:
+
+- **`expire-stale-sessions`**, every 15 minutes, calls
+  `expire_stale_sessions()`. For every session past `expires_at`, it
+  broadcasts `session_expired` on that session's realtime channel (payload
+  carries no session data, same discipline as `session_changed`) and only
+  then deletes the row, so `participants`/`rounds`/`votes` cascade away in
+  one transaction per session. The broadcast happens first because the
+  delete removes the only place a version bump could have been recorded —
+  without an explicit event, a client with the tab open would have nothing
+  to react to.
+- **`cleanup-abandoned-anonymous-users`**, daily, calls
+  `cleanup_abandoned_anonymous_users()`. Deletes anonymous `auth.users` rows
+  created more than 7 days ago with no remaining `participants` row. There
+  is no surviving timestamp for "when did this user last belong to a
+  session" — that row is gone by the time a session's cascade runs — so
+  "anonymous, unreferenced, and old enough" is the closest available proxy.
+
 ## Exactly one admin per session
 
 Two mechanisms, because the two failure directions need different tools:
