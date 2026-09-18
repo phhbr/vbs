@@ -20,6 +20,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # The local stack's keys are the same fixed demo values on every machine,
+      # so the example file is a working config rather than a template. Needed
+      # before `pnpm test`, not just before the e2e suite: src/lib/supabase.ts
+      # throws at import time if these are missing, which several Vitest
+      # suites reach transitively (e.g. App.test.tsx via session queries).
+      - run: cp apps/web/.env.example apps/web/.env.local
+
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -30,10 +37,6 @@ jobs:
 
       - run: supabase start
       - run: supabase test db --local
-
-      # The local stack's keys are the same fixed demo values on every machine,
-      # so the example file is a working config rather than a template.
-      - run: cp apps/web/.env.example apps/web/.env.local
 
       - run: pnpm --filter @vbs/web exec playwright install --with-deps chromium
       - run: pnpm test:e2e
