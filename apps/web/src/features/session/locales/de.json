@@ -31,7 +31,9 @@
     "refresh": "[Aktualisieren]",
     "refreshing": "[wird geladen …]",
     "qrCaption": "QR-Code für den Sitzungslink",
-    "you": "du"
+    "you": "du",
+    "connected": "Verbunden",
+    "reconnecting": "Verbindung wird wiederhergestellt …"
   },
   "admin": {
     "recoveryTitle": "Wiederherstellungs-Link",

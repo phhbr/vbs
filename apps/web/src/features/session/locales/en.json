@@ -31,7 +31,9 @@
     "refresh": "[Refresh]",
     "refreshing": "[loading …]",
     "qrCaption": "QR code for the session link",
-    "you": "you"
+    "you": "you",
+    "connected": "Connected",
+    "reconnecting": "Reconnecting …"
   },
   "admin": {
     "recoveryTitle": "Recovery link",

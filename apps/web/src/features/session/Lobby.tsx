@@ -2,6 +2,7 @@ import type { SessionState } from "@vbs/core";
 import { formatSessionCode } from "@vbs/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { ConnectionStatus } from "./realtime";
 import { SessionQr } from "./SessionQr";
 
 function ShareLink({ url }: { url: string }) {
@@ -30,11 +31,13 @@ export function Lobby({
   shareUrl,
   onRefresh,
   isRefreshing,
+  connectionStatus,
 }: {
   state: SessionState;
   shareUrl: string;
   onRefresh: () => void;
   isRefreshing: boolean;
+  connectionStatus: ConnectionStatus;
 }) {
   const { t } = useTranslation();
   const participants = state.participants ?? [];
@@ -42,6 +45,11 @@ export function Lobby({
   return (
     <main>
       <h1>{t("lobby.title")}</h1>
+      <p role="status">
+        {connectionStatus === "connected"
+          ? t("lobby.connected")
+          : t("lobby.reconnecting")}
+      </p>
       <p>{t("lobby.waiting")}</p>
 
       <p>

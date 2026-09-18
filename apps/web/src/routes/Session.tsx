@@ -12,6 +12,7 @@ import {
   stripHash,
 } from "../features/session/adminToken";
 import { useClaimAdmin, useSessionState } from "../features/session/queries";
+import { useSessionRealtime } from "../features/session/realtime";
 
 export function Session() {
   const { t } = useTranslation();
@@ -46,6 +47,11 @@ export function Session() {
   const state = useSessionState(code);
   const claim = useClaimAdmin(code);
   const { mutate: claimAdmin, isIdle: claimIsIdle } = claim;
+
+  const { status: connectionStatus } = useSessionRealtime({
+    sessionId: state.data?.is_member ? state.data.session.id : undefined,
+    participantId: state.data?.viewer?.participant_id,
+  });
 
   useEffect(() => {
     // A token we did not just mint is one to redeem. Claiming is idempotent,
@@ -111,6 +117,7 @@ export function Session() {
         shareUrl={shareUrl}
         onRefresh={() => void state.refetch()}
         isRefreshing={state.isFetching}
+        connectionStatus={connectionStatus}
       />
     </>
   );
