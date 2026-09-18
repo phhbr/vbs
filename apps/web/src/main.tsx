@@ -7,6 +7,9 @@ import "./styles/global.css";
 import "./i18n";
 import { App } from "./App";
 import { AuthGate } from "./lib/AuthGate";
+import { initErrorTracking } from "./lib/sentry";
+
+initErrorTracking();
 
 const queryClient = new QueryClient({
   defaultOptions: {
