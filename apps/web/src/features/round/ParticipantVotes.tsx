@@ -1,6 +1,7 @@
 import type { RoundStatusResult, SessionParticipant } from "@vbs/core";
 import { ParticipantList } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { ConfirmAction } from "../session/ConfirmAction";
 
 /**
  * Spectators stay in the list (matching the prototype's single "Dein Team"
@@ -11,10 +12,18 @@ export function ParticipantVotes({
   participants,
   roundStatus,
   onlineParticipantIds,
+  isAdmin,
+  onRemove,
+  removingId,
 }: {
   participants: SessionParticipant[];
   roundStatus: RoundStatusResult | undefined;
   onlineParticipantIds: ReadonlySet<string>;
+  /** The signed-in viewer's own role — only admins get a remove control. */
+  isAdmin: boolean;
+  onRemove: (participantId: string) => void;
+  /** The id currently being removed, to disable its own control mid-mutation. */
+  removingId?: string;
 }) {
   const { t } = useTranslation();
   const byId = new Map(
@@ -45,6 +54,19 @@ export function ParticipantVotes({
         : voted
           ? "voted"
           : "waiting") as "neutral" | "voted" | "waiting",
+      action:
+        isAdmin && participant.role !== "admin" ? (
+          <ConfirmAction
+            label={t("session.remove")}
+            confirmQuestion={t("session.removeConfirm", {
+              name: participant.name,
+            })}
+            confirmLabel={t("session.removeConfirmYes")}
+            cancelLabel={t("session.removeConfirmNo")}
+            onConfirm={() => onRemove(participant.id)}
+            disabled={removingId === participant.id}
+          />
+        ) : undefined,
     };
   });
 

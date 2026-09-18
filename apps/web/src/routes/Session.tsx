@@ -93,7 +93,11 @@ export function Session() {
   }
 
   if (!state.data.is_member) {
-    // Say so before asking for a nickname, rather than after.
+    // Say so before asking for a nickname, rather than after — same reason
+    // this comes before the join form as the full-session case below.
+    if (state.data.removed) {
+      return <SessionErrorScreen error={{ code: "VB019" }} />;
+    }
     if (state.data.session.is_full) {
       return (
         <SessionErrorScreen

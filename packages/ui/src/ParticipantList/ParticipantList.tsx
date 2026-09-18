@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import styles from "./ParticipantList.module.css";
 
 export type ParticipantListItem = {
@@ -8,6 +9,8 @@ export type ParticipantListItem = {
   status: string;
   /** "waiting" = danger, "voted" = accent, "neutral" = body text. */
   statusVariant: "waiting" | "voted" | "neutral";
+  /** e.g. an admin's remove control. Omitted for most rows. */
+  action?: ReactNode;
 };
 
 export function ParticipantList({
@@ -37,6 +40,7 @@ export function ParticipantList({
           >
             {item.status}
           </span>
+          {item.action && <> {item.action}</>}
         </li>
       ))}
     </ul>

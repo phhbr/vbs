@@ -3,6 +3,8 @@ import type {
   CreateSessionResult,
   Deck,
   JoinSessionResult,
+  LeaveSessionResult,
+  RemoveParticipantResult,
   SessionState,
 } from "@vbs/core";
 import { supabase } from "../../lib/supabase";
@@ -66,5 +68,21 @@ export async function transferAdmin(
 ): Promise<ClaimAdminResult> {
   return unwrap<ClaimAdminResult>(
     await supabase.rpc("transfer_admin", { p_participant_id: participantId }),
+  );
+}
+
+export async function removeParticipant(
+  participantId: string,
+): Promise<RemoveParticipantResult> {
+  return unwrap<RemoveParticipantResult>(
+    await supabase.rpc("remove_participant", {
+      p_participant_id: participantId,
+    }),
+  );
+}
+
+export async function leaveSession(code: string): Promise<LeaveSessionResult> {
+  return unwrap<LeaveSessionResult>(
+    await supabase.rpc("leave_session", { p_code: code }),
   );
 }

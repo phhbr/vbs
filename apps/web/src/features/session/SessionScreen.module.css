@@ -2,19 +2,6 @@
   text-align: center;
 }
 
-/* A bracket action as a real <a> (react-router Link): leaving is
-   navigation, not a mutation, so it stays a link — see the identical
-   treatment on SessionError's "back to the start". */
-.leaveLink {
-  color: var(--vbs-accent);
-  text-decoration: none;
-}
-
-.leaveLink:hover,
-.leaveLink:focus-visible {
-  text-decoration: underline;
-}
-
 /* The [ bracket ] marker plus text is the AAA-required non-color signal —
    the border/text color is reinforcement, not the only cue. */
 .expiryWarning {

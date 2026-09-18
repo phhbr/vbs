@@ -3,14 +3,17 @@ import { formatSessionCode } from "@vbs/core";
 import { Footer, NavTabs, StatusBar } from "@vbs/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
 import { RoundHistory } from "../round/RoundHistory";
 import { RoundScreen } from "../round/RoundScreen";
 import { useRoundHistory } from "../round/queries";
 import { useDocumentTitle } from "../../lib/useDocumentTitle";
+import { ConfirmAction } from "./ConfirmAction";
 import { useExpiryStatus } from "./expiry";
+import { useLeaveSession } from "./queries";
 import type { ConnectionStatus } from "./realtime";
 import { RulesTab } from "./RulesTab";
+import { useErrorMessage } from "./useErrorMessage";
 import styles from "./SessionScreen.module.css";
 
 type Tab = "main" | "history" | "rules";
@@ -27,9 +30,12 @@ export function SessionScreen({
   onlineParticipantIds: ReadonlySet<string>;
 }) {
   const { t } = useTranslation();
+  const describeError = useErrorMessage();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("main");
   const history = useRoundHistory(state.session.id);
   const expiry = useExpiryStatus(state.session.expires_at);
+  const leaveSession = useLeaveSession(code);
   useDocumentTitle(`${t("app.title")} — ${t("session.heading")}`);
 
   const shareUrl = `${window.location.origin}/s/${code}`;
@@ -88,6 +94,10 @@ export function SessionScreen({
         </p>
       )}
 
+      {leaveSession.error !== null && (
+        <p role="alert">{describeError(leaveSession.error)}</p>
+      )}
+
       {tab === "main" && (
         <RoundScreen
           code={code}
@@ -122,9 +132,18 @@ export function SessionScreen({
           t("session.footerRound", { n: latestRoundNumber }),
         ]}
         action={
-          <Link to="/" className={styles.leaveLink}>
-            {t("session.footerLeave")}
-          </Link>
+          <ConfirmAction
+            label={t("session.footerLeave")}
+            confirmQuestion={t("session.leaveConfirm")}
+            confirmLabel={t("session.leaveConfirmYes")}
+            cancelLabel={t("session.leaveConfirmNo")}
+            disabled={leaveSession.isPending}
+            onConfirm={() =>
+              leaveSession.mutate(undefined, {
+                onSuccess: () => void navigate("/"),
+              })
+            }
+          />
         }
       />
     </main>

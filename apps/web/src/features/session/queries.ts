@@ -5,6 +5,8 @@ import {
   createSession,
   fetchSessionState,
   joinSession,
+  leaveSession,
+  removeParticipant,
   transferAdmin,
 } from "./api";
 
@@ -46,6 +48,24 @@ export function useTransferAdmin(code: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: transferAdmin,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+  });
+}
+
+export function useRemoveParticipant(code: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: removeParticipant,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+  });
+}
+
+export function useLeaveSession(code: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => leaveSession(code),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
   });

@@ -2,6 +2,7 @@ import type { SessionState } from "@vbs/core";
 import { cardsForDeck } from "@vbs/core";
 import { CardDeck, Panel, StatusBar } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { useRemoveParticipant } from "../session/queries";
 import { ShareLink } from "../session/ShareLink";
 import { SessionQr } from "../session/SessionQr";
 import { useErrorMessage } from "../session/useErrorMessage";
@@ -57,6 +58,7 @@ export function RoundScreen({
   const castVote = useVote(currentRound?.id);
   const reveal = useReveal(currentRound?.id);
   const reEstimate = useReEstimate(currentRound?.id, code);
+  const removeParticipant = useRemoveParticipant(code);
 
   const myVote = roundStatus.data?.participants.find(
     (p) => p.participant_id === viewer.participant_id,
@@ -76,7 +78,8 @@ export function RoundScreen({
     setDeck.error ??
     castVote.error ??
     reveal.error ??
-    reEstimate.error;
+    reEstimate.error ??
+    removeParticipant.error;
 
   const phaseLabel = isVoting
     ? t("round.phaseVoting")
@@ -152,6 +155,15 @@ export function RoundScreen({
             participants={participants}
             roundStatus={roundStatus.data}
             onlineParticipantIds={onlineParticipantIds}
+            isAdmin={isAdmin}
+            onRemove={(participantId) =>
+              removeParticipant.mutate(participantId)
+            }
+            removingId={
+              removeParticipant.isPending
+                ? removeParticipant.variables
+                : undefined
+            }
           />
 
           {isAdmin && (
