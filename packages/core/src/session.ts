@@ -8,12 +8,26 @@ export type Deck = "fibonacci" | "tshirt";
 export type ParticipantRole = "admin" | "player" | "spectator";
 
 export type SessionSummary = {
+  id: string;
   code: string;
   deck: Deck;
   version: number;
   expires_at: string;
   participant_count: number;
   is_full: boolean;
+};
+
+export type RoundStatus = "voting" | "revealed";
+
+/** Metadata only — never votes or a result. See round_status() for those. */
+export type CurrentRound = {
+  id: string;
+  round_number: number;
+  story: string;
+  attempt: number;
+  status: RoundStatus;
+  started_at: string;
+  revealed_at: string | null;
 };
 
 export type SessionParticipant = {
@@ -31,12 +45,16 @@ export type SessionViewer = {
   can_vote: boolean;
 };
 
-/** A non-member gets the summary only — `viewer` and `participants` are null. */
+/**
+ * A non-member gets the summary only — `viewer`, `participants` and
+ * `current_round` are null.
+ */
 export type SessionState = {
   session: SessionSummary;
   is_member: boolean;
   viewer: SessionViewer | null;
   participants: SessionParticipant[] | null;
+  current_round: CurrentRound | null;
 };
 
 export type CreateSessionResult = {

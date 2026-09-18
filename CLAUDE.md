@@ -147,6 +147,21 @@ increments with `re_estimate`, so re-estimating the same story produces a new
 round and its `result` stay in place as history. `sessions.current_round_id`
 points at the live round; null means idle.
 
+## Realtime
+
+One private channel per session, topic `session:<session id>`. A trigger on
+`sessions` fires whenever `version` changes — which every mutating function
+causes, through `touch_session()` — and broadcasts `session_changed` with the
+new version as its only payload. No vote value, no participant name, nothing
+but the counter: clients refetch through `session_state`/`round_status` on
+receiving it rather than trusting the payload for anything.
+
+Authorization lives on `realtime.messages`, the same shape as the table
+policies: one predicate, `is_session_channel_member()`, reusing
+`is_active_session_member()` so the two can never drift apart. There is no
+insert policy — clients never publish, only the trigger does, running as the
+function owner rather than through a grant.
+
 ## Error codes
 
 Functions raise custom SQLSTATEs, which PostgREST passes through as

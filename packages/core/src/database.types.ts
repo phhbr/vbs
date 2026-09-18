@@ -250,6 +250,7 @@ export type Database = {
         Args: { p_session_id: string }
         Returns: boolean
       }
+      is_session_channel_member: { Args: { p_topic: string }; Returns: boolean }
       join_session: {
         Args: { p_code: string; p_nickname: string }
         Returns: Json
