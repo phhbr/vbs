@@ -130,6 +130,13 @@ serialises concurrent joins so the 50-participant limit cannot be overshot.
 Afterwards they call `touch_session()`, which pushes `expires_at` out by 24
 hours and bumps `sessions.version`.
 
+Round-scoped functions (`vote`, `reveal`, `re_estimate`) lock the round instead,
+through `lock_active_round()`. That row lock is what stops a vote from landing
+after reveal: both functions take it before checking `rounds.status`, so
+whichever call reaches it first commits its status change (or its insert), and
+the other blocks, re-reads the now-committed status, and finds it no longer
+`voting`. A vote arriving that way fails with `VB014`, not silently.
+
 ## Rounds
 
 `rounds.round_number` is a session-wide sequence — every round ever started in
@@ -160,6 +167,11 @@ message text.
 | `VB010` | admin_invariant (trigger only) |
 | `VB011` | not_authenticated              |
 | `VB012` | round_in_progress              |
+| `VB013` | round_not_found                |
+| `VB014` | round_not_voting               |
+| `VB015` | not_a_voter                    |
+| `VB016` | invalid_vote_value             |
+| `VB017` | round_not_revealed             |
 | `VB018` | invalid_story                  |
 
 ## Roles

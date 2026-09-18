@@ -235,11 +235,16 @@ export type Database = {
         Returns: boolean
       }
       claim_admin: { Args: { p_code: string; p_token: string }; Returns: Json }
+      compute_round_result: {
+        Args: { p_deck: string; p_round_id: string }
+        Returns: Json
+      }
       create_session: {
         Args: { p_deck?: string; p_locale?: string; p_nickname: string }
         Returns: Json
       }
       current_user_id: { Args: never; Returns: string }
+      deck_card_values: { Args: { p_deck: string }; Returns: string[] }
       generate_session_code: { Args: never; Returns: string }
       is_active_session_member: {
         Args: { p_session_id: string }
@@ -248,6 +253,26 @@ export type Database = {
       join_session: {
         Args: { p_code: string; p_nickname: string }
         Returns: Json
+      }
+      lock_active_round: {
+        Args: { p_round_id: string }
+        Returns: {
+          attempt: number
+          id: string
+          result: Json | null
+          revealed_at: string | null
+          round_number: number
+          session_id: string
+          started_at: string
+          status: string
+          story: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rounds"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       lock_live_session: {
         Args: { p_code: string }
@@ -271,6 +296,9 @@ export type Database = {
       }
       new_story: { Args: { p_code: string }; Returns: Json }
       normalize_session_code: { Args: { p_code: string }; Returns: string }
+      re_estimate: { Args: { p_round_id: string }; Returns: Json }
+      reveal: { Args: { p_round_id: string }; Returns: Json }
+      round_status: { Args: { p_round_id: string }; Returns: Json }
       session_state: { Args: { p_code: string }; Returns: Json }
       set_deck: { Args: { p_code: string; p_deck: string }; Returns: Json }
       start_story: { Args: { p_code: string; p_title: string }; Returns: Json }
@@ -278,6 +306,7 @@ export type Database = {
       transfer_admin: { Args: { p_participant_id: string }; Returns: Json }
       validate_nickname: { Args: { p_nickname: string }; Returns: string }
       validate_story_title: { Args: { p_title: string }; Returns: string }
+      vote: { Args: { p_round_id: string; p_value: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

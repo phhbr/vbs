@@ -12,6 +12,11 @@ export const VBS_ERROR_CODES = {
   VB010: "admin_invariant",
   VB011: "not_authenticated",
   VB012: "round_in_progress",
+  VB013: "round_not_found",
+  VB014: "round_not_voting",
+  VB015: "not_a_voter",
+  VB016: "invalid_vote_value",
+  VB017: "round_not_revealed",
   VB018: "invalid_story",
 } as const;
 
