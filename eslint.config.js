@@ -11,6 +11,7 @@ export default tseslint.config(
     ignores: [
       "**/dist/**",
       "**/node_modules/**",
+      "**/public/**",
       "supabase/.branches/**",
       "supabase/.temp/**",
       "packages/core/src/database.types.ts",
