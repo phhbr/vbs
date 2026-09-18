@@ -1,3 +1,4 @@
+import { BracketButton, Panel } from "@vbs/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -23,20 +24,19 @@ export function AdminRecoveryNotice({
   };
 
   return (
-    <section>
-      <h2>{t("admin.recoveryTitle")}</h2>
+    <Panel heading={t("admin.recoveryTitle")} headingLevel="h2">
       <p role="alert">{t("admin.recoveryWarning")}</p>
       <p>
         <code>{url}</code>{" "}
-        <button type="button" onClick={copy}>
+        <BracketButton onClick={copy}>
           {copied ? t("lobby.copied") : t("lobby.copy")}
-        </button>
+        </BracketButton>
       </p>
       <p>
-        <button type="button" onClick={onAcknowledge}>
+        <BracketButton onClick={onAcknowledge}>
           {t("admin.recoveryAcknowledge")}
-        </button>
+        </BracketButton>
       </p>
-    </section>
+    </Panel>
   );
 }

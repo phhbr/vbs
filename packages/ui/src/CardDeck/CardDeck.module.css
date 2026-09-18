@@ -1,0 +1,32 @@
+/* Cards (STYLE.md): a row of square fields, min 46x44, page-colored
+   background, the number in accent. Selected: accent fill plus a distinct
+   border — never color alone, even though --vbs-on-accent independently
+   reaches AAA (see tokens.css). */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vbs-gap-cards);
+}
+
+.card {
+  min-width: 46px;
+  min-height: var(--vbs-touch-target);
+  padding: 8px 4px;
+  text-align: center;
+  font: inherit;
+  cursor: pointer;
+  background: var(--vbs-bg);
+  color: var(--vbs-accent);
+  border: 1px solid var(--vbs-divider);
+}
+
+.card:disabled {
+  color: var(--vbs-disabled);
+  cursor: default;
+}
+
+.selected {
+  background: var(--vbs-accent);
+  color: var(--vbs-on-accent);
+  border: 2px solid var(--vbs-fg-strong);
+}

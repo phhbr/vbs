@@ -13,6 +13,8 @@ export type BracketToggleProps<T extends string> = {
   onChange: (value: T) => void;
   optionA: BracketToggleOption<T>;
   optionB: BracketToggleOption<T>;
+  /** Stays visible but inert, matching every other bracket action. */
+  disabled?: boolean;
 };
 
 /**
@@ -28,12 +30,14 @@ export function BracketToggle<T extends string>({
   onChange,
   optionA,
   optionB,
+  disabled,
 }: BracketToggleProps<T>) {
   return (
     <span className={styles.row}>
       {label}
       <BracketButton
         aria-pressed={value === optionA.value}
+        disabled={disabled}
         className={
           value === optionA.value ? styles.optionActive : styles.option
         }
@@ -46,6 +50,7 @@ export function BracketToggle<T extends string>({
       </span>
       <BracketButton
         aria-pressed={value === optionB.value}
+        disabled={disabled}
         className={
           value === optionB.value ? styles.optionActive : styles.option
         }

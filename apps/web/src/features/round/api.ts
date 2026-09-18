@@ -1,4 +1,10 @@
-import type { CurrentRound, Deck, RoundStatusResult } from "@vbs/core";
+import type {
+  CurrentRound,
+  Deck,
+  RoundPhase,
+  RoundResult,
+  RoundStatusResult,
+} from "@vbs/core";
 import { supabase } from "../../lib/supabase";
 
 // Same unwrap pattern as ../session/api.ts: supabase-js reports failures in
@@ -54,4 +60,30 @@ export async function fetchRoundStatus(
   roundId: string,
 ): Promise<RoundStatusResult> {
   return unwrap(await supabase.rpc("round_status", { p_round_id: roundId }));
+}
+
+export type HistoryRound = {
+  id: string;
+  round_number: number;
+  story: string;
+  attempt: number;
+  status: RoundPhase;
+  result: RoundResult | null;
+};
+
+/**
+ * A plain table read, not an RPC: rounds_read_for_members (M2's RLS) and its
+ * select grant already govern this, so a new function would only duplicate
+ * a read decision that already lives in one place — the policy.
+ */
+export async function fetchRoundHistory(
+  sessionId: string,
+): Promise<HistoryRound[]> {
+  const { data, error } = await supabase
+    .from("rounds")
+    .select("id, round_number, story, attempt, status, result")
+    .eq("session_id", sessionId)
+    .order("round_number", { ascending: false });
+  if (error) throw error;
+  return data as HistoryRound[];
 }

@@ -50,7 +50,11 @@ test("no vote value ever appears in a player's realtime frames", async ({
   await admin.getByRole("button", { name: "[ Karten aufdecken ]" }).click();
   // Confirms Bob actually received the reveal over the socket, so the
   // capture window covers the moment values became public knowledge too.
-  await expect(bob.getByText("Ø Durchschnitt")).toBeVisible();
+  // Scoped to the result panel: the recent-rounds preview shows the same
+  // text a second time, which would otherwise be ambiguous.
+  await expect(
+    bob.getByRole("region", { name: "Ergebnis" }).getByText("Ø Durchschnitt:"),
+  ).toBeVisible();
 
   expect(frames.length).toBeGreaterThan(0);
   // The capture must have caught real traffic, or the assertion below would

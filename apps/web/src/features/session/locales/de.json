@@ -23,20 +23,26 @@
     "forSession": "Du trittst der Sitzung {{code}} bei."
   },
   "lobby": {
-    "title": "Vorzimmer",
-    "waiting": "Die Abstimmung beginnt, sobald die Sitzung eröffnet ist.",
-    "participants": "Anwesend",
-    "participantCount": "{{count}} von 50",
-    "code": "Sitzungs-Code",
     "link": "Link zum Teilen",
     "copy": "[Kopieren]",
     "copied": "[Kopiert]",
-    "refresh": "[Aktualisieren]",
-    "refreshing": "[wird geladen …]",
     "qrCaption": "QR-Code für den Sitzungslink",
     "you": "du",
     "connected": "Verbunden",
     "reconnecting": "Verbindung wird wiederhergestellt …"
+  },
+  "session": {
+    "heading": "Sitzung",
+    "navLabel": "Bereiche",
+    "navMain": "Main",
+    "navHistory": "Verlauf",
+    "navRules": "Regeln",
+    "statusBarLabel": "Sitzungsstatus",
+    "footerRound": "Runde {{n}}",
+    "footerLeave": "[ Sitzung verlassen ]",
+    "rulesHeading": "Regeln",
+    "rulesIntro": "Planning Poker ist eine Schätzmethode für agile Teams: Jede*r wählt verdeckt eine Karte für den Aufwand einer Story. Erst wenn alle abgestimmt haben, werden die Karten gemeinsam aufgedeckt.",
+    "rulesDiscussion": "Große Unterschiede in den Schätzungen sind der eigentliche Sinn der Übung — sie zeigen, wo das Team unterschiedliche Annahmen hat, und lohnen eine kurze Diskussion. „Neu schätzen“ startet danach eine neue Abstimmung für dieselbe Story."
   },
   "admin": {
     "recoveryTitle": "Wiederherstellungs-Link",

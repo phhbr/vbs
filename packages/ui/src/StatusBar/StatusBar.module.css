@@ -1,0 +1,20 @@
+/* Bars (STYLE.md): "| Session: K7QP-M2XR | Round: 3 | ... |", label in
+   --vbs-fg, value in --vbs-accent. Stacks directly under NavTabs or another
+   StatusBar, so only the bottom rule is drawn — a shared line, not a
+   doubled one. */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  border-bottom: var(--vbs-border-style);
+  padding: var(--vbs-pad-bar);
+}
+
+.divider {
+  color: var(--vbs-divider);
+}
+
+.value {
+  color: var(--vbs-accent);
+}

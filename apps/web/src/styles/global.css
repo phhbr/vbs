@@ -38,3 +38,10 @@ input:not([type]) {
   border: 1px solid var(--vbs-divider);
   color: var(--vbs-input-fg);
 }
+
+/* A raw recovery link or session URL is one unbroken token that a normal
+   line box won't wrap, which overflows a narrow screen (caught testing at
+   360px). */
+code {
+  overflow-wrap: break-word;
+}

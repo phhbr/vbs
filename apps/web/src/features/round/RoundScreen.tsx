@@ -1,9 +1,12 @@
 import type { SessionState } from "@vbs/core";
 import { cardsForDeck } from "@vbs/core";
+import { CardDeck, Panel, StatusBar } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { ShareLink } from "../session/ShareLink";
+import { SessionQr } from "../session/SessionQr";
 import { useErrorMessage } from "../session/useErrorMessage";
-import { AdminControls } from "./AdminControls";
-import { CardRow } from "./CardRow";
+import { AdminActions } from "./AdminActions";
+import { AdminSetup } from "./AdminSetup";
 import { ParticipantVotes } from "./ParticipantVotes";
 import {
   useNewStory,
@@ -14,21 +17,28 @@ import {
   useStartStory,
   useVote,
 } from "./queries";
+import { RecentRounds } from "./RecentRounds";
 import { ResultPanel } from "./ResultPanel";
+import styles from "./RoundScreen.module.css";
 
 /**
- * The live-voting area: story, card row, participant status and result.
- * Rendered once the caller is a member (Session.tsx guarantees viewer and
- * participants are non-null at that point).
+ * The "Main" tab: story setup, the card row, participant status and the
+ * result — everything from STYLE.md's two-column layout. Rendered once the
+ * caller is a member (Session.tsx guarantees viewer and participants are
+ * non-null at that point).
  */
 export function RoundScreen({
   code,
   state,
   onlineParticipantIds,
+  shareUrl,
+  onShowHistory,
 }: {
   code: string;
   state: SessionState;
   onlineParticipantIds: ReadonlySet<string>;
+  shareUrl: string;
+  onShowHistory: () => void;
 }) {
   const { t } = useTranslation();
   const describeError = useErrorMessage();
@@ -68,43 +78,58 @@ export function RoundScreen({
     reveal.error ??
     reEstimate.error;
 
+  const phaseLabel = isVoting
+    ? t("round.phaseVoting")
+    : isRevealed
+      ? t("round.phaseRevealed")
+      : t("round.phaseIdle");
+
   return (
-    <section>
-      <h2>{t("round.title")}</h2>
+    <div id="tabpanel-main" role="tabpanel" aria-labelledby="tab-main">
+      <StatusBar
+        ariaLabel={t("round.statusBarLabel")}
+        items={[
+          {
+            label: t("round.statusStory"),
+            value: currentRound ? currentRound.story : "–",
+          },
+          { label: t("round.statusStatus"), value: phaseLabel },
+          {
+            label: t("round.statusVoted"),
+            value: currentRound
+              ? `${votedCount}/${eligibleVoters.length}`
+              : "–",
+          },
+        ]}
+      />
 
       {mutationError !== null && (
         <p role="alert">{describeError(mutationError)}</p>
       )}
 
       {isAdmin && (
-        <AdminControls
+        <AdminSetup
           deck={state.session.deck}
           canEditDeck={!isVoting}
           onSetDeck={(deck) => setDeck.mutate(deck)}
           canStart={!isVoting}
           onStart={(title) => startStory.mutate(title)}
           isStarting={startStory.isPending}
-          canReveal={isVoting ?? false}
-          onReveal={() => reveal.mutate()}
-          isRevealing={reveal.isPending}
-          canReEstimate={isRevealed ?? false}
-          onReEstimate={() => reEstimate.mutate()}
-          isReEstimating={reEstimate.isPending}
-          canNewStory={isRevealed ?? false}
-          onNewStory={() => newStory.mutate()}
-          isClearingStory={newStory.isPending}
         />
       )}
 
-      {!currentRound && (
-        <p>{isAdmin ? t("round.emptyAdmin") : t("round.emptyPlayer")}</p>
-      )}
+      <div className={styles.grid}>
+        <div className={styles.column}>
+          <h2 className={styles.sectionHeading}>
+            <span aria-hidden="true">&raquo; </span>
+            {t("round.title")}
+          </h2>
 
-      {currentRound && (
-        <>
-          <p>{t("round.story", { title: currentRound.story })}</p>
+          {!currentRound && (
+            <p>{isAdmin ? t("round.emptyAdmin") : t("round.emptyPlayer")}</p>
+          )}
 
-          {isVoting && (
+          {currentRound && isVoting && (
             <p>
               {t("round.progress", {
                 voted: votedCount,
@@ -114,11 +139,12 @@ export function RoundScreen({
           )}
 
           {canVote && isVoting && (
-            <CardRow
+            <CardDeck
               cards={cardsForDeck(state.session.deck)}
               value={myVote?.value ?? null}
               disabled={castVote.isPending}
               onChange={(value) => castVote.mutate(value)}
+              ariaLabel={t("round.cards")}
             />
           )}
 
@@ -128,13 +154,53 @@ export function RoundScreen({
             onlineParticipantIds={onlineParticipantIds}
           />
 
-          <div aria-live="polite">
-            {isRevealed && roundStatus.data?.result && (
-              <ResultPanel result={roundStatus.data.result} />
+          {isAdmin && (
+            <AdminActions
+              canReveal={isVoting ?? false}
+              onReveal={() => reveal.mutate()}
+              isRevealing={reveal.isPending}
+              canReEstimate={isRevealed ?? false}
+              onReEstimate={() => reEstimate.mutate()}
+              isReEstimating={reEstimate.isPending}
+              canNewStory={isRevealed ?? false}
+              onNewStory={() => newStory.mutate()}
+              isClearingStory={newStory.isPending}
+            />
+          )}
+        </div>
+
+        <div className={styles.column}>
+          <Panel heading={t("round.resultHeading")}>
+            {!currentRound && <p>{t("round.noRoundYet")}</p>}
+            {currentRound && isVoting && (
+              <>
+                <p>
+                  {t("round.progress", {
+                    voted: votedCount,
+                    total: eligibleVoters.length,
+                  })}
+                </p>
+                <p>{t("round.awaitingReveal")}</p>
+              </>
             )}
-          </div>
-        </>
-      )}
-    </section>
+            {currentRound && isRevealed && roundStatus.data?.result && (
+              <div aria-live="polite">
+                <ResultPanel result={roundStatus.data.result} />
+              </div>
+            )}
+          </Panel>
+
+          <RecentRounds
+            sessionId={state.session.id}
+            onShowAll={onShowHistory}
+          />
+
+          <Panel heading={t("lobby.link")}>
+            <ShareLink url={shareUrl} />
+            <SessionQr url={shareUrl} />
+          </Panel>
+        </div>
+      </div>
+    </div>
   );
 }

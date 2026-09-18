@@ -1,0 +1,22 @@
+/* "• Name — status" (STYLE.md), status color as the second cue alongside
+   its text — never color alone. */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item::before {
+  content: "\2022 ";
+}
+
+.waiting {
+  color: var(--vbs-danger);
+}
+
+.voted {
+  color: var(--vbs-accent);
+}

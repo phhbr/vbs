@@ -46,27 +46,43 @@ test("start, vote, reveal and re-estimate across three participants", async ({
   await admin.getByRole("button", { name: "[ Karten aufdecken ]" }).click();
 
   // (5 + 8 + 13) / 3 = 8.6666… → 8.7, no consensus, spread 5–13.
-  await expect(admin.getByText("Ø Durchschnitt")).toBeVisible();
-  await expect(admin.getByText("8.7")).toBeVisible();
-  await expect(admin.getByText("Streuung: 5 – 13")).toBeVisible();
+  // The result panel specifically — "Ø Durchschnitt" alone would also match
+  // the recent-rounds preview, which shows the same result a second time.
+  const resultPanel = admin.getByRole("region", { name: "Ergebnis" });
+  await expect(resultPanel.getByText("Ø Durchschnitt:")).toBeVisible();
+  await expect(resultPanel.getByText("8.7")).toBeVisible();
+  await expect(resultPanel.getByText("Streuung: 5 – 13")).toBeVisible();
 
   // All three see the same result, again with no reload.
-  await expect(bob.getByText("8.7")).toBeVisible();
-  await expect(cy.getByText("8.7")).toBeVisible();
+  await expect(
+    bob.getByRole("region", { name: "Ergebnis" }).getByText("8.7"),
+  ).toBeVisible();
+  await expect(
+    cy.getByRole("region", { name: "Ergebnis" }).getByText("8.7"),
+  ).toBeVisible();
   await expect(bobStatus).toContainText("5");
   await expect(cyStatus).toContainText("8");
 
   await admin.getByRole("button", { name: "[ Neu schätzen ]" }).click();
 
   // A fresh attempt at the same story: votes are cleared for everyone.
-  await expect(admin.getByText("Story: Login redesign")).toBeVisible();
+  // Scoped to the round's status bar — the history preview shows the same
+  // story name too, which would otherwise be ambiguous.
+  await expect(
+    admin
+      .getByRole("group", { name: "Rundenstatus" })
+      .getByText("Login redesign"),
+  ).toBeVisible();
   await expect(bobStatus).toContainText("wartet");
   await expect(cyStatus).toContainText("wartet");
-  await expect(admin.getByText("Ø Durchschnitt")).toBeHidden();
+  await expect(resultPanel.getByText("Ø Durchschnitt:")).toBeHidden();
 
-  // The earlier round and its result stay in the database as history —
-  // covered at the data layer by 080_rpc_voting.sql, since M3 has no
-  // dedicated history view yet to assert against here.
+  // The earlier round and its result stay in the database as history, and
+  // now visibly so too: the recent-rounds preview keeps it after re-estimate
+  // starts a fresh, empty round.
+  await expect(
+    admin.getByText("Login redesign — Ø Durchschnitt 8.7"),
+  ).toBeVisible();
 
   await contextA.close();
   await contextB.close();

@@ -1,19 +1,26 @@
+import { CardDeck } from "@vbs/ui";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeAll, describe, expect, it, vi } from "vitest";
-import { CardRow } from "./CardRow";
+import { describe, expect, it, vi } from "vitest";
 
-beforeAll(async () => {
-  const { default: i18n } = await import("../../i18n");
-  await i18n.changeLanguage("en");
-});
+// CardDeck lives in @vbs/ui, but its keyboard/ARIA behavior is exercised
+// here rather than in packages/ui, which has no jsdom/testing-library setup
+// of its own — apps/web already does, and CardDeck has no app dependency,
+// so importing it through the workspace package is the pragmatic choice
+// over duplicating that test infrastructure for one component.
 
 const cards = ["1", "2", "3"] as const;
 
-describe("CardRow", () => {
+describe("CardDeck", () => {
   it("renders one radio per card with the current value checked", () => {
     render(
-      <CardRow cards={cards} value="2" onChange={vi.fn()} disabled={false} />,
+      <CardDeck
+        cards={cards}
+        value="2"
+        onChange={vi.fn()}
+        disabled={false}
+        ariaLabel="Cards"
+      />,
     );
 
     expect(screen.getByRole("radio", { name: "1" })).toHaveAttribute(
@@ -30,11 +37,12 @@ describe("CardRow", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
     render(
-      <CardRow
+      <CardDeck
         cards={cards}
         value={null}
         onChange={onChange}
         disabled={false}
+        ariaLabel="Cards"
       />,
     );
 
@@ -47,7 +55,13 @@ describe("CardRow", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
     render(
-      <CardRow cards={cards} value="1" onChange={onChange} disabled={false} />,
+      <CardDeck
+        cards={cards}
+        value="1"
+        onChange={onChange}
+        disabled={false}
+        ariaLabel="Cards"
+      />,
     );
 
     screen.getByRole("radio", { name: "1" }).focus();
@@ -61,7 +75,13 @@ describe("CardRow", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
     render(
-      <CardRow cards={cards} value="3" onChange={onChange} disabled={false} />,
+      <CardDeck
+        cards={cards}
+        value="3"
+        onChange={onChange}
+        disabled={false}
+        ariaLabel="Cards"
+      />,
     );
 
     screen.getByRole("radio", { name: "3" }).focus();
@@ -74,7 +94,13 @@ describe("CardRow", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
     render(
-      <CardRow cards={cards} value="2" onChange={onChange} disabled={false} />,
+      <CardDeck
+        cards={cards}
+        value="2"
+        onChange={onChange}
+        disabled={false}
+        ariaLabel="Cards"
+      />,
     );
 
     screen.getByRole("radio", { name: "2" }).focus();
@@ -87,7 +113,13 @@ describe("CardRow", () => {
 
   it("disables every card when the round is not accepting votes", () => {
     render(
-      <CardRow cards={cards} value={null} onChange={vi.fn()} disabled={true} />,
+      <CardDeck
+        cards={cards}
+        value={null}
+        onChange={vi.fn()}
+        disabled={true}
+        ariaLabel="Cards"
+      />,
     );
 
     for (const card of cards) {
@@ -97,7 +129,13 @@ describe("CardRow", () => {
 
   it("makes only the selected (or first) card tab-reachable", () => {
     render(
-      <CardRow cards={cards} value="2" onChange={vi.fn()} disabled={false} />,
+      <CardDeck
+        cards={cards}
+        value="2"
+        onChange={vi.fn()}
+        disabled={false}
+        ariaLabel="Cards"
+      />,
     );
 
     expect(screen.getByRole("radio", { name: "1" })).toHaveAttribute(

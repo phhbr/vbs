@@ -1,0 +1,29 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--vbs-gap-columns);
+  align-items: start;
+  padding-top: 4px;
+}
+
+/* Matches STYLE.md's session-screen breakpoint (also used by Home). */
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1.3fr 1fr;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-gap-row);
+  min-width: 0;
+}
+
+/* The left column's "» Abstimmung" label: Panel's heading style without
+   Panel's box, since the prototype's voting column isn't boxed. */
+.sectionHeading {
+  margin: 0;
+  color: var(--vbs-accent);
+  font-weight: 700;
+}

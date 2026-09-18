@@ -23,20 +23,26 @@
     "forSession": "You are joining session {{code}}."
   },
   "lobby": {
-    "title": "Waiting room",
-    "waiting": "Voting starts once the session is called to order.",
-    "participants": "Present",
-    "participantCount": "{{count}} of 50",
-    "code": "Session code",
     "link": "Link to share",
     "copy": "[Copy]",
     "copied": "[Copied]",
-    "refresh": "[Refresh]",
-    "refreshing": "[loading …]",
     "qrCaption": "QR code for the session link",
     "you": "you",
     "connected": "Connected",
     "reconnecting": "Reconnecting …"
+  },
+  "session": {
+    "heading": "Session",
+    "navLabel": "Sections",
+    "navMain": "Main",
+    "navHistory": "History",
+    "navRules": "Rules",
+    "statusBarLabel": "Session status",
+    "footerRound": "Round {{n}}",
+    "footerLeave": "[ Leave session ]",
+    "rulesHeading": "Rules",
+    "rulesIntro": "Planning poker is an estimation method for agile teams: everyone picks a card for a story's effort in secret. Only once everyone has voted are the cards revealed together.",
+    "rulesDiscussion": "Large differences between estimates are the actual point of the exercise — they show where the team holds different assumptions, and are worth a short discussion. \"Re-estimate\" then starts a fresh vote for the same story."
   },
   "admin": {
     "recoveryTitle": "Recovery link",

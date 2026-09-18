@@ -2,6 +2,7 @@ import type { Deck, RoundStatusResult } from "@vbs/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { sessionKey } from "../session/queries";
 import {
+  fetchRoundHistory,
   fetchRoundStatus,
   newStory,
   reEstimate,
@@ -12,6 +13,11 @@ import {
 } from "./api";
 
 export const roundKey = (roundId: string) => ["round", roundId] as const;
+// Prefixed with "round" (not a separate top-level key) so
+// useSessionRealtime's refetch predicate — which matches "session" and
+// "round" — picks this up too, without needing its own case.
+export const roundHistoryKey = (sessionId: string) =>
+  ["round", "history", sessionId] as const;
 
 export function useRoundStatus(roundId: string | undefined) {
   return useQuery<RoundStatusResult>({
@@ -19,6 +25,15 @@ export function useRoundStatus(roundId: string | undefined) {
     queryFn: () => fetchRoundStatus(roundId!),
     enabled: !!roundId,
     // Realtime drives refetches; no polling needed.
+    refetchInterval: false,
+  });
+}
+
+export function useRoundHistory(sessionId: string | undefined) {
+  return useQuery({
+    queryKey: roundHistoryKey(sessionId ?? ""),
+    queryFn: () => fetchRoundHistory(sessionId!),
+    enabled: !!sessionId,
     refetchInterval: false,
   });
 }

@@ -1,0 +1,38 @@
+/* Bars (STYLE.md): dashed rules above and below, items pipe-separated. */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+  border-top: var(--vbs-border-style);
+  border-bottom: var(--vbs-border-style);
+  padding: var(--vbs-pad-bar);
+}
+
+.divider {
+  color: var(--vbs-divider);
+}
+
+/* Lets each [button, divider] pair sit directly in the flex row for
+   wrapping, without a wrapping element affecting the layout. */
+.tabWrapper {
+  display: contents;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 6px;
+  font: inherit;
+  color: var(--vbs-fg);
+  cursor: pointer;
+  min-height: var(--vbs-touch-target);
+  display: inline-flex;
+  align-items: center;
+}
+
+.tabActive {
+  color: var(--vbs-accent);
+  font-weight: 700;
+}

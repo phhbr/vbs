@@ -1,7 +1,11 @@
 import { expect, type Page } from "@playwright/test";
 
-export function heading(page: Page, name: string) {
-  return page.getByRole("heading", { name });
+export function heading(
+  page: Page,
+  name: string,
+  options?: { exact?: boolean },
+) {
+  return page.getByRole("heading", { name, ...options });
 }
 
 export async function createSession(page: Page, nickname: string) {
@@ -21,5 +25,5 @@ export async function join(page: Page, code: string, nickname: string) {
   await page.goto(`/s/${code}`);
   await page.getByLabel("Dein Name").fill(nickname);
   await page.getByRole("button", { name: "[ Beitreten ]" }).click();
-  await expect(heading(page, "Vorzimmer")).toBeVisible();
+  await expect(heading(page, "Sitzung", { exact: true })).toBeVisible();
 }

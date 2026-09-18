@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useLocation, useParams } from "react-router";
 import { AdminRecoveryNotice } from "../features/session/AdminRecoveryNotice";
 import { JoinSessionForm } from "../features/session/JoinSessionForm";
-import { Lobby } from "../features/session/Lobby";
 import { SessionErrorScreen } from "../features/session/SessionError";
+import { SessionScreen } from "../features/session/SessionScreen";
 import {
   adminRecoveryUrl,
   readAdminTokenFromHash,
@@ -13,7 +13,6 @@ import {
 } from "../features/session/adminToken";
 import { useClaimAdmin, useSessionState } from "../features/session/queries";
 import { useSessionRealtime } from "../features/session/realtime";
-import { RoundScreen } from "../features/round/RoundScreen";
 
 export function Session() {
   const { t } = useTranslation();
@@ -100,7 +99,6 @@ export function Session() {
     return <JoinSessionForm code={code} />;
   }
 
-  const shareUrl = `${window.location.origin}/s/${code}`;
   const showRecoveryNotice = isOwnToken && token && !noticeDismissed;
 
   return (
@@ -115,20 +113,12 @@ export function Session() {
         />
       )}
       {claim.isSuccess && <p role="status">{t("admin.claimed")}</p>}
-      <main>
-        <RoundScreen
-          code={code}
-          state={state.data}
-          onlineParticipantIds={onlineParticipantIds}
-        />
-        <Lobby
-          state={state.data}
-          shareUrl={shareUrl}
-          onRefresh={() => void state.refetch()}
-          isRefreshing={state.isFetching}
-          connectionStatus={connectionStatus}
-        />
-      </main>
+      <SessionScreen
+        code={code}
+        state={state.data}
+        connectionStatus={connectionStatus}
+        onlineParticipantIds={onlineParticipantIds}
+      />
     </>
   );
 }

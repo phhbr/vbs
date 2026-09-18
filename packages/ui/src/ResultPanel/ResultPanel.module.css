@@ -1,0 +1,19 @@
+.value {
+  color: var(--vbs-accent);
+}
+
+/* Accent fill, inverted text, bold — never the only cue that consensus was
+   reached, since the label text says so too. */
+.badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  background: var(--vbs-accent);
+  color: var(--vbs-on-accent);
+  font-weight: 700;
+}
+
+.spread {
+  margin-top: 8px;
+  color: var(--vbs-danger);
+}

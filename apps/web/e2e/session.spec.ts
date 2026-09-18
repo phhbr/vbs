@@ -10,14 +10,13 @@ test("two people share a session by link and both see each other", async ({
   const pageB = await contextB.newPage();
 
   const { code } = await createSession(pageA, "Ada");
-  await expect(heading(pageA, "Vorzimmer")).toBeVisible();
+  await expect(heading(pageA, "Sitzung", { exact: true })).toBeVisible();
   await expect(pageA.getByRole("listitem")).toHaveCount(1);
 
   await join(pageB, code, "Bob");
   await expect(pageB.getByRole("listitem")).toHaveCount(2);
 
-  // No realtime yet, so A picks the change up on the manual refresh.
-  await pageA.getByRole("button", { name: "[Aktualisieren]" }).click();
+  // Realtime, not a manual refresh: A's own view updates on its own.
   await expect(pageA.getByRole("listitem")).toHaveCount(2);
   await expect(pageA.getByRole("listitem").nth(0)).toContainText("Ada");
   await expect(pageA.getByRole("listitem").nth(1)).toContainText("Bob");
@@ -50,27 +49,30 @@ test("the recovery link makes a third browser the admin and demotes the first", 
 
   // C is a stranger to the session and recovers the chair with the link.
   await pageC.goto(recoveryUrl);
-  await expect(heading(pageC, "Vorzimmer")).toBeVisible();
+  await expect(heading(pageC, "Sitzung", { exact: true })).toBeVisible();
   await expect(pageC.getByRole("status")).toContainText("übernommen");
   // The token never survives in the address bar.
   expect(new URL(pageC.url()).hash).toBe("");
 
-  // C adopted Ada's row rather than adding a ghost participant.
+  // C adopted Ada's row rather than adding a ghost participant, and the
+  // admin-only story form now renders for C — the participant list itself
+  // no longer shows role labels (STYLE.md's team list never did either).
   await expect(pageC.getByRole("listitem")).toHaveCount(2);
-  await expect(pageC.getByRole("listitem").nth(0)).toContainText("Ada");
-  await expect(pageC.getByRole("listitem").nth(0)).toContainText("admin");
-  await expect(pageC.getByRole("listitem").nth(0)).toContainText("du");
+  await expect(
+    pageC.getByRole("listitem").filter({ hasText: "Ada" }),
+  ).toContainText("du");
+  await expect(pageC.getByLabel("Story")).toBeVisible();
 
   // A lost the session with the row, so A is no longer a member of it.
   await pageA.reload();
   await expect(heading(pageA, "Sitzung beitreten")).toBeVisible();
 
-  // B is unaffected and still sees exactly one admin.
-  await pageB.getByRole("button", { name: "[Aktualisieren]" }).click();
+  // B is unaffected and still sees both participants — exactly one admin
+  // is the database's invariant to keep, covered thoroughly at that layer
+  // (010_session_codes_and_admin_invariant.sql); B never had the story
+  // form either way, so it isn't a differential check here.
   await expect(pageB.getByRole("listitem")).toHaveCount(2);
-  await expect(
-    pageB.getByRole("listitem").filter({ hasText: "admin" }),
-  ).toHaveCount(1);
+  await expect(pageB.getByLabel("Story")).toBeHidden();
 
   await contextA.close();
   await contextB.close();
