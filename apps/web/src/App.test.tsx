@@ -79,6 +79,12 @@ describe("home screen", () => {
     await user.type(screen.getByLabelText("Sitzungs-Code"), "abcd-efgh-jklm");
     await user.click(screen.getByRole("button", { name: "[ Beitreten ]" }));
 
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    // Only the inline format check is this test's concern — not whatever the
+    // join request that fires next does. Asserting "no alert at all" was
+    // flaky: a real network call to a Supabase that isn't up yet can reject
+    // fast enough to render its own failure alert before this runs.
+    expect(
+      screen.queryByText("Ein Code besteht aus 12 Zeichen"),
+    ).not.toBeInTheDocument();
   });
 });
