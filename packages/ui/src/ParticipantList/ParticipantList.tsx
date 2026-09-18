@@ -13,6 +13,15 @@ export type ParticipantListItem = {
   action?: ReactNode;
 };
 
+// The dot only distinguishes "waiting" (danger) from everything else
+// (accent) — a revealed value's status text is plain body text, but its
+// dot stays accent, matching the prototype exactly.
+const DOT_VARIANT_CLASS = {
+  waiting: "dotWaiting",
+  voted: "dotAccent",
+  neutral: "dotAccent",
+} as const;
+
 export function ParticipantList({
   items,
   ariaLabel,
@@ -27,8 +36,14 @@ export function ParticipantList({
     <ul aria-live="polite" aria-label={ariaLabel} className={styles.list}>
       {items.map((item) => (
         <li key={item.id} className={styles.item}>
-          {item.name}
-          {item.isYou ? ` (${youSuffix})` : ""} —{" "}
+          <span
+            className={`${styles.dot} ${styles[DOT_VARIANT_CLASS[item.statusVariant]]}`}
+            aria-hidden="true"
+          />
+          <span className={styles.name}>
+            {item.name}
+            {item.isYou ? ` (${youSuffix})` : ""}
+          </span>
           <span
             className={
               item.statusVariant === "waiting"
@@ -40,7 +55,7 @@ export function ParticipantList({
           >
             {item.status}
           </span>
-          {item.action && <> {item.action}</>}
+          {item.action && item.action}
         </li>
       ))}
     </ul>

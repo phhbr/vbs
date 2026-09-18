@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Route, Routes } from "react-router";
 import { Home } from "./routes/Home";
 import { Session } from "./routes/Session";
+import styles from "./App.module.css";
 
 export function App() {
   const [theme, setTheme] = useTheme();
@@ -10,7 +11,7 @@ export function App() {
   const locale = i18n.resolvedLanguage === "en" ? "en" : "de";
 
   return (
-    <>
+    <div className={styles.page}>
       <Header
         title={t("app.title")}
         subtitle={t("app.subtitle")}
@@ -23,10 +24,10 @@ export function App() {
               darkLabel={t("theme.dark")}
               lightLabel={t("theme.light")}
             />
-            <span aria-hidden="true">&middot;</span>
             <LocaleToggle
               locale={locale}
               onChange={(next) => void i18n.changeLanguage(next)}
+              label={t("language.label")}
               deLabel={t("language.de")}
               enLabel={t("language.en")}
             />
@@ -37,6 +38,6 @@ export function App() {
         <Route path="/" element={<Home />} />
         <Route path="/s/:code" element={<Session />} />
       </Routes>
-    </>
+    </div>
   );
 }

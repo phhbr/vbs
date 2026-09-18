@@ -7,7 +7,7 @@ export type BracketToggleOption<T extends string> = {
 };
 
 export type BracketToggleProps<T extends string> = {
-  /** e.g. "Darstellung:" — omit for an unlabeled pair. */
+  /** e.g. "Darstellung" — its own labeled group (design revision finding 11). */
   label?: string;
   value: T;
   onChange: (value: T) => void;
@@ -18,11 +18,11 @@ export type BracketToggleProps<T extends string> = {
 };
 
 /**
- * The recurring "Label: [ A ] | [ B ]" pattern — STYLE.md's theme switch
- * (`Darstellung: [Dunkel] | [Hell]`) and role picker (`Rolle: [Admin] |
- * [Player]`) are the same shape with different words, so this is the one
- * implementation behind ThemeToggle, LocaleToggle, and any other two-way
- * bracket choice (e.g. a deck picker).
+ * The recurring "Label [ A ] [ B ]" pattern — the theme switch, locale
+ * switch, and role picker are the same shape with different words. No
+ * divider between the options: the group's own gap is the only separator
+ * (design revision finding 11 — one separator style, not a mix of pipes
+ * and middots).
  */
 export function BracketToggle<T extends string>({
   label,
@@ -34,26 +34,19 @@ export function BracketToggle<T extends string>({
 }: BracketToggleProps<T>) {
   return (
     <span className={styles.row}>
-      {label}
+      {label && <span className={styles.label}>{label}</span>}
       <BracketButton
         aria-pressed={value === optionA.value}
+        active={value === optionA.value}
         disabled={disabled}
-        className={
-          value === optionA.value ? styles.optionActive : styles.option
-        }
         onClick={() => onChange(optionA.value)}
       >
         {optionA.label}
       </BracketButton>
-      <span className={styles.divider} aria-hidden="true">
-        |
-      </span>
       <BracketButton
         aria-pressed={value === optionB.value}
+        active={value === optionB.value}
         disabled={disabled}
-        className={
-          value === optionB.value ? styles.optionActive : styles.option
-        }
         onClick={() => onChange(optionB.value)}
       >
         {optionB.label}

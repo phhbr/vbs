@@ -31,3 +31,27 @@ body {
 code {
   overflow-wrap: break-word;
 }
+
+/* Any prose block is capped at 80ch (design revision finding 8) — long
+   lines at this monospace width are hard to track back to their start. */
+.prose {
+  max-width: 80ch;
+}
+
+/* Every route's <main> and its own <h1> follow the same rhythm and heading
+   treatment as every panel title (design revision finding 3) — shared here
+   rather than duplicated per route. */
+.page-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-space-20);
+}
+
+.page-heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vbs-fg-strong);
+}

@@ -1,4 +1,5 @@
 import { useRef, type KeyboardEvent } from "react";
+import { BracketButton } from "../BracketButton/BracketButton";
 import styles from "./NavTabs.module.css";
 
 export type NavTab = {
@@ -14,9 +15,10 @@ export type NavTabsProps = {
 };
 
 /**
- * STYLE.md's "| Main | Verlauf | Regeln |" bar. The ARIA Tabs pattern:
- * arrow keys both move focus and select (unlike the roving tabindex in a
- * plain toolbar), matching CardDeck's radiogroup keyboard model.
+ * The tab row: bracket buttons, the active one inverted. The ARIA Tabs
+ * pattern — arrow keys both move focus and select (unlike the roving
+ * tabindex in a plain toolbar) — matching CardDeck's radiogroup keyboard
+ * model.
  */
 export function NavTabs({ tabs, activeId, onChange, ariaLabel }: NavTabsProps) {
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -57,31 +59,23 @@ export function NavTabs({ tabs, activeId, onChange, ariaLabel }: NavTabsProps) {
 
   return (
     <div className={styles.bar} role="tablist" aria-label={ariaLabel}>
-      <span className={styles.divider} aria-hidden="true">
-        |
-      </span>
       {tabs.map((tab, index) => (
-        <span key={tab.id} className={styles.tabWrapper}>
-          <button
-            ref={(el) => {
-              buttonRefs.current[index] = el;
-            }}
-            type="button"
-            role="tab"
-            id={`tab-${tab.id}`}
-            aria-selected={tab.id === activeId}
-            aria-controls={`tabpanel-${tab.id}`}
-            tabIndex={index === focusableIndex ? 0 : -1}
-            className={tab.id === activeId ? styles.tabActive : styles.tab}
-            onClick={() => onChange(tab.id)}
-            onKeyDown={(event) => onKeyDown(event, index)}
-          >
-            {tab.label}
-          </button>
-          <span className={styles.divider} aria-hidden="true">
-            |
-          </span>
-        </span>
+        <BracketButton
+          key={tab.id}
+          ref={(el) => {
+            buttonRefs.current[index] = el;
+          }}
+          role="tab"
+          id={`tab-${tab.id}`}
+          aria-selected={tab.id === activeId}
+          aria-controls={`tabpanel-${tab.id}`}
+          tabIndex={index === focusableIndex ? 0 : -1}
+          active={tab.id === activeId}
+          onClick={() => onChange(tab.id)}
+          onKeyDown={(event) => onKeyDown(event, index)}
+        >
+          {tab.label}
+        </BracketButton>
       ))}
     </div>
   );

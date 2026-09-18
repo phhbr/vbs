@@ -32,6 +32,9 @@
      same as the 1-2px border widths used throughout. */
   --vbs-touch-target: 44px;
   --vbs-card-min-size: 56px;
+  /* The one named exception to the 10/20/40 scale: finding 1 specifies
+     button padding as exactly 10px 14px, not a value we chose ourselves. */
+  --vbs-space-action-x: 14px;
 
   /* Surfaces: no radii, no shadows, no gradients */
   --vbs-radius: 0;

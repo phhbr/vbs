@@ -21,12 +21,7 @@ export function Footer({ segments, action }: FooterProps) {
           </span>
         ))}
       </span>
-      {action && (
-        <>
-          <span aria-hidden="true">&mdash;</span>
-          {action}
-        </>
-      )}
+      {action}
     </footer>
   );
 }

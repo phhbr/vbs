@@ -1,0 +1,10 @@
+/* The prototype's outer .wrap: a centered, max-width column with page
+   padding — currently missing entirely, so content ran edge-to-edge. */
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--vbs-space-40) var(--vbs-space-page-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-space-20);
+}

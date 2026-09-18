@@ -1,16 +1,40 @@
-/* "• Name — status" (STYLE.md), status color as the second cue alongside
-   its text — never color alone. */
+/* Participant row (design revision finding 10): a real dot element, then
+   the name, then status as text — color is never the only cue. Rows and
+   lists get no border (finding 4); the list sits directly under its
+   Panel's heading. */
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--vbs-space-10);
 }
 
-.item::before {
-  content: "\2022 ";
+.item {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--vbs-space-10);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+}
+
+.dotWaiting {
+  background: var(--vbs-danger);
+}
+
+.dotAccent {
+  background: var(--vbs-accent);
+}
+
+.name {
+  flex: 1 1 auto;
+  color: var(--vbs-fg-strong);
 }
 
 .waiting {
@@ -18,5 +42,5 @@
 }
 
 .voted {
-  color: var(--vbs-accent);
+  color: var(--vbs-fg-dim);
 }

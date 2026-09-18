@@ -6,6 +6,10 @@ export type StatusBarItem = {
   value: ReactNode;
 };
 
+/**
+ * A grid of label-over-value pairs (design revision finding 4) — no pipe
+ * characters, no borders on the row itself. Meant to sit inside a Panel.
+ */
 export function StatusBar({
   items,
   ariaLabel,
@@ -14,17 +18,12 @@ export function StatusBar({
   ariaLabel: string;
 }) {
   return (
-    <div className={styles.bar} role="group" aria-label={ariaLabel}>
-      <span className={styles.divider} aria-hidden="true">
-        |
-      </span>
+    <div className={styles.meta} role="group" aria-label={ariaLabel}>
       {items.map((item, index) => (
-        <span key={index}>
-          {item.label}: <span className={styles.value}>{item.value}</span>{" "}
-          <span className={styles.divider} aria-hidden="true">
-            |
-          </span>
-        </span>
+        <div key={index} className={styles.item}>
+          <span className={styles.label}>{item.label}</span>
+          <span className={styles.value}>{item.value}</span>
+        </div>
       ))}
     </div>
   );

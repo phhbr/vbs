@@ -18,11 +18,13 @@ export type HeaderProps = {
 export function Header({ title, subtitle, actions }: HeaderProps) {
   return (
     <header className={styles.header}>
-      <p className={styles.eyebrow}>&raquo; {title.toUpperCase()} &laquo;</p>
-      <pre className={styles.logo} aria-hidden="true">
-        {LOGO_TEXT}
-      </pre>
-      <p className={styles.subtitle}>{subtitle}</p>
+      <div className={styles.brand}>
+        <p className={styles.eyebrow}>{title.toUpperCase()}</p>
+        <pre className={styles.logo} aria-hidden="true">
+          {LOGO_TEXT}
+        </pre>
+        <p className={styles.subtitle}>{subtitle}</p>
+      </div>
       {actions && <div className={styles.actions}>{actions}</div>}
     </header>
   );

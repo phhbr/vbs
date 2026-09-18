@@ -1,20 +1,22 @@
-/* Bars (STYLE.md): "| Session: K7QP-M2XR | Round: 3 | ... |", label in
-   --vbs-fg, value in --vbs-accent. Stacks directly under NavTabs or another
-   StatusBar, so only the bottom rule is drawn — a shared line, not a
-   doubled one. */
-.bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px;
-  border-bottom: var(--vbs-border-style);
-  padding: var(--vbs-pad-bar);
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--vbs-space-10) var(--vbs-space-20);
 }
 
-.divider {
-  color: var(--vbs-divider);
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Meta label (STYLE.md): dim, 12px, uppercase, letter-spaced. */
+.label {
+  font-size: var(--vbs-font-size-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vbs-fg-dim);
 }
 
 .value {
-  color: var(--vbs-accent);
+  color: var(--vbs-fg-strong);
 }

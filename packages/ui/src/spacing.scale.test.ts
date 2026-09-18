@@ -14,7 +14,10 @@ import { describe, expect, it } from "vitest";
  * (--vbs-touch-target, --vbs-card-min-size) and border widths are a
  * different kind of constant and aren't covered here.
  */
-const ALLOWED_PX = new Set([0, 10, 20, 40]);
+// 14 is the one named exception: finding 1 specifies button padding as
+// exactly 10px 14px (--vbs-space-action-x in tokens.css), a deliberate,
+// precise value rather than an improvised one.
+const ALLOWED_PX = new Set([0, 10, 14, 20, 40]);
 
 const uiSrcDir = dirname(fileURLToPath(import.meta.url));
 const webSrcDir = resolve(uiSrcDir, "../../../apps/web/src");
@@ -46,7 +49,9 @@ function findViolations(css: string): string[] {
     for (const pxMatch of value!.matchAll(PX_LITERAL)) {
       const px = Number(pxMatch[1]);
       if (!ALLOWED_PX.has(px)) {
-        violations.push(`${property}: ${value!.trim()} (${px}px not in 0/10/20/40)`);
+        violations.push(
+          `${property}: ${value!.trim()} (${px}px not in 0/10/20/40)`,
+        );
       }
     }
   }

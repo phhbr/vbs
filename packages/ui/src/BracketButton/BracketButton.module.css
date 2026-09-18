@@ -1,29 +1,62 @@
 /*
- * The bracket-action pattern (STYLE.md): a link disguised as a button, no
- * border or background of its own. The brackets are part of the label text
- * the caller passes in (e.g. t("round.reveal") = "[ Reveal cards ]") — this
- * class never adds them, so plain i18n strings stay the single source of the
- * visible label.
+ * Button anatomy (STYLE.md): a real hit area, not text in brackets. The
+ * brackets are decoration (--vbs-divider by default), the label carries the
+ * actual meaning.
  */
 .button {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: var(--vbs-accent);
-  cursor: pointer;
-  /* The brackets are part of the label (STYLE.md) — an internal wrap would
-     split "[ Dunkel" from "]" across lines, so the whole label stays atomic
-     and rows of these buttons wrap between buttons instead. */
-  white-space: nowrap;
-  /* Text sits well under 44px tall; this grows the hit area without growing
-     the visible glyph, so it stays a "link", not a button-shaped box. */
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: var(--vbs-space-10);
   min-height: var(--vbs-touch-target);
+  padding: var(--vbs-space-10) var(--vbs-space-action-x);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--vbs-accent);
+  font: inherit;
+  cursor: pointer;
+  /* The brackets are now separate elements from the label, not one text
+     node — an internal wrap would split "[" from "Dunkel]" across lines,
+     so the whole button stays atomic and rows of these wrap between
+     buttons instead (on the parent's flex-wrap). */
+  white-space: nowrap;
+}
+
+.bracket {
+  color: var(--vbs-divider);
+}
+
+.button:hover:not(:disabled),
+.button:focus-visible:not(:disabled),
+.button.active:not(:disabled) {
+  background: var(--vbs-accent);
+  color: var(--vbs-on-accent);
+}
+
+.button:hover:not(:disabled) .bracket,
+.button:focus-visible:not(:disabled) .bracket,
+.button.active:not(:disabled) .bracket {
+  color: var(--vbs-on-accent);
+}
+
+.button:focus-visible {
+  outline: var(--vbs-focus-ring);
+  outline-offset: 2px;
+}
+
+.primary {
+  border-color: var(--vbs-accent);
+}
+
+.button.active {
+  border-color: var(--vbs-accent);
 }
 
 .button:disabled {
-  color: var(--vbs-fg-dim);
+  color: var(--vbs-disabled);
   cursor: default;
+}
+
+.button:disabled .bracket {
+  color: var(--vbs-disabled);
 }

@@ -1,23 +1,35 @@
-/* Cards (STYLE.md): a row of square fields, min 46x44, page-colored
-   background, the number in accent. Selected: accent fill plus a distinct
-   border — never color alone, even though --vbs-on-accent independently
-   reaches AAA (see tokens.css). */
+/* Cards (STYLE.md): solid 1px border, square, page-colored background.
+   Selected is a plain inversion — accent fill, on-accent text — signalled
+   by the fill itself plus aria-checked, not by an extra border weight. */
 .row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--vbs-gap-cards);
+  gap: var(--vbs-space-10);
 }
 
 .card {
-  min-width: 46px;
-  min-height: var(--vbs-touch-target);
-  padding: 8px 4px;
+  min-width: var(--vbs-card-min-size);
+  min-height: var(--vbs-card-min-size);
+  padding: var(--vbs-space-10);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   font: inherit;
   cursor: pointer;
-  background: var(--vbs-bg);
+  background: transparent;
   color: var(--vbs-accent);
   border: 1px solid var(--vbs-divider);
+}
+
+.card:hover:not(:disabled),
+.card:focus-visible:not(:disabled) {
+  border-color: var(--vbs-accent);
+}
+
+.card:focus-visible {
+  outline: var(--vbs-focus-ring);
+  outline-offset: 2px;
 }
 
 .card:disabled {
@@ -28,5 +40,5 @@
 .selected {
   background: var(--vbs-accent);
   color: var(--vbs-on-accent);
-  border: 2px solid var(--vbs-fg-strong);
+  border-color: var(--vbs-accent);
 }

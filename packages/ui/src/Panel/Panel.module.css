@@ -1,14 +1,26 @@
-/* Boxes (STYLE.md): a dashed border all around, no radius, no shadow, no
-   accent fill except where a component explicitly opts into one (the
-   selected card, the consensus badge). */
+/* Boxes (STYLE.md): dashed 1px border, nothing else gets this — cards and
+   rows have their own, different border treatment. */
 .panel {
   border: var(--vbs-border-style);
-  padding: var(--vbs-pad-panel);
+  padding: var(--vbs-space-20);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-space-20);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vbs-space-10);
 }
 
 .heading {
-  margin: 0 0 6px;
-  color: var(--vbs-accent);
-  font-weight: 700;
+  margin: 0;
   font-size: inherit;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vbs-fg-strong);
 }

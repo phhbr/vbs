@@ -1,0 +1,32 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-space-10);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--vbs-touch-target);
+  padding: var(--vbs-space-10);
+  font: inherit;
+  background: var(--vbs-input-bg);
+  border: var(--vbs-border-style);
+  color: var(--vbs-input-fg);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--vbs-accent);
+  outline-offset: 2px;
+}
+
+.inputRow {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: var(--vbs-space-10);
+}
+
+.inputRow .input {
+  flex: 1 1 260px;
+}

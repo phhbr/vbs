@@ -1,18 +1,14 @@
 .row {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--vbs-space-10);
 }
 
-.divider {
-  color: var(--vbs-divider);
-}
-
-.option {
+/* Meta label (STYLE.md): dim, 12px, uppercase, letter-spaced. */
+.label {
+  font-size: var(--vbs-font-size-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--vbs-fg-dim);
-}
-
-.optionActive {
-  color: var(--vbs-accent);
-  font-weight: 700;
 }
