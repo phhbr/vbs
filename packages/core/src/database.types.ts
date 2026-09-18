@@ -207,6 +207,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assert_is_admin: {
+        Args: { p_session_id: string; p_user_id: string }
+        Returns: {
+          can_vote: boolean
+          id: string
+          joined_at: string
+          last_activity_at: string
+          name: string
+          role: string
+          session_id: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "participants"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      assert_no_round_in_progress: {
+        Args: { p_session: Database["public"]["Tables"]["sessions"]["Row"] }
+        Returns: undefined
+      }
       can_read_vote: {
         Args: { p_participant_id: string; p_round_id: string }
         Returns: boolean
@@ -246,11 +269,15 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      new_story: { Args: { p_code: string }; Returns: Json }
       normalize_session_code: { Args: { p_code: string }; Returns: string }
       session_state: { Args: { p_code: string }; Returns: Json }
+      set_deck: { Args: { p_code: string; p_deck: string }; Returns: Json }
+      start_story: { Args: { p_code: string; p_title: string }; Returns: Json }
       touch_session: { Args: { p_session_id: string }; Returns: undefined }
       transfer_admin: { Args: { p_participant_id: string }; Returns: Json }
       validate_nickname: { Args: { p_nickname: string }; Returns: string }
+      validate_story_title: { Args: { p_title: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never

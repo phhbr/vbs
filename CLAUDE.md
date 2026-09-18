@@ -146,14 +146,21 @@ Functions raise custom SQLSTATEs, which PostgREST passes through as
 `error.code`, so the frontend maps a code to an i18n key without matching on
 message text.
 
-| Code    | Meaning           | Code    | Meaning                        |
-| ------- | ----------------- | ------- | ------------------------------ |
-| `VB001` | session_not_found | `VB007` | invalid_token                  |
-| `VB002` | session_expired   | `VB008` | not_a_participant              |
-| `VB003` | session_full      | `VB009` | participant_not_found          |
-| `VB004` | nickname_taken    | `VB010` | admin_invariant (trigger only) |
-| `VB005` | nickname_invalid  | `VB011` | not_authenticated              |
-| `VB006` | not_admin         |         |                                |
+| Code    | Meaning                        |
+| ------- | ------------------------------ |
+| `VB001` | session_not_found              |
+| `VB002` | session_expired                |
+| `VB003` | session_full                   |
+| `VB004` | nickname_taken                 |
+| `VB005` | nickname_invalid               |
+| `VB006` | not_admin                      |
+| `VB007` | invalid_token                  |
+| `VB008` | not_a_participant              |
+| `VB009` | participant_not_found          |
+| `VB010` | admin_invariant (trigger only) |
+| `VB011` | not_authenticated              |
+| `VB012` | round_in_progress              |
+| `VB018` | invalid_story                  |
 
 ## Roles
 

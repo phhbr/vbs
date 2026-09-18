@@ -11,6 +11,8 @@ export const VBS_ERROR_CODES = {
   VB009: "participant_not_found",
   VB010: "admin_invariant",
   VB011: "not_authenticated",
+  VB012: "round_in_progress",
+  VB018: "invalid_story",
 } as const;
 
 export type VbsErrorCode = keyof typeof VBS_ERROR_CODES;
