@@ -1,3 +1,5 @@
+import type { CurrentRound } from "./round";
+
 /**
  * Shapes of the `jsonb` payloads the session RPCs return. The generated
  * database types only say `Json`, so these are maintained by hand alongside
@@ -15,19 +17,6 @@ export type SessionSummary = {
   expires_at: string;
   participant_count: number;
   is_full: boolean;
-};
-
-export type RoundStatus = "voting" | "revealed";
-
-/** Metadata only — never votes or a result. See round_status() for those. */
-export type CurrentRound = {
-  id: string;
-  round_number: number;
-  story: string;
-  attempt: number;
-  status: RoundStatus;
-  started_at: string;
-  revealed_at: string | null;
 };
 
 export type SessionParticipant = {

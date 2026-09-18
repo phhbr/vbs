@@ -17,6 +17,14 @@ export type {
   SessionSummary,
   SessionViewer,
 } from "./session";
+export type {
+  CurrentRound,
+  RoundPhase,
+  RoundResult,
+  RoundStatusParticipant,
+  RoundStatusResult,
+} from "./round";
+export { FIBONACCI_CARDS, TSHIRT_CARDS, cardsForDeck } from "./round";
 export {
   SESSION_CODE_ALPHABET,
   SESSION_CODE_LENGTH,

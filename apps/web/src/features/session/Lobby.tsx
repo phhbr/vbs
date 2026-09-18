@@ -43,14 +43,14 @@ export function Lobby({
   const participants = state.participants ?? [];
 
   return (
-    <main>
+    <>
       <h1>{t("lobby.title")}</h1>
       <p role="status">
         {connectionStatus === "connected"
           ? t("lobby.connected")
           : t("lobby.reconnecting")}
       </p>
-      <p>{t("lobby.waiting")}</p>
+      {!state.current_round && <p>{t("lobby.waiting")}</p>}
 
       <p>
         {t("lobby.code")}:{" "}
@@ -83,6 +83,6 @@ export function Lobby({
           {isRefreshing ? t("lobby.refreshing") : t("lobby.refresh")}
         </button>
       </p>
-    </main>
+    </>
   );
 }

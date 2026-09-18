@@ -13,6 +13,7 @@ import {
 } from "../features/session/adminToken";
 import { useClaimAdmin, useSessionState } from "../features/session/queries";
 import { useSessionRealtime } from "../features/session/realtime";
+import { RoundScreen } from "../features/round/RoundScreen";
 
 export function Session() {
   const { t } = useTranslation();
@@ -48,10 +49,11 @@ export function Session() {
   const claim = useClaimAdmin(code);
   const { mutate: claimAdmin, isIdle: claimIsIdle } = claim;
 
-  const { status: connectionStatus } = useSessionRealtime({
-    sessionId: state.data?.is_member ? state.data.session.id : undefined,
-    participantId: state.data?.viewer?.participant_id,
-  });
+  const { status: connectionStatus, onlineParticipantIds } =
+    useSessionRealtime({
+      sessionId: state.data?.is_member ? state.data.session.id : undefined,
+      participantId: state.data?.viewer?.participant_id,
+    });
 
   useEffect(() => {
     // A token we did not just mint is one to redeem. Claiming is idempotent,
@@ -112,13 +114,20 @@ export function Session() {
         />
       )}
       {claim.isSuccess && <p role="status">{t("admin.claimed")}</p>}
-      <Lobby
-        state={state.data}
-        shareUrl={shareUrl}
-        onRefresh={() => void state.refetch()}
-        isRefreshing={state.isFetching}
-        connectionStatus={connectionStatus}
-      />
+      <main>
+        <RoundScreen
+          code={code}
+          state={state.data}
+          onlineParticipantIds={onlineParticipantIds}
+        />
+        <Lobby
+          state={state.data}
+          shareUrl={shareUrl}
+          onRefresh={() => void state.refetch()}
+          isRefreshing={state.isFetching}
+          connectionStatus={connectionStatus}
+        />
+      </main>
     </>
   );
 }

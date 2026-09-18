@@ -1,0 +1,23 @@
+{
+  "round": {
+    "title": "Abstimmung",
+    "cards": "Karten",
+    "storyLabel": "Story",
+    "start": "[ Runde starten ]",
+    "reveal": "[ Karten aufdecken ]",
+    "reEstimate": "[ Neu schätzen ]",
+    "newStory": "[ Neue Story ]",
+    "emptyAdmin": "Keine aktive Runde — trag oben eine Story ein und starte.",
+    "emptyPlayer": "Warte auf den Admin, der eine Story startet.",
+    "story": "Story: {{title}}",
+    "progress": "Abstimmung läuft — {{voted}} von {{total}} abgegeben.",
+    "waiting": "wartet …",
+    "hasVoted": "hat abgestimmt",
+    "didNotVote": "hat nicht abgestimmt",
+    "offline": "offline",
+    "average": "Ø Durchschnitt",
+    "majority": "Mehrheit",
+    "consensus": "KONSENS ERREICHT",
+    "spread": "Streuung: {{min}} – {{max}} — Diskussion empfohlen."
+  }
+}

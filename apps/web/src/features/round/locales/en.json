@@ -1,0 +1,23 @@
+{
+  "round": {
+    "title": "Voting",
+    "cards": "Cards",
+    "storyLabel": "Story",
+    "start": "[ Start round ]",
+    "reveal": "[ Reveal cards ]",
+    "reEstimate": "[ Re-estimate ]",
+    "newStory": "[ New story ]",
+    "emptyAdmin": "No active round — enter a story above and start.",
+    "emptyPlayer": "Waiting for the admin to start a story.",
+    "story": "Story: {{title}}",
+    "progress": "Voting in progress — {{voted}} of {{total}} submitted.",
+    "waiting": "waiting …",
+    "hasVoted": "has voted",
+    "didNotVote": "did not vote",
+    "offline": "offline",
+    "average": "Ø Average",
+    "majority": "Majority",
+    "consensus": "CONSENSUS REACHED",
+    "spread": "Spread: {{min}} – {{max}} — discussion recommended."
+  }
+}
