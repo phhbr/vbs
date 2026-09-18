@@ -158,9 +158,15 @@ receiving it rather than trusting the payload for anything.
 
 Authorization lives on `realtime.messages`, the same shape as the table
 policies: one predicate, `is_session_channel_member()`, reusing
-`is_active_session_member()` so the two can never drift apart. There is no
-insert policy — clients never publish, only the trigger does, running as the
-function owner rather than through a grant.
+`is_active_session_member()` so the two can never drift apart.
+
+Broadcasts need no insert policy — only the trigger publishes them, running
+as the function owner rather than through a grant. Presence is different:
+`channel.track()` runs as the client, so it inserts through the client's own
+role and needs its own policy, scoped to `extension = 'presence'` so it
+can't be used to send an arbitrary broadcast. Missing this in the first cut
+meant every `track()` call failed silently (a `phx_reply` error visible only
+in the websocket frames) and presence never worked at all.
 
 ## Error codes
 
