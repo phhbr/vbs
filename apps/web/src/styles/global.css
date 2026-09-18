@@ -24,3 +24,17 @@ body {
   background: var(--vbs-accent);
   color: var(--vbs-on-accent);
 }
+
+/* Global, not per-component, matching the prototype's own <style> block —
+   text fields aren't one of STYLE.md's named building blocks, just a plain
+   element treatment reused everywhere. input:not([type]) covers our own
+   inputs, none of which set type="text" explicitly. */
+input[type="text"],
+input:not([type]) {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 6px 8px;
+  background: var(--vbs-input-bg);
+  border: 1px solid var(--vbs-divider);
+  color: var(--vbs-input-fg);
+}

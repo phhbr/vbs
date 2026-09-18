@@ -1,11 +1,14 @@
 {
+  "home": {
+    "heading": "Neue Sitzung oder Beitritt"
+  },
   "create": {
     "title": "Neue Sitzung eröffnen",
     "nickname": "Dein Name",
     "nicknameHint": "1 bis 24 Zeichen.",
-    "deck": "Kartensatz",
-    "deckFibonacci": "Fibonacci",
-    "deckTshirt": "T-Shirt",
+    "deck": "Kartensatz:",
+    "deckFibonacci": "[ Fibonacci ]",
+    "deckTshirt": "[ T-Shirt ]",
     "submit": "[ Sitzung eröffnen ]",
     "submitting": "[ wird eröffnet … ]"
   },

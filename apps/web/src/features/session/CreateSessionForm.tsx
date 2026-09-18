@@ -1,4 +1,5 @@
 import type { Deck } from "@vbs/core";
+import { BracketButton, BracketToggle, Panel } from "@vbs/ui";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -14,7 +15,6 @@ export function CreateSessionForm() {
 
   const nicknameId = useId();
   const nicknameHintId = useId();
-  const deckLabelId = useId();
   const [nickname, setNickname] = useState("");
   const [deck, setDeck] = useState<Deck>("fibonacci");
 
@@ -41,8 +41,7 @@ export function CreateSessionForm() {
   };
 
   return (
-    <section>
-      <h2>{t("create.title")}</h2>
+    <Panel heading={t("create.title")} headingLevel="h2">
       <form onSubmit={onSubmit}>
         <p>
           <label htmlFor={nicknameId}>{t("create.nickname")}</label>
@@ -61,32 +60,27 @@ export function CreateSessionForm() {
           <small id={nicknameHintId}>{t("create.nicknameHint")}</small>
         </p>
 
-        <fieldset>
-          <legend id={deckLabelId}>{t("create.deck")}</legend>
-          {(["fibonacci", "tshirt"] as const).map((option) => (
-            <label key={option}>
-              <input
-                type="radio"
-                name="deck"
-                value={option}
-                checked={deck === option}
-                onChange={() => setDeck(option)}
-              />
-              {option === "fibonacci"
-                ? t("create.deckFibonacci")
-                : t("create.deckTshirt")}
-            </label>
-          ))}
-        </fieldset>
+        <p>
+          <BracketToggle
+            label={t("create.deck")}
+            value={deck}
+            onChange={setDeck}
+            optionA={{ value: "fibonacci", label: t("create.deckFibonacci") }}
+            optionB={{ value: "tshirt", label: t("create.deckTshirt") }}
+          />
+        </p>
 
         <p>
-          <button type="submit" disabled={!nicknameValid || create.isPending}>
+          <BracketButton
+            type="submit"
+            disabled={!nicknameValid || create.isPending}
+          >
             {create.isPending ? t("create.submitting") : t("create.submit")}
-          </button>
+          </BracketButton>
         </p>
 
         {create.isError && <p role="alert">{describeError(create.error)}</p>}
       </form>
-    </section>
+    </Panel>
   );
 }

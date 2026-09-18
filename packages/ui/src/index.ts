@@ -2,6 +2,11 @@ export { useTheme } from "./theme/useTheme";
 export type { Theme } from "./theme/useTheme";
 export { BracketButton } from "./BracketButton/BracketButton";
 export type { BracketButtonProps } from "./BracketButton/BracketButton";
+export { BracketToggle } from "./BracketToggle/BracketToggle";
+export type {
+  BracketToggleOption,
+  BracketToggleProps,
+} from "./BracketToggle/BracketToggle";
 export { Panel } from "./Panel/Panel";
 export type { PanelProps } from "./Panel/Panel";
 export { Header } from "./Header/Header";

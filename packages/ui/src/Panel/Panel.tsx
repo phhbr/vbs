@@ -21,7 +21,10 @@ export function Panel({
       {...props}
     >
       {heading !== undefined && (
-        <Heading className={styles.heading}>&raquo; {heading}</Heading>
+        <Heading className={styles.heading}>
+          <span aria-hidden="true">&raquo; </span>
+          {heading}
+        </Heading>
       )}
       {children}
     </div>

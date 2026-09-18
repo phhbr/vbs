@@ -1,0 +1,22 @@
+.heading {
+  text-align: center;
+}
+
+.panels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-gap-columns);
+}
+
+/* Matches the session screen's own breakpoint (STYLE.md). */
+@media (min-width: 900px) {
+  .panels {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .panels > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}

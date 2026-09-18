@@ -42,9 +42,8 @@ describe("home screen", () => {
     expect(screen.getByLabelText("Dein Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Sitzungs-Code")).toBeInTheDocument();
     expect(
-      screen.getByRole("group", { name: "Kartensatz" }),
+      screen.getByRole("button", { name: "[ Fibonacci ]", pressed: true }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("radio", { name: "Fibonacci" })).toBeChecked();
   });
 
   it("keeps the create button disabled until a nickname is entered", async () => {

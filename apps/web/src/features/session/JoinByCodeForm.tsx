@@ -1,4 +1,5 @@
 import { isValidSessionCode, normalizeSessionCode } from "@vbs/core";
+import { BracketButton, Panel } from "@vbs/ui";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -25,8 +26,7 @@ export function JoinByCodeForm() {
   };
 
   return (
-    <section>
-      <h2>{t("join.title")}</h2>
+    <Panel heading={t("join.title")} headingLevel="h2">
       <form onSubmit={onSubmit}>
         <p>
           <label htmlFor={codeId}>{t("join.code")}</label>
@@ -57,9 +57,9 @@ export function JoinByCodeForm() {
         )}
 
         <p>
-          <button type="submit">{t("join.submit")}</button>
+          <BracketButton type="submit">{t("join.submit")}</BracketButton>
         </p>
       </form>
-    </section>
+    </Panel>
   );
 }

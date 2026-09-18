@@ -1,11 +1,14 @@
 {
+  "home": {
+    "heading": "New session or join"
+  },
   "create": {
     "title": "Open a new session",
     "nickname": "Your name",
     "nicknameHint": "1 to 24 characters.",
-    "deck": "Card deck",
-    "deckFibonacci": "Fibonacci",
-    "deckTshirt": "T-shirt",
+    "deck": "Card deck:",
+    "deckFibonacci": "[ Fibonacci ]",
+    "deckTshirt": "[ T-shirt ]",
     "submit": "[ Open session ]",
     "submitting": "[ opening … ]"
   },

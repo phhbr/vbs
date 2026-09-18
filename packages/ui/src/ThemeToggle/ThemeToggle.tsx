@@ -1,5 +1,4 @@
-import { BracketButton } from "../BracketButton/BracketButton";
-import styles from "./ThemeToggle.module.css";
+import { BracketToggle } from "../BracketToggle/BracketToggle";
 
 export type ThemeToggleProps = {
   theme: "light" | "dark";
@@ -18,25 +17,12 @@ export function ThemeToggle({
   lightLabel,
 }: ThemeToggleProps) {
   return (
-    <span className={styles.row}>
-      {label}
-      <BracketButton
-        aria-pressed={theme === "dark"}
-        className={theme === "dark" ? styles.optionActive : styles.option}
-        onClick={() => onChange("dark")}
-      >
-        {darkLabel}
-      </BracketButton>
-      <span className={styles.divider} aria-hidden="true">
-        |
-      </span>
-      <BracketButton
-        aria-pressed={theme === "light"}
-        className={theme === "light" ? styles.optionActive : styles.option}
-        onClick={() => onChange("light")}
-      >
-        {lightLabel}
-      </BracketButton>
-    </span>
+    <BracketToggle
+      label={label}
+      value={theme}
+      onChange={onChange}
+      optionA={{ value: "dark", label: darkLabel }}
+      optionB={{ value: "light", label: lightLabel }}
+    />
   );
 }
