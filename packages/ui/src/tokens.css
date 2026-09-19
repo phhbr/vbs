@@ -36,9 +36,14 @@
      button padding as exactly 10px 14px, not a value we chose ourselves. */
   --vbs-space-action-x: 14px;
 
-  /* Surfaces: no radii, no shadows, no gradients */
+  /* Surfaces: no radii, no shadows, no gradients (Behörde's inset input
+     shadow is the one deliberate exception — see --vbs-input-shadow below). */
   --vbs-radius: 0;
-  --vbs-border-style: 1px dashed var(--vbs-divider);
+  /* Composed from the two structural primitives below rather than hardcoded
+     here, so every Panel/Input/Dialog/rule that references this one
+     property picks up each theme's edge automatically — no component CSS
+     needs to know a third theme exists. */
+  --vbs-border-style: var(--vbs-edge-width) var(--vbs-edge-style) var(--vbs-divider);
 }
 
 /* 40px of side padding eats 22% of a 360px screen — halved below 480px. */
@@ -86,6 +91,15 @@
      the prototype, since a dashed border plus a same-color solid ring
      would read as one blurred shape rather than two distinct signals. */
   --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+
+  /* Structural tokens (design revision: third theme). Light and dark share
+     these defaults; Behörde is the only theme that overrides them. */
+  --vbs-edge-width: 1px;
+  --vbs-edge-style: dashed;
+  --vbs-title-bg: transparent;
+  --vbs-title-fg: var(--vbs-fg-strong);
+  --vbs-title-pad: 0;
+  --vbs-input-shadow: none;
 }
 
 /* Light */
@@ -102,11 +116,48 @@
   --vbs-disabled: #a8a498;    /* exempt */
   --vbs-on-accent: #ffffff;  /* text on an accent fill    9.3:1 */
   --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+  --vbs-edge-width: 1px;
+  --vbs-edge-style: dashed;
+  --vbs-title-bg: transparent;
+  --vbs-title-fg: var(--vbs-fg-strong);
+  --vbs-title-pad: 0;
+  --vbs-input-shadow: none;
 }
 
-/* With no stored choice, follow the system. */
+/* Behörde: a 1980s German administrative terminal. Deep blue screen, yellow
+   highlights, a double-ruled edge instead of dashed, inverted section
+   titles, sunken input fields. A full third option, not a variant of light
+   or dark — it brings its own accent and danger rather than reusing either
+   theme's, and every component already reads colors through these tokens
+   rather than assuming a value, so nothing but this block was needed to
+   add it. */
+:root[data-theme="amt"] {
+  --vbs-bg: #000080;
+  --vbs-fg: #d0d4e4;           /* body text        10.8:1 */
+  --vbs-fg-dim: #a8b0d0;       /* meta labels, hints 7.5:1 */
+  --vbs-fg-strong: #ffffff;    /* values, logo, headings, panel titles 16.0:1 */
+  --vbs-accent: #ffff54;       /* interactive only: buttons, cards, active 15.0:1 */
+  --vbs-danger: #ff9a9a;       /* warnings           7.9:1 */
+  --vbs-divider: #6a78c8;      /* rules, panel borders 3.9:1 */
+  --vbs-input-bg: #00004a;
+  --vbs-input-fg: #ffffff;
+  --vbs-disabled: #7a86b4;     /* exempt */
+  --vbs-on-accent: #000000;   /* text on an accent fill   19.7:1 */
+  --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+  --vbs-edge-width: 3px;
+  --vbs-edge-style: double;
+  --vbs-title-bg: var(--vbs-accent);
+  --vbs-title-fg: var(--vbs-on-accent);
+  --vbs-title-pad: 0 10px;
+  --vbs-input-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* With no stored choice, follow the system. Behörde is never a default —
+   it has no place in this block, only in the explicit [data-theme="amt"]
+   selector above, which useTheme.ts and theme-bootstrap.js are the only
+   things that ever set. */
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
+  :root:not([data-theme="dark"]):not([data-theme="amt"]) {
     --vbs-bg: #f7f4ec;
     --vbs-fg: #262620;
     --vbs-fg-dim: #4a4740;
@@ -119,13 +170,19 @@
     --vbs-disabled: #a8a498;
     --vbs-on-accent: #ffffff;
     --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+    --vbs-edge-width: 1px;
+    --vbs-edge-style: dashed;
+    --vbs-title-bg: transparent;
+    --vbs-title-fg: var(--vbs-fg-strong);
+    --vbs-title-pad: 0;
+    --vbs-input-shadow: none;
   }
 }
 
 /*
  * The selected card, an "on" button/tab, and the consensus badge fill an
  * area with --vbs-accent and print --vbs-on-accent on top of it — confirmed
- * by the contrast test to reach AAA in both themes. These states are signalled
- * by the fill/inversion itself plus real state (aria-checked/aria-selected/
- * aria-pressed), not by color alone.
+ * by the contrast test to reach AAA in all three themes. These states are
+ * signalled by the fill/inversion itself plus real state
+ * (aria-checked/aria-selected/aria-pressed), not by color alone.
  */

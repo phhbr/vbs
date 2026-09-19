@@ -25,17 +25,28 @@ function extractBlock(css: string, selector: string): string {
   return css.slice(braceStart, braceEnd);
 }
 
+// A few tokens (amt's title-bg/title-fg) are defined as var(--other-token)
+// rather than a literal hex, to keep them tied to that token's single
+// definition instead of repeating its value. Resolve one level of that
+// indirection within the same block rather than duplicating the hex.
+function resolveToken(block: string, name: string): string {
+  const match = block.match(
+    new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6}|var\\((--[a-z-]+)\\))`),
+  );
+  if (!match) {
+    throw new Error(`Token not found: ${name}`);
+  }
+  const [, value, ref] = match;
+  return value!.startsWith("#") ? value! : resolveToken(block, ref!);
+}
+
 function extractTokens(
   block: string,
   names: readonly string[],
 ): Record<string, string> {
   const result: Record<string, string> = {};
   for (const name of names) {
-    const match = block.match(new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6})`));
-    if (!match) {
-      throw new Error(`Token not found: ${name}`);
-    }
-    result[name] = match[1]!;
+    result[name] = resolveToken(block, name);
   }
   return result;
 }
@@ -64,7 +75,13 @@ function contrastRatio(hexA: string, hexB: string): number {
 const THEMES = {
   dark: extractBlock(tokensCss, ':root,\n:root[data-theme="dark"]'),
   light: extractBlock(tokensCss, ':root[data-theme="light"]'),
+  amt: extractBlock(tokensCss, ':root[data-theme="amt"]'),
 } as const;
+
+// Only Behörde fills the title bar with a real color — light/dark leave
+// --vbs-title-bg: transparent, which isn't a pair to check (and isn't a hex
+// value extractTokens' regex would even match).
+const THEMES_WITH_TITLE_FILL = { amt: THEMES.amt } as const;
 
 describe.each(Object.entries(THEMES))(
   "token contrast — %s theme",
@@ -91,6 +108,21 @@ describe.each(Object.entries(THEMES))(
       const { "--vbs-on-accent": onAccent, "--vbs-accent": accent } =
         extractTokens(block, ["--vbs-on-accent", "--vbs-accent"]);
       expect(contrastRatio(onAccent!, accent!)).toBeGreaterThanOrEqual(7);
+    });
+  },
+);
+
+// Only the heading text itself sits on --vbs-title-bg (finding: "only the
+// heading itself gets the bar, not the whole header row with its buttons"),
+// so this checks that exact pair rather than reusing the background-based
+// checks above.
+describe.each(Object.entries(THEMES_WITH_TITLE_FILL))(
+  "token contrast — %s theme title bar",
+  (_name, block) => {
+    it("--vbs-title-fg reaches 7:1 against --vbs-title-bg", () => {
+      const { "--vbs-title-fg": titleFg, "--vbs-title-bg": titleBg } =
+        extractTokens(block, ["--vbs-title-fg", "--vbs-title-bg"]);
+      expect(contrastRatio(titleFg!, titleBg!)).toBeGreaterThanOrEqual(7);
     });
   },
 );
