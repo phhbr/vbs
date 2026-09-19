@@ -8,16 +8,29 @@ export function heading(
   return page.getByRole("heading", { name, ...options });
 }
 
-export async function createSession(page: Page, nickname: string) {
+export async function createSession(
+  page: Page,
+  nickname: string,
+  options: { dismissRecovery?: boolean } = {},
+) {
   await page.goto("/");
   await page.getByLabel("Dein Name").fill(nickname);
   await page.getByRole("button", { name: "Sitzung eröffnen" }).click();
   await page.waitForURL(/\/s\/[A-Z2-9]{12}#admin=[0-9a-f]{64}/);
 
   const url = new URL(page.url());
+  const recoveryUrl = page.url();
+
+  // The recovery notice is a real modal now — it blocks every other
+  // interaction until dismissed, same as it does for a real admin. Callers
+  // that want to interact with it themselves opt out.
+  if (options.dismissRecovery ?? true) {
+    await page.getByRole("button", { name: "Verstanden, weiter" }).click();
+  }
+
   return {
     code: url.pathname.split("/").pop()!,
-    recoveryUrl: page.url(),
+    recoveryUrl,
   };
 }
 

@@ -8,6 +8,7 @@ import {
   joinSession,
   leaveSession,
   recordJoinFailure,
+  regenerateAdminToken,
   removeParticipant,
   transferAdmin,
 } from "./api";
@@ -59,6 +60,13 @@ export function useTransferAdmin(code: string) {
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
   });
+}
+
+/** Mints a fresh recovery link on demand — the database can never
+ * redisplay the original, and claim_admin now invalidates it after one
+ * use anyway, so this is the only way to get a working link again. */
+export function useRegenerateAdminToken(code: string) {
+  return useMutation({ mutationFn: () => regenerateAdminToken(code) });
 }
 
 export function useRemoveParticipant(code: string) {

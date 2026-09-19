@@ -78,3 +78,11 @@ export type LeaveSessionResult = {
   /** Present only when the leaving admin handed off to a successor. */
   new_admin_id?: string;
 };
+
+export type RegenerateAdminTokenResult = {
+  code: string;
+  /** Returned exactly once, same as create_session's. Only its hash is
+   * stored, and the previous token stops working the moment this is
+   * minted. */
+  admin_token: string;
+};

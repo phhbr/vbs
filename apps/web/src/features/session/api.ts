@@ -4,6 +4,7 @@ import type {
   Deck,
   JoinSessionResult,
   LeaveSessionResult,
+  RegenerateAdminTokenResult,
   RemoveParticipantResult,
   SessionState,
 } from "@vbs/core";
@@ -68,6 +69,14 @@ export async function transferAdmin(
 ): Promise<ClaimAdminResult> {
   return unwrap<ClaimAdminResult>(
     await supabase.rpc("transfer_admin", { p_participant_id: participantId }),
+  );
+}
+
+export async function regenerateAdminToken(
+  code: string,
+): Promise<RegenerateAdminTokenResult> {
+  return unwrap<RegenerateAdminTokenResult>(
+    await supabase.rpc("regenerate_admin_token", { p_code: code }),
   );
 }
 

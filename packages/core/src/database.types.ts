@@ -145,6 +145,7 @@ export type Database = {
       }
       sessions: {
         Row: {
+          admin_token_expires_at: string
           admin_token_hash: string
           code: string
           created_at: string
@@ -156,6 +157,7 @@ export type Database = {
           version: number
         }
         Insert: {
+          admin_token_expires_at?: string
           admin_token_hash: string
           code: string
           created_at?: string
@@ -167,6 +169,7 @@ export type Database = {
           version?: number
         }
         Update: {
+          admin_token_expires_at?: string
           admin_token_hash?: string
           code?: string
           created_at?: string
@@ -336,6 +339,7 @@ export type Database = {
       lock_live_session: {
         Args: { p_code: string }
         Returns: {
+          admin_token_expires_at: string
           admin_token_hash: string
           code: string
           created_at: string
@@ -357,6 +361,7 @@ export type Database = {
       normalize_session_code: { Args: { p_code: string }; Returns: string }
       re_estimate: { Args: { p_round_id: string }; Returns: Json }
       record_join_failure: { Args: never; Returns: undefined }
+      regenerate_admin_token: { Args: { p_code: string }; Returns: Json }
       remove_participant: { Args: { p_participant_id: string }; Returns: Json }
       reveal: { Args: { p_round_id: string }; Returns: Json }
       round_status: { Args: { p_round_id: string }; Returns: Json }

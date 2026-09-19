@@ -16,6 +16,9 @@ export default tseslint.config(
       // not our code — same reasoning as public/.
       "docs/prototype/support.js",
       "docs/prototype/vendor/**",
+      // Playwright's own generated report/trace output, not source.
+      "**/playwright-report/**",
+      "**/test-results/**",
       "supabase/.branches/**",
       "supabase/.temp/**",
       "packages/core/src/database.types.ts",

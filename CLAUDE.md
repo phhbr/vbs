@@ -143,8 +143,9 @@ adding a policy, not by changing grants.
 
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
 `new_story`, `set_deck`, `remove_participant`, `leave_session`, `transfer_admin`,
-`claim_admin`, `set_can_vote`, `record_join_failure`, `round_status`
-(read-only; before reveal it returns only who has voted, never values).
+`claim_admin`, `regenerate_admin_token`, `set_can_vote`, `record_join_failure`,
+`round_status` (read-only; before reveal it returns only who has voted, never
+values).
 
 Every mutating function goes through `lock_live_session()`, which takes a row
 lock on the session and raises on unknown or expired codes. The lock is what
@@ -233,7 +234,15 @@ message text.
 Admin recovery: `/s/<code>#admin=<token>`. The token travels only in the URL
 fragment — never the path or query, so it stays out of server logs and
 `Referer` headers — and the database stores only its SHA-256 hash. It is
-returned exactly once, by `create_session`.
+returned exactly once, by `create_session`, expires 24 hours after minting
+(`sessions.admin_token_expires_at`), and is single-use: `claim_admin` rotates
+`admin_token_hash` to a fresh, never-returned value the instant it accepts a
+token, so a second attempt with the same one — a genuine reuse or a link that
+leaked further — fails exactly like a wrong token, `VB007`. A found-in-a-
+screenshot recovery link is the design revision's motivating case for this.
+`regenerate_admin_token` is how the current admin gets a working link again;
+there is no "show it again" path even in principle, since the database never
+held anything but the hash.
 
 `claim_admin` has two paths, because the realistic case is a browser that lost
 its anonymous session and is therefore a stranger to the session:

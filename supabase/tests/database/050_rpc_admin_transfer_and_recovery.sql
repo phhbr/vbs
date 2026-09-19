@@ -1,7 +1,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(22);
 
 -- ---------------------------------------------------------------- fixtures
 insert into auth.users (id, instance_id, aud, role, email) values
@@ -16,6 +16,17 @@ values (
   '50000000-0000-0000-0000-000000000001',
   'ABCDEFGHJKLM',
   encode(extensions.digest('secret-token', 'sha256'), 'hex')
+);
+
+-- A second session whose token is already past its expiry, for the
+-- expiry check — kept separate from the main narrative above so that test
+-- doesn't have to fight over the first session's state.
+insert into sessions (id, code, admin_token_hash, admin_token_expires_at)
+values (
+  '50000000-0000-0000-0000-000000000002',
+  'NPQRSTUVWXYZ',
+  encode(extensions.digest('expired-token', 'sha256'), 'hex'),
+  now() - interval '1 minute'
 );
 
 insert into participants (id, session_id, user_id, name, role) values
@@ -129,14 +140,54 @@ select is(
   'adoption leaves no ghost participant behind'
 );
 
--- Bob is already a participant, so his claim demotes instead of adopting.
+-- ------------------------------------------------------- single-use token
+-- design revision security fix: the token Dee just claimed with must not
+-- work a second time, for anyone.
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"a0000000-0000-0000-0000-000000000002","role":"authenticated"}';
+select throws_ok(
+  $$ select claim_admin('ABCDEFGHJKLM', 'secret-token') $$,
+  'VB007',
+  null,
+  'a token already used successfully is rejected the same as a wrong one'
+);
 
+-- ------------------------------------------------------ regenerate_admin_token
+-- Bob (a player) may not mint a new recovery link.
+select throws_ok(
+  $$ select regenerate_admin_token('ABCDEFGHJKLM') $$,
+  'VB006',
+  null,
+  'a player calling regenerate_admin_token is rejected as not_admin'
+);
+
+-- Cy, a stranger to the session, may not either.
+set local request.jwt.claims = '{"sub":"a0000000-0000-0000-0000-000000000003","role":"authenticated"}';
+select throws_ok(
+  $$ select regenerate_admin_token('ABCDEFGHJKLM') $$,
+  'VB008',
+  null,
+  'a stranger calling regenerate_admin_token is rejected as not_a_participant'
+);
+
+-- Dee, the current admin (via adoption above), mints a fresh link.
+set local request.jwt.claims = '{"sub":"a0000000-0000-0000-0000-000000000004","role":"authenticated"}';
+create temporary table t_regen as
+  select regenerate_admin_token('ABCDEFGHJKLM') as result;
+
+select ok(
+  (select result ->> 'admin_token' from t_regen) is not null,
+  'regenerate_admin_token returns a fresh token for the current admin'
+);
+
+-- Bob, already a participant, claims with the new token and is promoted
+-- rather than adopting a row — the same "existing participant" path
+-- claim_admin has always had, now exercised against a regenerated token.
+set local request.jwt.claims = '{"sub":"a0000000-0000-0000-0000-000000000002","role":"authenticated"}';
 select is(
-  claim_admin('ABCDEFGHJKLM', 'secret-token') ->> 'adopted',
+  claim_admin('ABCDEFGHJKLM', (select result ->> 'admin_token' from t_regen)) ->> 'adopted',
   'false',
-  'a claimant who already joined is promoted rather than adopting a row'
+  'a claimant who already joined is promoted using the regenerated token'
 );
 
 reset role;
@@ -151,6 +202,16 @@ select is(
     where session_id = '50000000-0000-0000-0000-000000000001' and role = 'admin'),
   1::bigint,
   'there is still exactly one admin after the claim'
+);
+
+-- ------------------------------------------------------------- expiry
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"a0000000-0000-0000-0000-000000000003","role":"authenticated"}';
+select throws_ok(
+  $$ select claim_admin('NPQRSTUVWXYZ', 'expired-token') $$,
+  'VB007',
+  null,
+  'a token past its own expiry is rejected as invalid_token even with the right value'
 );
 
 select * from finish();

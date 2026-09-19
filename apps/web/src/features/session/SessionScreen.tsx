@@ -1,6 +1,6 @@
 import type { SessionState } from "@vbs/core";
 import { formatSessionCode } from "@vbs/core";
-import { Footer, NavTabs, StatusBar } from "@vbs/ui";
+import { BracketButton, Footer, NavTabs, StatusBar } from "@vbs/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -8,9 +8,11 @@ import { RoundHistory } from "../round/RoundHistory";
 import { RoundScreen } from "../round/RoundScreen";
 import { useRoundHistory } from "../round/queries";
 import { useDocumentTitle } from "../../lib/useDocumentTitle";
+import { AdminRecoveryNotice } from "./AdminRecoveryNotice";
+import { adminRecoveryUrl } from "./adminToken";
 import { ConfirmAction } from "./ConfirmAction";
 import { useExpiryStatus } from "./expiry";
-import { useLeaveSession } from "./queries";
+import { useLeaveSession, useRegenerateAdminToken } from "./queries";
 import type { ConnectionStatus } from "./realtime";
 import { RulesTab } from "./RulesTab";
 import { useErrorMessage } from "./useErrorMessage";
@@ -36,6 +38,9 @@ export function SessionScreen({
   const history = useRoundHistory(state.session.id);
   const expiry = useExpiryStatus(state.session.expires_at);
   const leaveSession = useLeaveSession(code);
+  const regenerateToken = useRegenerateAdminToken(code);
+  const [freshToken, setFreshToken] = useState<string | null>(null);
+  const isAdmin = state.viewer?.role === "admin";
   useDocumentTitle(`${t("app.title")} — ${t("session.heading")}`);
 
   const shareUrl = `${window.location.origin}/s/${code}`;
@@ -55,6 +60,13 @@ export function SessionScreen({
 
   return (
     <main className="page-main">
+      {freshToken && (
+        <AdminRecoveryNotice
+          code={code}
+          url={adminRecoveryUrl(window.location.origin, code, freshToken)}
+          onAcknowledge={() => setFreshToken(null)}
+        />
+      )}
       <h1 className="page-heading">{t("session.heading")}</h1>
       <p aria-live="polite">
         {connectionStatus === "connected"
@@ -131,18 +143,32 @@ export function SessionScreen({
           t("session.footerRound", { n: latestRoundNumber }),
         ]}
         action={
-          <ConfirmAction
-            label={t("session.footerLeave")}
-            confirmQuestion={t("session.leaveConfirm")}
-            confirmLabel={t("session.leaveConfirmYes")}
-            cancelLabel={t("session.leaveConfirmNo")}
-            disabled={leaveSession.isPending}
-            onConfirm={() =>
-              leaveSession.mutate(undefined, {
-                onSuccess: () => void navigate("/"),
-              })
-            }
-          />
+          <span className={styles.footerActions}>
+            {isAdmin && (
+              <BracketButton
+                disabled={regenerateToken.isPending}
+                onClick={() =>
+                  regenerateToken.mutate(undefined, {
+                    onSuccess: (result) => setFreshToken(result.admin_token),
+                  })
+                }
+              >
+                {t("admin.regenerate")}
+              </BracketButton>
+            )}
+            <ConfirmAction
+              label={t("session.footerLeave")}
+              confirmQuestion={t("session.leaveConfirm")}
+              confirmLabel={t("session.leaveConfirmYes")}
+              cancelLabel={t("session.leaveConfirmNo")}
+              disabled={leaveSession.isPending}
+              onConfirm={() =>
+                leaveSession.mutate(undefined, {
+                  onSuccess: () => void navigate("/"),
+                })
+              }
+            />
+          </span>
         }
       />
     </main>

@@ -35,7 +35,9 @@ test("the recovery link makes a third browser the admin and demotes the first", 
   const pageB = await contextB.newPage();
   const pageC = await contextC.newPage();
 
-  const { code, recoveryUrl } = await createSession(pageA, "Ada");
+  const { code, recoveryUrl } = await createSession(pageA, "Ada", {
+    dismissRecovery: false,
+  });
   await join(pageB, code, "Bob");
 
   // The recovery link is shown exactly once, with its warning.

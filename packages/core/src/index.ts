@@ -13,6 +13,7 @@ export type {
   JoinSessionResult,
   LeaveSessionResult,
   ParticipantRole,
+  RegenerateAdminTokenResult,
   RemoveParticipantResult,
   SessionParticipant,
   SessionState,

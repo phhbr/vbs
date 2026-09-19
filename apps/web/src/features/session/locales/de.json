@@ -54,8 +54,10 @@
   },
   "admin": {
     "recoveryTitle": "Wiederherstellungs-Link",
-    "recoveryWarning": "Dieser Link wird genau einmal angezeigt. Mit ihm holst du dir die Leitung zurück, falls du den Browser wechselst oder deine Daten löschst. Bewahre ihn jetzt auf — danach ist er weg.",
+    "recoveryWarning": "Dieser Link wird genau einmal angezeigt. Mit ihm holst du dir die Leitung zurück, falls du den Browser wechselst oder deine Daten löschst. Bewahre ihn jetzt auf — danach ist er weg. Er läuft nach 24 Stunden ab und funktioniert nur einmal; eine neue Verwendung braucht einen frisch erzeugten Link.",
+    "recoverySession": "Sitzung",
     "recoveryAcknowledge": "Verstanden, weiter",
+    "regenerate": "Admin-Link",
     "claimed": "Du hast die Leitung übernommen.",
     "claiming": "Leitung wird übernommen …"
   },

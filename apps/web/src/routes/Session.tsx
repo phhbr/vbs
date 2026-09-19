@@ -1,5 +1,5 @@
 import { normalizeSessionCode } from "@vbs/core";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation, useParams } from "react-router";
 import { AdminRecoveryNotice } from "../features/session/AdminRecoveryNotice";
@@ -46,7 +46,15 @@ export function Session() {
 
   const state = useSessionState(code);
   const claim = useClaimAdmin(code);
-  const { mutate: claimAdmin, isIdle: claimIsIdle } = claim;
+  const { mutate: claimAdmin } = claim;
+  // A ref, not claim.isIdle: the token is single-use now (design revision
+  // security fix), so a second claim_admin call for the same token fails
+  // instead of harmlessly repeating the first. isIdle only flips once
+  // React Query's async state catches up, which isn't fast enough to stop
+  // React StrictMode's deliberate double-invoke of this effect under load —
+  // confirmed the hard way as an e2e flake under parallel test workers.
+  // This ref updates synchronously, before the mutation even starts.
+  const claimedTokenRef = useRef<string | null>(null);
 
   const {
     status: connectionStatus,
@@ -58,12 +66,12 @@ export function Session() {
   });
 
   useEffect(() => {
-    // A token we did not just mint is one to redeem. Claiming is idempotent,
-    // so a reload with the hash still present is harmless.
-    if (token && !isOwnToken && claimIsIdle) {
+    // A token we did not just mint is one to redeem.
+    if (token && !isOwnToken && claimedTokenRef.current !== token) {
+      claimedTokenRef.current = token;
       claimAdmin(token, { onSettled: stripHash });
     }
-  }, [token, isOwnToken, claimIsIdle, claimAdmin]);
+  }, [token, isOwnToken, claimAdmin]);
 
   if (!code) return <Navigate to="/" replace />;
 
@@ -115,6 +123,7 @@ export function Session() {
     <>
       {showRecoveryNotice && (
         <AdminRecoveryNotice
+          code={code}
           url={adminRecoveryUrl(window.location.origin, code, token)}
           onAcknowledge={() => {
             stripHash();

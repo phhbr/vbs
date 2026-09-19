@@ -54,8 +54,10 @@
   },
   "admin": {
     "recoveryTitle": "Recovery link",
-    "recoveryWarning": "This link is shown exactly once. Use it to take the chair back if you switch browsers or clear your data. Save it now — after this it is gone.",
+    "recoveryWarning": "This link is shown exactly once. Use it to take the chair back if you switch browsers or clear your data. Save it now — after this it is gone. It expires after 24 hours and only works once; using it again needs a freshly minted link.",
+    "recoverySession": "Session",
     "recoveryAcknowledge": "Understood, continue",
+    "regenerate": "Admin link",
     "claimed": "You have taken the chair.",
     "claiming": "Taking the chair …"
   },
