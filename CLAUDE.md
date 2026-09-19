@@ -335,11 +335,16 @@ stay open for the Playwright suite to run unattended.
 
 ## Design and accessibility
 
-- The look comes from `docs/prototype/`. `tokens.css` is binding, `STYLE.md`
-  explains the patterns.
+- The look comes from `docs/prototype/Main.dc.html`. `packages/ui/src/tokens.css`
+  is binding, `docs/prototype/STYLE.md` explains the patterns.
 - Target is WCAG AAA: 7:1 for text, 44 × 44 px hit areas, visible focus, status
   always conveyed as text and not by color alone.
 - A unit test checks every token pair for 7:1. New colors without a test are not allowed.
+- A 14px/20px type grid and a 10/20/40px spacing scale, enforced by a unit test
+  that scans every `.module.css` file for gap/padding/margin — a stray value
+  fails it, the same way a color misses AAA. `--vbs-space-action-x` (14px,
+  button padding) is the one named exception, not a value the scale itself
+  permits.
 - Responsive from 360 px up. The prototype's fixed `min-width: 1040px` is not carried over.
 - Real elements: `<button>`, `<a href>`, `<input>` with `<label>`, the card row as a
   `radiogroup`. No `onClick` on a `div` or `span`.
