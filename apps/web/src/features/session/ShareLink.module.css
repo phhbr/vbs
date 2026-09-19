@@ -1,0 +1,8 @@
+/* Same treatment as SessionError.module.css's .backLink: the browser's
+   default link blue clashes badly against Behörde's own blue background
+   (an axe color-contrast failure caught by e2e/accessibility.spec.ts), and
+   every other interactive element already reads --vbs-accent instead of a
+   UA default. */
+.link {
+  color: var(--vbs-accent);
+}

@@ -9,7 +9,12 @@ import styles from "./Panel.module.css";
 export type PanelProps = HTMLAttributes<HTMLDivElement> & {
   /** Uppercase, letter-spaced panel title. Omit for a plain box. */
   heading?: ReactNode;
-  /** Defaults to h3: panels sit inside an already-titled section (h2). */
+  /** Defaults to h2: every panel in the app today sits directly under a
+   * route's own h1, as a sibling, never nested inside a further-titled
+   * section — axe's heading-order rule caught the h3 default skipping a
+   * level everywhere it was used without an override. Pass "h3" (or
+   * higher) explicitly for a panel that genuinely nests inside another
+   * heading. */
   headingLevel?: ElementType;
   /** Rendered beside the heading in the title bar, e.g. "Rundenverlauf
    * [ Alle ]" or the deck-picker buttons beside "Neue Story". */
@@ -26,7 +31,7 @@ export type PanelProps = HTMLAttributes<HTMLDivElement> & {
  */
 export function Panel({
   heading,
-  headingLevel: Heading = "h3",
+  headingLevel: Heading = "h2",
   headingAction,
   className,
   children,

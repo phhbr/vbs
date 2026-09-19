@@ -27,7 +27,7 @@ export function JoinByCodeForm() {
   };
 
   return (
-    <Panel heading={t("join.title")} headingLevel="h2">
+    <Panel heading={t("join.title")}>
       <form onSubmit={onSubmit} className={styles.form}>
         <Field>
           <label htmlFor={codeId}>{t("join.code")}</label>

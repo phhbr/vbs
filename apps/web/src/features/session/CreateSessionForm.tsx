@@ -42,7 +42,7 @@ export function CreateSessionForm() {
   };
 
   return (
-    <Panel heading={t("create.title")} headingLevel="h2">
+    <Panel heading={t("create.title")}>
       <form onSubmit={onSubmit} className={styles.form}>
         <Field>
           <label htmlFor={nicknameId}>{t("create.nickname")}</label>
