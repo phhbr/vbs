@@ -47,11 +47,15 @@ code {
   gap: var(--vbs-space-20);
 }
 
+/* Mirrors Panel's own .heading rule exactly, so a page's <h1> and every
+   panel's title bar invert together in Behörde — see Panel.module.css. */
 .page-heading {
   margin: 0;
   font-size: inherit;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--vbs-fg-strong);
+  color: var(--vbs-title-fg);
+  background: var(--vbs-title-bg);
+  padding: var(--vbs-title-pad);
 }

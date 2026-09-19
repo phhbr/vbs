@@ -16,11 +16,17 @@
   gap: var(--vbs-space-10);
 }
 
+/* Transparent/0-padding for light and dark, so this is a no-op there;
+   Behörde is the only theme that fills this with an inverted title bar
+   (design revision, third theme finding 2) — the bar covers only the
+   heading text itself, not the action buttons beside it in .head. */
 .heading {
   margin: 0;
   font-size: inherit;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--vbs-fg-strong);
+  color: var(--vbs-title-fg);
+  background: var(--vbs-title-bg);
+  padding: var(--vbs-title-pad);
 }

@@ -12,6 +12,10 @@
   font: inherit;
   background: var(--vbs-input-bg);
   border: var(--vbs-border-style);
+  /* "none" for light and dark; Behörde's sunken-field look (design
+     revision, third theme finding 3) is the one deliberate exception to
+     "no shadows" in tokens.css's surfaces comment. */
+  box-shadow: var(--vbs-input-shadow);
   color: var(--vbs-input-fg);
 }
 
