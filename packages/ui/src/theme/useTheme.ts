@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark";
+export type Theme = "light" | "dark" | "amt";
+// prefers-color-scheme only ever distinguishes light from dark — Behörde
+// ("amt") has no operating-system equivalent and must never come from here,
+// only from an explicit stored choice.
+type SystemTheme = "light" | "dark";
 
 const STORAGE_KEY = "vbs-theme";
 
 function isTheme(value: string | null): value is Theme {
-  return value === "light" || value === "dark";
+  return value === "light" || value === "dark" || value === "amt";
 }
 
 function getStoredTheme(): Theme | null {
@@ -18,7 +22,7 @@ function getStoredTheme(): Theme | null {
   }
 }
 
-function getSystemTheme(): Theme {
+function getSystemTheme(): SystemTheme {
   return window.matchMedia("(prefers-color-scheme: light)").matches
     ? "light"
     : "dark";

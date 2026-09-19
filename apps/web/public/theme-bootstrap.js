@@ -14,7 +14,7 @@
 (function () {
   try {
     var theme = localStorage.getItem("vbs-theme");
-    if (theme === "light" || theme === "dark") {
+    if (theme === "light" || theme === "dark" || theme === "amt") {
       document.documentElement.dataset.theme = theme;
     }
     var locale = localStorage.getItem("i18nextLng");

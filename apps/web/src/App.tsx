@@ -23,6 +23,7 @@ export function App() {
               label={t("theme.label")}
               darkLabel={t("theme.dark")}
               lightLabel={t("theme.light")}
+              amtLabel={t("theme.amt")}
             />
             <LocaleToggle
               locale={locale}

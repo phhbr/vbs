@@ -11,7 +11,8 @@
   "theme": {
     "label": "Display",
     "light": "Light",
-    "dark": "Dark"
+    "dark": "Dark",
+    "amt": "Behörde"
   },
   "language": {
     "label": "Language",

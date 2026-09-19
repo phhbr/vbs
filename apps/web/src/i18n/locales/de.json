@@ -11,7 +11,8 @@
   "theme": {
     "label": "Darstellung",
     "light": "Hell",
-    "dark": "Dunkel"
+    "dark": "Dunkel",
+    "amt": "Behörde"
   },
   "language": {
     "label": "Sprache",
