@@ -54,9 +54,51 @@ fill (a selected card, an "on" button, the consensus badge), not on the page
 background, which is why it has its own line in the contrast test rather than
 sharing one with `--vbs-fg-strong`.
 
+## Themes
+
+Three: dark (the prototype's default), light, and Behörde (`amt`) — a 1980s
+German administrative terminal, added as a genuine third option rather than a
+variant of either. `data-theme` on `<html>` selects one; with nothing stored,
+`prefers-color-scheme` still decides between dark and light only — Behörde
+has no operating-system equivalent and is reached only by an explicit choice
+in the `Darstellung` control (`ThemeToggle`), a real three-option
+`role="radiogroup"` with the same roving-tabindex, arrow-key pattern as
+`CardDeck`, not the two-state toggle the previous version used. The choice
+persists per browser (`localStorage`) and applies before first paint through
+the same mechanism as the locale — `theme-bootstrap.js` reads the stored
+value and sets `data-theme` synchronously, so a returning visitor never sees
+a flash of the wrong theme.
+
+Every color role above, plus four structural tokens, is defined per theme in
+`tokens.css` and nowhere else:
+
+- **`--vbs-edge-width`** and **`--vbs-edge-style`** compose into
+  `--vbs-border-style` (`1px dashed` for dark and light, `3px double` for
+  Behörde). Every Panel, Input, and Dialog already read that one composed
+  token rather than a hardcoded value, so the third theme's edge needed zero
+  component CSS changes — only `tokens.css`.
+- **`--vbs-title-bg`**, **`--vbs-title-fg`**, and **`--vbs-title-pad`** are
+  transparent, `--vbs-fg-strong`, and `0` for dark and light — a no-op, the
+  title stays plain text exactly as before this theme existed. Behörde fills
+  them with the accent/on-accent pair and `0 10px`, giving its section
+  titles an inverted bar. Only the heading text itself gets the fill, in
+  both `Panel`'s own heading and `global.css`'s `.page-heading` — never the
+  action buttons that sit beside a heading in the same title row.
+- **`--vbs-input-shadow`** is `none` for dark and light, an inset shadow for
+  Behörde's sunken-field look — the one deliberate exception to "no shadows"
+  in the surfaces comment at the top of `tokens.css`.
+
+Behörde's palette (`#000080` background, `#ffff54` accent, black text on that
+accent fill) clears every pair in `tokens.contrast.test.ts` with margin —
+nothing needed correcting when it was added, unlike a hue chosen without
+checking first. "Behörde" itself is never translated: it is a proper name in
+both `de` and `en`, with an English-only `title` attribute on its radio
+option for a reader who doesn't already know what it refers to.
+
 ## Borders — one system
 
-- **Dashed 1px** (`--vbs-border-style`) is a Panel and nothing else.
+- **Dashed 1px** (`--vbs-border-style`, `3px double` in Behörde — see
+  Themes) is a Panel and nothing else.
 - **Solid 1px** is a Card.
 - **Rows, lists, and the status grid get no border at all.**
 
@@ -177,10 +219,12 @@ VBS.
 
 ## Accessibility exceptions
 
-None currently. `--vbs-on-accent` reaches AAA against `--vbs-accent` in both
-themes (confirmed by `tokens.contrast.test.ts`), so the fallback this
-section would otherwise document — keeping a non-color cue and noting the
-hue that couldn't reach 7:1 — isn't needed. If a future accent color choice
-fails that test, the fix is either a different hue or a documented exception
-here, in that order; the test failing is not itself the problem to solve
-around.
+None currently. `--vbs-on-accent` reaches AAA against `--vbs-accent` in all
+three themes, and (Behörde only, since it's the only theme where the fill is
+real rather than transparent) `--vbs-title-fg` reaches AAA against
+`--vbs-title-bg` — both confirmed by `tokens.contrast.test.ts` — so the
+fallback this section would otherwise document — keeping a non-color cue and
+noting the hue that couldn't reach 7:1 — isn't needed. If a future accent
+color choice fails that test, the fix is either a different hue or a
+documented exception here, in that order; the test failing is not itself the
+problem to solve around.
