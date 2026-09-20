@@ -1,15 +1,30 @@
 import { useCallback, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark" | "amt";
-// prefers-color-scheme only ever distinguishes light from dark — Behörde
-// ("amt") has no operating-system equivalent and must never come from here,
-// only from an explicit stored choice.
-type SystemTheme = "light" | "dark";
+export type Theme =
+  | "modernLight"
+  | "modernDark"
+  | "light"
+  | "dark"
+  | "amt"
+  | "vb6";
+// prefers-color-scheme only ever distinguishes the two modern themes —
+// Terminal hell/dunkel, Behörde ("amt"), and Fachanwendung ("vb6") have no
+// operating-system equivalent and must never come from here, only from an
+// explicit stored choice.
+type SystemTheme = "modernLight" | "modernDark";
 
 const STORAGE_KEY = "vbs-theme";
+const THEMES: readonly Theme[] = [
+  "modernLight",
+  "modernDark",
+  "light",
+  "dark",
+  "amt",
+  "vb6",
+];
 
 function isTheme(value: string | null): value is Theme {
-  return value === "light" || value === "dark" || value === "amt";
+  return THEMES.includes(value as Theme);
 }
 
 function getStoredTheme(): Theme | null {
@@ -24,8 +39,8 @@ function getStoredTheme(): Theme | null {
 
 function getSystemTheme(): SystemTheme {
   return window.matchMedia("(prefers-color-scheme: light)").matches
-    ? "light"
-    : "dark";
+    ? "modernLight"
+    : "modernDark";
 }
 
 function applyTheme(theme: Theme | null) {

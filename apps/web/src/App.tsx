@@ -1,4 +1,4 @@
-import { Footer, Header, LocaleToggle, ThemeToggle, useTheme } from "@vbs/ui";
+import { Footer, Header, LocaleToggle, ThemeSelect, useTheme } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
 import { Link, Route, Routes } from "react-router";
 import { Datenschutz } from "./routes/Datenschutz";
@@ -19,13 +19,18 @@ export function App() {
         subtitle={t("app.subtitle")}
         actions={
           <>
-            <ThemeToggle
+            <ThemeSelect
               theme={theme}
               onChange={setTheme}
               label={t("theme.label")}
-              darkLabel={t("theme.dark")}
+              groupModernLabel={t("theme.groupModern")}
+              groupRetroLabel={t("theme.groupRetro")}
+              modernLightLabel={t("theme.modernLight")}
+              modernDarkLabel={t("theme.modernDark")}
               lightLabel={t("theme.light")}
+              darkLabel={t("theme.dark")}
               amtLabel={t("theme.amt")}
+              vb6Label={t("theme.vb6")}
             />
             <LocaleToggle
               locale={locale}

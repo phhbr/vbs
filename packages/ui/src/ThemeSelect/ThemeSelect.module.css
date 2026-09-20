@@ -1,0 +1,34 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vbs-space-10);
+}
+
+/* Meta label (STYLE.md): dim, 12px, uppercase and letter-spaced in the
+   retro themes; the modern themes turn both off. */
+.label {
+  font-size: var(--vbs-font-size-label);
+  letter-spacing: var(--vbs-label-tracking);
+  text-transform: var(--vbs-label-transform);
+  color: var(--vbs-fg-dim);
+}
+
+.select {
+  min-height: var(--vbs-touch-target);
+  padding: var(--vbs-space-10);
+  font: inherit;
+  background: var(--vbs-input-bg);
+  color: var(--vbs-input-fg);
+  /* A control's edge, not a decorative rule — --vbs-control-border, not
+     --vbs-divider. The prototype still points this rule at --divider;
+     that's the oversight finding 2 asks to catch, not reproduce. */
+  border: var(--vbs-input-edge-width) var(--vbs-input-edge-style)
+    var(--vbs-control-border);
+  border-radius: var(--vbs-radius);
+  box-shadow: var(--vbs-input-shadow);
+}
+
+.select:focus-visible {
+  outline: var(--vbs-focus-ring);
+  outline-offset: var(--vbs-focus-offset);
+}

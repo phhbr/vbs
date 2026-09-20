@@ -1,7 +1,14 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const THEMES = ["dark", "light", "amt"] as const;
+const THEMES = [
+  "modernLight",
+  "modernDark",
+  "light",
+  "dark",
+  "amt",
+  "vb6",
+] as const;
 const LOCALES = ["de", "en"] as const;
 
 // Same two storage keys theme-bootstrap.js itself reads pre-paint (see its
