@@ -11,7 +11,7 @@
   min-height: var(--vbs-touch-target);
   padding: var(--vbs-space-10) var(--vbs-space-action-x);
   border: 1px solid transparent;
-  background: transparent;
+  background: var(--vbs-control-bg);
   color: var(--vbs-accent);
   font: inherit;
   cursor: pointer;
@@ -20,10 +20,17 @@
      so the whole button stays atomic and rows of these wrap between
      buttons instead (on the parent's flex-wrap). */
   white-space: nowrap;
+  box-shadow: var(--vbs-control-shadow);
+  border-radius: var(--vbs-radius);
+}
+
+.button:active:not(:disabled) {
+  box-shadow: var(--vbs-control-shadow-active);
 }
 
 .bracket {
   color: var(--vbs-divider);
+  display: var(--vbs-bracket-display);
 }
 
 .button:hover:not(:disabled),
@@ -41,7 +48,7 @@
 
 .button:focus-visible {
   outline: var(--vbs-focus-ring);
-  outline-offset: 2px;
+  outline-offset: var(--vbs-focus-offset);
 }
 
 .primary {
@@ -50,11 +57,16 @@
 
 .button.active {
   border-color: var(--vbs-accent);
+  box-shadow: var(--vbs-control-shadow-on);
+  text-decoration: var(--vbs-on-underline);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
 }
 
 .button:disabled {
   color: var(--vbs-disabled);
   cursor: default;
+  text-shadow: var(--vbs-disabled-shadow);
 }
 
 .button:disabled .bracket {

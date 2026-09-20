@@ -1,5 +1,6 @@
 .footer {
-  border-top: var(--vbs-border-style);
+  border-top: var(--vbs-rule-width) var(--vbs-rule-style) var(--vbs-divider);
+  box-shadow: var(--vbs-rule-shadow);
   padding-top: var(--vbs-space-20);
   display: flex;
   flex-wrap: wrap;

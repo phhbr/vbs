@@ -11,17 +11,30 @@
   padding: var(--vbs-space-10);
   font: inherit;
   background: var(--vbs-input-bg);
-  border: var(--vbs-border-style);
-  /* "none" for light and dark; Behörde's sunken-field look (design
-     revision, third theme finding 3) is the one deliberate exception to
-     "no shadows" in tokens.css's surfaces comment. */
+  /* A control's edge, not a decorative rule — --vbs-control-border, not
+     --vbs-divider (see tokens.css's note on modernLight/finding 2). */
+  border: var(--vbs-input-edge-width) var(--vbs-input-edge-style)
+    var(--vbs-control-border);
+  /* "none" for most themes; Behörde and Fachanwendung's sunken-field look
+     is the deliberate exception to "no shadows" in tokens.css's surfaces
+     comment. */
   box-shadow: var(--vbs-input-shadow);
   color: var(--vbs-input-fg);
+  border-radius: var(--vbs-radius);
 }
 
 .input:focus-visible {
   outline: 2px solid var(--vbs-accent);
   outline-offset: 2px;
+}
+
+/* Same forced-colors fallback as Panel.module.css — Fachanwendung's
+   box-shadow-only edge (its sunken-field look) disappears under
+   forced-colors otherwise, leaving the field with no visible boundary. */
+@media (forced-colors: active) {
+  .input {
+    border: 1px solid CanvasText;
+  }
 }
 
 .inputRow {

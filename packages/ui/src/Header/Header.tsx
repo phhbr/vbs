@@ -19,10 +19,16 @@ export function Header({ title, subtitle, actions }: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <p className={styles.eyebrow}>{title.toUpperCase()}</p>
+        <p className={styles.eyebrow}>{title}</p>
+        {/* Both always render; --vbs-logo-display/--vbs-wordmark-display
+         * pick exactly one per theme (design revision: modern themes swap
+         * the ASCII logo for a plain wordmark). */}
         <pre className={styles.logo} aria-hidden="true">
           {LOGO_TEXT}
         </pre>
+        <p className={styles.wordmark} aria-hidden="true">
+          VBS
+        </p>
         <p className={styles.subtitle}>{subtitle}</p>
       </div>
       {actions && <div className={styles.actions}>{actions}</div>}

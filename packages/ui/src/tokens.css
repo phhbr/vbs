@@ -2,14 +2,18 @@
  * VBS design tokens, derived from the design revision prototype
  * (docs/prototype/Main.dc.html). See docs/prototype/STYLE.md for the full
  * system this backs: the 14/20 type grid, the 10/20/40 spacing scale, the
- * single border system, and the color roles.
+ * border systems, and the color roles.
  *
  * Text colors reach WCAG AAA (7:1) against the page background; the
  * on-accent pair reaches AAA against the accent fill instead (buttons,
  * cards, and the consensus badge print text there, not on the page
  * background). Both are confirmed by packages/ui/src/tokens.contrast.test.ts.
- * Decorative rules and borders sit at 3:1 or better — there is no AAA tier
- * for non-text — and disabled controls are exempt per WCAG.
+ * Decorative rules sit at whatever a theme chooses (Behörde/dark/light/vb6
+ * keep --vbs-divider at 3:1+; the two modern themes deliberately drop it to
+ * ~1.4:1 for a genuinely hairline rule) — there is no AAA tier for
+ * non-text. A *control's* edge is a different token, --vbs-control-border,
+ * and that one is held to 3:1 in every theme that gives it a real color
+ * (see "Themes" below). Disabled controls are exempt per WCAG.
  */
 
 :root {
@@ -36,13 +40,14 @@
      button padding as exactly 10px 14px, not a value we chose ourselves. */
   --vbs-space-action-x: 14px;
 
-  /* Surfaces: no radii, no shadows, no gradients (Behörde's inset input
-     shadow is the one deliberate exception — see --vbs-input-shadow below). */
-  --vbs-radius: 0;
-  /* Composed from the two structural primitives below rather than hardcoded
-     here, so every Panel/Input/Dialog/rule that references this one
-     property picks up each theme's edge automatically — no component CSS
-     needs to know a third theme exists. */
+  /* Composed from each theme's own edge primitives rather than hardcoded
+     here, so every Panel/Dialog/Footer that references this one property
+     picks up each theme's edge automatically. Panel/rule edges use
+     --vbs-divider; a *control's* edge (Input/CardDeck/ThemeSelect) uses the
+     separate --vbs-control-border token instead — see "Themes" below for
+     why the two can't share one color. --vbs-radius has no theme-independent
+     default any more (six themes disagree on it), so it's declared inside
+     every theme block below, same as every other structural token. */
   --vbs-border-style: var(--vbs-edge-width) var(--vbs-edge-style) var(--vbs-divider);
 }
 
@@ -71,8 +76,131 @@
   }
 }
 
-/* Dark, the prototype's default */
+/*
+ * Hell (modernLight): today's ordinary product surface, and the default
+ * when nothing is stored — bare :root carries these values directly, the
+ * same way the old dark theme's selector alone used to be the
+ * unconditional default before this theme existed. System font, soft 10px
+ * corners, a single flat
+ * accent fill, no bracket glyphs, no ASCII logo. Every color role here
+ * clears 7:1 against both --vbs-bg and --vbs-panel-bg; --vbs-control-border
+ * (not --vbs-divider — see the note on Terminal hell below) clears 3:1.
+ */
 :root,
+:root[data-theme="modernLight"] {
+  --vbs-bg: #f7f7f9;
+  --vbs-fg: #27272d;          /* body text        13.9:1 */
+  --vbs-fg-dim: #4b4b55;      /* meta labels, hints 8.8:1 */
+  --vbs-fg-strong: #111114;   /* values, headings, panel titles  17.9:1 */
+  --vbs-accent: #4338ca;      /* interactive only: buttons, cards, active 7.8:1 */
+  --vbs-danger: #991b1b;      /* warnings           7.8:1 */
+  --vbs-divider: #d3d3da;     /* decorative rules only — 1.4:1, see note below */
+  --vbs-input-bg: #ffffff;
+  --vbs-input-fg: #111114;
+  --vbs-disabled: #a5a5b0;    /* exempt */
+  --vbs-on-accent: #ffffff;   /* text on an accent fill   11.0:1 */
+  --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+
+  --vbs-edge-width: 1px;
+  --vbs-edge-style: solid;
+  --vbs-title-bg: transparent;
+  --vbs-title-fg: var(--vbs-fg-strong);
+  --vbs-title-pad: 0;
+  --vbs-input-shadow: none;
+
+  --vbs-radius: 10px;
+  --vbs-title-transform: none;
+  --vbs-title-tracking: -0.01em;
+  --vbs-label-transform: none;
+  --vbs-label-tracking: 0;
+  --vbs-on-underline: none;
+  --vbs-logo-display: none;
+  --vbs-wordmark-display: block;
+  --vbs-font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --vbs-panel-bg: #ffffff;
+  --vbs-panel-shadow: 0 1px 2px rgba(17, 17, 20, 0.06),
+    0 1px 3px rgba(17, 17, 20, 0.05);
+  --vbs-control-bg: transparent;
+  --vbs-control-shadow: none;
+  --vbs-control-shadow-active: none;
+  --vbs-control-shadow-on: none;
+  --vbs-bracket-display: none;
+  --vbs-input-edge-width: var(--vbs-edge-width);
+  --vbs-input-edge-style: var(--vbs-edge-style);
+  /* Cards, the Input, and ThemeSelect need a boundary that survives on its
+     own — --vbs-divider above is intentionally too faint for that (a
+     hairline rule, 1.4:1). This is finding 2 of the token review: a
+     control's edge and a decorative rule are different jobs and now have
+     different tokens. 3.2:1 against --vbs-bg. */
+  --vbs-control-border: #8a8a94;
+  --vbs-focus-offset: 2px;
+  --vbs-disabled-shadow: none;
+  --vbs-rule-width: var(--vbs-edge-width);
+  --vbs-rule-style: var(--vbs-edge-style);
+  --vbs-rule-shadow: none;
+}
+
+/*
+ * Dunkel (modernDark): the same system as Hell, inverted. Its own accent
+ * rather than a simple color-flip of Hell's, since a light-mode accent
+ * rarely survives inversion at 7:1 without going muddy.
+ */
+:root[data-theme="modernDark"] {
+  --vbs-bg: #0e0f13;
+  --vbs-fg: #d5d6dd;          /* body text        13.5:1 */
+  --vbs-fg-dim: #a9abb6;      /* meta labels, hints 8.2:1 */
+  --vbs-fg-strong: #f4f4f6;   /* values, headings, panel titles  17.6:1 */
+  --vbs-accent: #a5b4fc;      /* interactive only: buttons, cards, active 9.6:1 */
+  --vbs-danger: #fca5a5;      /* warnings           10.1:1 */
+  --vbs-divider: #33343d;     /* decorative rules only, see modernLight's note */
+  --vbs-input-bg: #16171d;
+  --vbs-input-fg: #f4f4f6;
+  --vbs-disabled: #5d5f6b;    /* exempt */
+  --vbs-on-accent: #0e0f13;   /* text on an accent fill   9.6:1 */
+  --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+
+  --vbs-edge-width: 1px;
+  --vbs-edge-style: solid;
+  --vbs-title-bg: transparent;
+  --vbs-title-fg: var(--vbs-fg-strong);
+  --vbs-title-pad: 0;
+  --vbs-input-shadow: none;
+
+  --vbs-radius: 10px;
+  --vbs-title-transform: none;
+  --vbs-title-tracking: -0.01em;
+  --vbs-label-transform: none;
+  --vbs-label-tracking: 0;
+  --vbs-on-underline: none;
+  --vbs-logo-display: none;
+  --vbs-wordmark-display: block;
+  --vbs-font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --vbs-panel-bg: #16171d;
+  --vbs-panel-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --vbs-control-bg: transparent;
+  --vbs-control-shadow: none;
+  --vbs-control-shadow-active: none;
+  --vbs-control-shadow-on: none;
+  --vbs-bracket-display: none;
+  --vbs-input-edge-width: var(--vbs-edge-width);
+  --vbs-input-edge-style: var(--vbs-edge-style);
+  --vbs-control-border: #6b6d78; /* 3.7:1 against --vbs-bg */
+  --vbs-focus-offset: 2px;
+  --vbs-disabled-shadow: none;
+  --vbs-rule-width: var(--vbs-edge-width);
+  --vbs-rule-style: var(--vbs-edge-style);
+  --vbs-rule-shadow: none;
+}
+
+/* Terminal hell (dark's former name, unchanged palette). Every new
+   structural token below is set to the value that reproduces the app's
+   look before this pass — this theme is untouched, only now spelling out
+   explicitly what used to be an implicit default. --vbs-control-border
+   reuses --vbs-divider (3.1:1 here already, so a control's edge and a rule
+   can safely share one color in this theme — only the two modern themes
+   need them to differ). */
 :root[data-theme="dark"] {
   --vbs-bg: #000000;          /* ground */
   --vbs-fg: #b7b7b7;          /* body text        10.5:1 */
@@ -92,17 +220,41 @@
      would read as one blurred shape rather than two distinct signals. */
   --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
 
-  /* Structural tokens (design revision: third theme). Light and dark share
-     these defaults; Behörde is the only theme that overrides them. */
   --vbs-edge-width: 1px;
   --vbs-edge-style: dashed;
   --vbs-title-bg: transparent;
   --vbs-title-fg: var(--vbs-fg-strong);
   --vbs-title-pad: 0;
   --vbs-input-shadow: none;
+
+  --vbs-radius: 0;
+  --vbs-title-transform: uppercase;
+  --vbs-title-tracking: 0.1em;
+  --vbs-label-transform: uppercase;
+  --vbs-label-tracking: 0.08em;
+  --vbs-on-underline: none;
+  --vbs-logo-display: block;
+  --vbs-wordmark-display: none;
+  --vbs-font-family: var(--vbs-font-mono);
+  --vbs-panel-bg: transparent;
+  --vbs-panel-shadow: none;
+  --vbs-control-bg: transparent;
+  --vbs-control-shadow: none;
+  --vbs-control-shadow-active: none;
+  --vbs-control-shadow-on: none;
+  --vbs-bracket-display: inline;
+  --vbs-input-edge-width: var(--vbs-edge-width);
+  --vbs-input-edge-style: var(--vbs-edge-style);
+  --vbs-control-border: var(--vbs-divider);
+  --vbs-focus-offset: 2px;
+  --vbs-disabled-shadow: none;
+  --vbs-rule-width: var(--vbs-edge-width);
+  --vbs-rule-style: var(--vbs-edge-style);
+  --vbs-rule-shadow: none;
 }
 
-/* Light */
+/* Terminal dunkel (light's former name, unchanged palette). Same
+   untouched-defaults treatment as Terminal hell above. */
 :root[data-theme="light"] {
   --vbs-bg: #f7f4ec;          /* warm paper white */
   --vbs-fg: #262620;          /* body text        13.8:1 */
@@ -116,12 +268,38 @@
   --vbs-disabled: #a8a498;    /* exempt */
   --vbs-on-accent: #ffffff;  /* text on an accent fill    9.3:1 */
   --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+
   --vbs-edge-width: 1px;
   --vbs-edge-style: dashed;
   --vbs-title-bg: transparent;
   --vbs-title-fg: var(--vbs-fg-strong);
   --vbs-title-pad: 0;
   --vbs-input-shadow: none;
+
+  --vbs-radius: 0;
+  --vbs-title-transform: uppercase;
+  --vbs-title-tracking: 0.1em;
+  --vbs-label-transform: uppercase;
+  --vbs-label-tracking: 0.08em;
+  --vbs-on-underline: none;
+  --vbs-logo-display: block;
+  --vbs-wordmark-display: none;
+  --vbs-font-family: var(--vbs-font-mono);
+  --vbs-panel-bg: transparent;
+  --vbs-panel-shadow: none;
+  --vbs-control-bg: transparent;
+  --vbs-control-shadow: none;
+  --vbs-control-shadow-active: none;
+  --vbs-control-shadow-on: none;
+  --vbs-bracket-display: inline;
+  --vbs-input-edge-width: var(--vbs-edge-width);
+  --vbs-input-edge-style: var(--vbs-edge-style);
+  --vbs-control-border: var(--vbs-divider);
+  --vbs-focus-offset: 2px;
+  --vbs-disabled-shadow: none;
+  --vbs-rule-width: var(--vbs-edge-width);
+  --vbs-rule-style: var(--vbs-edge-style);
+  --vbs-rule-shadow: none;
 }
 
 /* Behörde: a 1980s German administrative terminal. Deep blue screen, yellow
@@ -130,12 +308,13 @@
    or dark — it brings its own accent and danger rather than reusing either
    theme's, and every component already reads colors through these tokens
    rather than assuming a value, so nothing but this block was needed to
-   add it. */
+   add it. Same untouched-defaults treatment for the new structural tokens
+   as the two Terminal themes above. */
 :root[data-theme="amt"] {
   --vbs-bg: #000080;
   --vbs-fg: #d0d4e4;           /* body text        10.8:1 */
   --vbs-fg-dim: #a8b0d0;       /* meta labels, hints 7.5:1 */
-  --vbs-fg-strong: #ffffff;    /* values, logo, headings, panel titles 16.0:1 */
+  --vbs-fg-strong: #ffffff;    /* values, headings, panel titles 16.0:1 */
   --vbs-accent: #ffff54;       /* interactive only: buttons, cards, active 15.0:1 */
   --vbs-danger: #ff9a9a;       /* warnings           7.9:1 */
   --vbs-divider: #6a78c8;      /* rules, panel borders 3.9:1 */
@@ -150,39 +329,163 @@
   --vbs-title-fg: var(--vbs-on-accent);
   --vbs-title-pad: 0 10px;
   --vbs-input-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.45);
+
+  --vbs-radius: 0;
+  --vbs-title-transform: uppercase;
+  --vbs-title-tracking: 0.1em;
+  --vbs-label-transform: uppercase;
+  --vbs-label-tracking: 0.08em;
+  --vbs-on-underline: none;
+  --vbs-logo-display: block;
+  --vbs-wordmark-display: none;
+  --vbs-font-family: var(--vbs-font-mono);
+  --vbs-panel-bg: transparent;
+  --vbs-panel-shadow: none;
+  --vbs-control-bg: transparent;
+  --vbs-control-shadow: none;
+  --vbs-control-shadow-active: none;
+  --vbs-control-shadow-on: none;
+  --vbs-bracket-display: inline;
+  --vbs-input-edge-width: var(--vbs-edge-width);
+  --vbs-input-edge-style: var(--vbs-edge-style);
+  --vbs-control-border: var(--vbs-divider);
+  --vbs-focus-offset: 2px;
+  --vbs-disabled-shadow: none;
+  --vbs-rule-width: var(--vbs-edge-width);
+  --vbs-rule-style: var(--vbs-edge-style);
+  --vbs-rule-shadow: none;
 }
 
-/* With no stored choice, follow the system. Behörde is never a default —
-   it has no place in this block, only in the explicit [data-theme="amt"]
-   selector above, which useTheme.ts and theme-bootstrap.js are the only
-   things that ever set. */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]):not([data-theme="amt"]) {
-    --vbs-bg: #f7f4ec;
-    --vbs-fg: #262620;
-    --vbs-fg-dim: #4a4740;
-    --vbs-fg-strong: #141310;
-    --vbs-accent: #6e3a00;
-    --vbs-danger: #8a1f14;
-    --vbs-divider: #9c7830;
-    --vbs-input-bg: #ffffff;
-    --vbs-input-fg: #141310;
-    --vbs-disabled: #a8a498;
-    --vbs-on-accent: #ffffff;
+/* Fachanwendung (vb6): the in-house Windows-9x line-of-business mask that
+   is still running in production somewhere. Silver face, Tahoma, engraved
+   and embossed bevels instead of a drawn border, navy title bars, sunken
+   fields. The bevels are real Win9x double-tone insets — outer white/black,
+   inner light/dark gray — composed once below and reused as
+   --vbs-control-shadow (idle "up" bevel) and --vbs-control-shadow-active /
+   --vbs-control-shadow-on (pressed/selected "down" bevel). Structurally the
+   furthest of the six themes from the dashed/solid system: panels and
+   inputs carry no drawn border at all (--vbs-edge-width / --vbs-input-edge-
+   width: 0), the bevel shadow is what reads as their edge, which is also
+   why --vbs-control-border is transparent here rather than a color — there
+   is nothing for a border color to draw. */
+:root[data-theme="vb6"] {
+  --vbs-bg: #c0c0c0;
+  --vbs-fg: #000000;           /* body text        11.6:1 */
+  --vbs-fg-dim: #2e2e2e;       /* meta labels, hints 7.5:1 */
+  --vbs-fg-strong: #000000;    /* values, headings, panel titles 11.6:1 */
+  --vbs-accent: #000080;       /* interactive only: buttons, cards, active 8.8:1 */
+  --vbs-danger: #660000;       /* warnings           7.4:1 */
+  --vbs-divider: #5a5a5a;      /* rules only — panels carry no border at all */
+  --vbs-input-bg: #ffffff;
+  --vbs-input-fg: #000000;
+  --vbs-disabled: #808080;     /* exempt */
+  --vbs-on-accent: #ffffff;    /* text on an accent fill   16.0:1 */
+  /* Win9x's dotted, inset focus rectangle — 1px, drawn inside the control
+     rather than outside it (--vbs-focus-offset below is negative here,
+     the only theme where that's true). */
+  --vbs-focus-ring: 1px dotted var(--vbs-fg-strong);
+  --vbs-edge-width: 0px;
+  --vbs-edge-style: solid;
+  --vbs-title-bg: var(--vbs-accent);
+  --vbs-title-fg: var(--vbs-on-accent);
+  --vbs-title-pad: 0 10px;
+  --vbs-input-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #000000, inset -2px -2px 0 #dfdfdf;
+
+  --vbs-radius: 0;
+  --vbs-title-transform: uppercase;
+  --vbs-title-tracking: 0.1em;
+  --vbs-label-transform: uppercase;
+  --vbs-label-tracking: 0.08em;
+  --vbs-on-underline: none;
+  --vbs-logo-display: block;
+  --vbs-wordmark-display: none;
+  --vbs-font-family: Tahoma, "MS Sans Serif", "Segoe UI", Verdana, sans-serif;
+  --vbs-panel-bg: var(--vbs-bg);
+  --vbs-panel-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+  --vbs-control-bg: var(--vbs-bg);
+  --vbs-control-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #000000,
+    inset 2px 2px 0 #dfdfdf, inset -2px -2px 0 #808080;
+  --vbs-control-shadow-active: inset 1px 1px 0 #808080,
+    inset -1px -1px 0 #ffffff, inset 2px 2px 0 #000000,
+    inset -2px -2px 0 #dfdfdf;
+  --vbs-control-shadow-on: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #000000, inset -2px -2px 0 #dfdfdf;
+  --vbs-bracket-display: none;
+  --vbs-input-edge-width: 0px;
+  --vbs-input-edge-style: solid;
+  --vbs-control-border: transparent;
+  --vbs-focus-offset: -6px;
+  --vbs-disabled-shadow: 1px 1px 0 #ffffff;
+  --vbs-rule-width: 1px;
+  --vbs-rule-style: solid;
+  /* Inset, not a normal drop shadow: Footer isn't a thin standalone rule
+     like the prototype's <hr>, it's a full box, so the highlight has to be
+     anchored to the inside of the top edge to land right under the
+     border-top line rather than at the box's bottom. */
+  --vbs-rule-shadow: inset 0 1px 0 #ffffff;
+}
+
+/* With no stored choice, follow the system — but only between the two
+   modern themes (point 3): Behörde, Fachanwendung, and the two Terminal
+   themes have no operating-system equivalent and are reachable only by an
+   explicit choice in the Darstellung select. :not([data-theme]) is what
+   keeps an explicit choice always winning regardless of OS preference —
+   this block only ever fires when nothing has been stored or set yet. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vbs-bg: #0e0f13;
+    --vbs-fg: #d5d6dd;
+    --vbs-fg-dim: #a9abb6;
+    --vbs-fg-strong: #f4f4f6;
+    --vbs-accent: #a5b4fc;
+    --vbs-danger: #fca5a5;
+    --vbs-divider: #33343d;
+    --vbs-input-bg: #16171d;
+    --vbs-input-fg: #f4f4f6;
+    --vbs-disabled: #5d5f6b;
+    --vbs-on-accent: #0e0f13;
     --vbs-focus-ring: 2px solid var(--vbs-fg-strong);
+
     --vbs-edge-width: 1px;
-    --vbs-edge-style: dashed;
+    --vbs-edge-style: solid;
     --vbs-title-bg: transparent;
     --vbs-title-fg: var(--vbs-fg-strong);
     --vbs-title-pad: 0;
     --vbs-input-shadow: none;
+
+    --vbs-radius: 10px;
+    --vbs-title-transform: none;
+    --vbs-title-tracking: -0.01em;
+    --vbs-label-transform: none;
+    --vbs-label-tracking: 0;
+    --vbs-on-underline: none;
+    --vbs-logo-display: none;
+    --vbs-wordmark-display: block;
+    --vbs-font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto,
+      Helvetica, Arial, sans-serif;
+    --vbs-panel-bg: #16171d;
+    --vbs-panel-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --vbs-control-bg: transparent;
+    --vbs-control-shadow: none;
+    --vbs-control-shadow-active: none;
+    --vbs-control-shadow-on: none;
+    --vbs-bracket-display: none;
+    --vbs-input-edge-width: var(--vbs-edge-width);
+    --vbs-input-edge-style: var(--vbs-edge-style);
+    --vbs-control-border: #6b6d78;
+      --vbs-focus-offset: 2px;
+    --vbs-disabled-shadow: none;
+    --vbs-rule-width: var(--vbs-edge-width);
+    --vbs-rule-style: var(--vbs-edge-style);
+    --vbs-rule-shadow: none;
   }
 }
 
 /*
  * The selected card, an "on" button/tab, and the consensus badge fill an
  * area with --vbs-accent and print --vbs-on-accent on top of it — confirmed
- * by the contrast test to reach AAA in all three themes. These states are
+ * by the contrast test to reach AAA in all six themes. These states are
  * signalled by the fill/inversion itself plus real state
  * (aria-checked/aria-selected/aria-pressed), not by color alone.
  */

@@ -8,16 +8,32 @@ body {
   margin: 0;
   background: var(--vbs-bg);
   color: var(--vbs-fg);
-  font-family: var(--vbs-font-mono);
+  font-family: var(--vbs-font-family);
   font-size: var(--vbs-font-size);
   line-height: var(--vbs-line-height);
 }
 
+/* Links (the footer's legal links, prose body copy) had never been styled
+   here, so they fell back to the browser's own default blue/purple —
+   ~1.7:1 against a dark background, an axe-core "color-contrast" failure
+   caught while extending the accessibility suite to the two new dark
+   themes (modernDark joined dark and amt in failing it; both already
+   failed this same check on their own before this change). Accent is
+   already the app's "interactive things" color and already clears 7:1
+   against the page background in every theme (tokens.contrast.test.ts),
+   so it's the correct fix rather than a one-off link color. */
+a,
+a:visited {
+  color: var(--vbs-accent);
+}
+
 /* A single rule for every focusable element, rather than per-component
-   outlines, so "visible focus everywhere" can't drift piecemeal. */
+   outlines, so "visible focus everywhere" can't drift piecemeal.
+   --vbs-focus-offset is negative only in Fachanwendung, whose dotted ring
+   sits inset inside the control rather than outside it. */
 :focus-visible {
   outline: var(--vbs-focus-ring);
-  outline-offset: 2px;
+  outline-offset: var(--vbs-focus-offset);
 }
 
 ::selection {
@@ -53,8 +69,8 @@ code {
   margin: 0;
   font-size: inherit;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: var(--vbs-title-tracking);
+  text-transform: var(--vbs-title-transform);
   color: var(--vbs-title-fg);
   background: var(--vbs-title-bg);
   padding: var(--vbs-title-pad);

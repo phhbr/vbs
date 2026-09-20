@@ -6,6 +6,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--vbs-space-20);
+  background: var(--vbs-panel-bg);
+  box-shadow: var(--vbs-panel-shadow);
+  border-radius: var(--vbs-radius);
+}
+
+/* Fachanwendung draws its box edge entirely as a bevel box-shadow
+   (--vbs-edge-width: 0) — forced-colors strips box-shadow, which would
+   otherwise leave the panel with no boundary at all. Every other theme
+   already has a real border here, so this is a no-op for them. */
+@media (forced-colors: active) {
+  .panel {
+    border: 1px solid CanvasText;
+  }
 }
 
 .head {
@@ -24,8 +37,8 @@
   margin: 0;
   font-size: inherit;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: var(--vbs-title-tracking);
+  text-transform: var(--vbs-title-transform);
   color: var(--vbs-title-fg);
   background: var(--vbs-title-bg);
   padding: var(--vbs-title-pad);

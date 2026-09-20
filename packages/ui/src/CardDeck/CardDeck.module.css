@@ -17,9 +17,17 @@
   text-align: center;
   font: inherit;
   cursor: pointer;
-  background: transparent;
+  background: var(--vbs-control-bg);
   color: var(--vbs-accent);
-  border: 1px solid var(--vbs-divider);
+  /* A control's edge, not a decorative rule — --vbs-control-border, not
+     --vbs-divider (see tokens.css's note on modernLight/finding 2). */
+  border: 1px solid var(--vbs-control-border);
+  box-shadow: var(--vbs-control-shadow);
+  border-radius: var(--vbs-radius);
+}
+
+.card:active:not(:disabled) {
+  box-shadow: var(--vbs-control-shadow-active);
 }
 
 .card:hover:not(:disabled),
@@ -29,16 +37,22 @@
 
 .card:focus-visible {
   outline: var(--vbs-focus-ring);
-  outline-offset: 2px;
+  outline-offset: var(--vbs-focus-offset);
 }
 
 .card:disabled {
   color: var(--vbs-disabled);
   cursor: default;
+  text-shadow: var(--vbs-disabled-shadow);
 }
 
 .selected {
   background: var(--vbs-accent);
   color: var(--vbs-on-accent);
   border-color: var(--vbs-accent);
+  border-width: 3px;
+  box-shadow: var(--vbs-control-shadow-on);
+  text-decoration: var(--vbs-on-underline);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
 }

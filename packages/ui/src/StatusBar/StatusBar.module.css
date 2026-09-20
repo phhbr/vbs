@@ -9,11 +9,12 @@
   flex-direction: column;
 }
 
-/* Meta label (STYLE.md): dim, 12px, uppercase, letter-spaced. */
+/* Meta label (STYLE.md): dim, 12px, uppercase and letter-spaced in the
+   retro themes; the modern themes turn both off. */
 .label {
   font-size: var(--vbs-font-size-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: var(--vbs-label-tracking);
+  text-transform: var(--vbs-label-transform);
   color: var(--vbs-fg-dim);
 }
 

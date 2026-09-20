@@ -18,12 +18,13 @@
   margin: 0;
   color: var(--vbs-fg-dim);
   font-size: var(--vbs-font-size-small);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  letter-spacing: var(--vbs-label-tracking);
+  text-transform: var(--vbs-label-transform);
 }
 
 .logo {
   margin: 0;
+  display: var(--vbs-logo-display);
   font-family: var(--vbs-font-mono);
   /* Pre-formatted text can't wrap or shrink to fit like normal text, and the
      widest generated line (see logo.ts) is ~48 characters — comfortably
@@ -35,6 +36,18 @@
   font-weight: 700;
   color: var(--vbs-fg-strong);
   white-space: pre;
+}
+
+/* The modern themes' plain wordmark, standing in for the ASCII logo above —
+   see --vbs-wordmark-display / --vbs-logo-display in tokens.css. */
+.wordmark {
+  margin: 0;
+  display: var(--vbs-wordmark-display);
+  font-size: 28px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--vbs-fg-strong);
 }
 
 .subtitle {

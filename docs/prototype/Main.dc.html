@@ -14,91 +14,140 @@
     body { margin: 0; background: #000000; }
     * { box-sizing: border-box; }
 
-    .vbs { font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 20px; }
+    .vbs { font-family: var(--font); font-size: 14px; line-height: 20px; }
     .wrap { width: 100%; max-width: 1120px; margin: 0 auto; }
     .prose { max-width: 80ch; }
     .col { display: flex; flex-direction: column; }
     .g10 { gap: 10px; } .g20 { gap: 20px; } .g40 { gap: 40px; }
     .row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 
-    .eyebrow { font-size: 12px; line-height: 20px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-dim); }
-    .label { font-size: 12px; line-height: 20px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-dim); }
+    .eyebrow { font-size: 12px; line-height: 20px; letter-spacing: var(--label-tracking); text-transform: var(--label-transform); color: var(--fg-dim); }
+    .label { font-size: 12px; line-height: 20px; letter-spacing: var(--label-tracking); text-transform: var(--label-transform); color: var(--fg-dim); }
     .value { color: var(--fg-strong); }
     .hint { color: var(--fg-dim); }
     .logo { margin: 0; font: 700 13px/1.05 'Courier New', Courier, monospace; white-space: pre; color: var(--fg-strong); }
+    .wordmark { margin: 0; font-size: 28px; line-height: 40px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg-strong); }
 
-    .rule { border: 0; border-top: var(--edge-w) var(--edge-s) var(--divider); margin: 0; }
+    .select { min-height: 44px; padding: 10px 12px; font: inherit; border-radius: var(--radius);
+              background: var(--input-bg); border: 1px solid var(--divider); color: var(--fg-strong); }
+    .select:focus-visible { outline: 3px var(--focus-style) var(--fg-strong); outline-offset: 2px; }
+
+    .rule { border: 0; border-top: var(--rule-w) var(--rule-s) var(--divider); box-shadow: var(--rule-shadow); margin: 0; }
 
     /* Ein Kastensystem: eine Kante pro Theme. Sonst keine Rahmen. */
-    .panel { border: var(--edge-w) var(--edge-s) var(--divider); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .panel { border: var(--edge-w) var(--edge-s) var(--divider); padding: 20px; display: flex; flex-direction: column; gap: 20px;
+             background: var(--panel-bg); box-shadow: var(--panel-shadow); border-radius: var(--radius); }
     .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .panel-title { margin: 0; font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-                   color: var(--title-fg); background: var(--title-bg); padding: var(--title-pad); }
+    .panel-title { margin: 0; font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: var(--title-tracking); text-transform: var(--title-transform);
+                   color: var(--title-fg); background: var(--title-bg); padding: var(--title-pad); border-radius: var(--radius); }
 
     .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 20px; }
     .meta-item { display: flex; flex-direction: column; }
 
     /* Aktionen: echte Flächen, Klammern sind Dekoration mit fester Weite. */
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 10px 14px;
-           border: 1px solid transparent; background: transparent; color: var(--accent); font: inherit; cursor: pointer; }
-    .btn .br { color: var(--divider); }
-    .btn:hover:not(:disabled), .btn:focus-visible:not(:disabled) { background: var(--accent); color: var(--on-accent); }
-    .btn:hover:not(:disabled) .br, .btn:focus-visible:not(:disabled) .br { color: var(--on-accent); }
-    .btn:focus-visible { outline: 2px solid var(--fg-strong); outline-offset: 2px; }
+           border: 1px solid transparent; background: var(--control-bg); color: var(--accent); font: inherit; cursor: pointer;
+           box-shadow: var(--control-shadow); border-radius: var(--radius); }
+    .btn:active:not(:disabled) { box-shadow: var(--control-shadow-active); }
+    .btn .br { color: var(--divider); display: var(--bracket-display); }
+    /* Drei getrennte Sprachen: Fuellung = Zeiger drueber, Umriss = Tastaturfokus,
+       Rahmen plus Unterstreichung = ausgewaehlt. Die letzten beiden ueberleben
+       auch den Windows-Kontrastmodus, in dem Farben und Schatten ersetzt werden. */
+    .btn:hover:not(:disabled) { background: var(--accent); color: var(--on-accent); }
+    .btn:hover:not(:disabled) .br { color: var(--on-accent); }
+    .btn:focus-visible { outline: 3px var(--focus-style) var(--fg-strong); outline-offset: var(--focus-offset); }
     .btn--primary { border-color: var(--accent); }
-    .btn--on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .btn--on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); box-shadow: var(--control-shadow-on);
+               border-width: 2px; text-decoration: var(--on-underline); text-underline-offset: 3px; text-decoration-thickness: 2px; }
     .btn--on .br { color: var(--on-accent); }
-    .btn:disabled { color: var(--disabled); cursor: default; }
+    .btn:disabled { color: var(--disabled); cursor: default; text-shadow: var(--disabled-shadow); }
     .btn:disabled .br { color: var(--disabled); }
 
     .card { display: inline-flex; align-items: center; justify-content: center; min-width: 56px; min-height: 56px; padding: 10px;
-            border: 1px solid var(--divider); background: transparent; color: var(--accent); font: inherit; cursor: pointer; }
-    .card:hover:not(:disabled), .card:focus-visible:not(:disabled) { border-color: var(--accent); }
-    .card:focus-visible { outline: 2px solid var(--fg-strong); outline-offset: 2px; }
-    .card--on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-    .card:disabled { color: var(--disabled); cursor: default; }
+            border: 1px solid var(--card-border); background: var(--control-bg); color: var(--accent); font: inherit; cursor: pointer;
+            box-shadow: var(--control-shadow); border-radius: var(--radius); }
+    .card:active:not(:disabled) { box-shadow: var(--control-shadow-active); }
+    .card:hover:not(:disabled) { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+    .card:focus-visible { outline: 3px var(--focus-style) var(--fg-strong); outline-offset: var(--focus-offset); }
+    .card--on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); box-shadow: var(--control-shadow-on);
+                border-width: 3px; text-decoration: var(--on-underline); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+    .card:disabled { color: var(--disabled); cursor: default; text-shadow: var(--disabled-shadow); }
 
     .dot { display: inline-block; width: 10px; height: 10px; flex: 0 0 auto; }
 
     .field { display: flex; flex-direction: column; gap: 10px; }
     .input { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; font: inherit;
-             background: var(--input-bg); border: 1px var(--edge-s) var(--divider); color: var(--fg-strong);
-             box-shadow: var(--input-shadow); }
+             background: var(--input-bg); border: var(--input-edge-w) var(--input-edge-s) var(--card-border); color: var(--fg-strong);
+             box-shadow: var(--input-shadow); border-radius: var(--radius); }
     .input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-style: solid; }
     .input-row { display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px; }
     .input-row .input { flex: 1 1 260px; }
 
     .overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
-    .modal { width: 100%; max-width: 70ch; background: var(--bg); border: var(--edge-w) var(--edge-s) var(--divider); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .modal { width: 100%; max-width: 70ch; background: var(--bg); border: var(--edge-w) var(--edge-s) var(--divider); padding: 20px; display: flex; flex-direction: column; gap: 20px;
+             border-radius: var(--radius); box-shadow: var(--panel-shadow); }
 
     .cols { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
     @media (min-width: 900px) { .cols { grid-template-columns: 1.2fr 1fr; } }
 
     ::selection { background: #ff8c1a; color: #000000; }
+
+    /* Erhoehter Kontrast: dieselben Signale, nur kraeftiger. */
+    @media (prefers-contrast: more) {
+      .btn--on { border-width: 3px; }
+      .card--on { border-width: 4px; }
+      .btn:focus-visible, .card:focus-visible, .input:focus-visible { outline-width: 4px; }
+    }
+
+    /* Windows-Kontrastmodus: Farben und Schatten werden ersetzt, Umrisse,
+       Rahmenbreiten und Unterstreichungen bleiben. Darauf bauen die Zustaende hier. */
+    @media (forced-colors: active) {
+      .btn, .card { border-color: ButtonText; }
+      .btn:hover:not(:disabled), .card:hover:not(:disabled) { background: Canvas; color: LinkText; text-decoration: underline; }
+      .btn--on, .card--on { background: Highlight; color: HighlightText; border-color: HighlightText; }
+      .btn:focus-visible, .card:focus-visible, .input:focus-visible { outline: 3px solid CanvasText; outline-offset: 2px; }
+      .panel, .modal { border: 1px solid CanvasText; }
+      .rule { border-top: 1px solid CanvasText; }
+      .dot { border: 1px solid CanvasText; }
+    }
   </style>
 </helmet>
-<div class="vbs col g20" style="--bg: {{bg}}; --fg: {{fg}}; --fg-dim: {{fgDim}}; --fg-strong: {{fgStrong}}; --accent: {{accent}}; --danger: {{danger}}; --divider: {{divider}}; --input-bg: {{inputBg}}; --disabled: {{disabled}}; --on-accent: {{onAccent}}; --edge-s: {{edgeStyle}}; --edge-w: {{edgeWidth}}; --title-bg: {{titleBg}}; --title-fg: {{titleFg}}; --title-pad: {{titlePad}}; --input-shadow: {{inputShadow}}; width: 100%; min-height: 100vh; background: {{bg}}; color: {{fg}}; padding: 40px 20px;">
+<div class="vbs col g20" style="--bg: {{bg}}; --fg: {{fg}}; --fg-dim: {{fgDim}}; --fg-strong: {{fgStrong}}; --accent: {{accent}}; --danger: {{danger}}; --divider: {{divider}}; --input-bg: {{inputBg}}; --disabled: {{disabled}}; --on-accent: {{onAccent}}; --edge-s: {{edgeStyle}}; --edge-w: {{edgeWidth}}; --title-bg: {{titleBg}}; --title-fg: {{titleFg}}; --title-pad: {{titlePad}}; --input-shadow: {{inputShadow}}; --font: {{fontFamily}}; --panel-bg: {{panelBg}}; --panel-shadow: {{panelShadow}}; --control-bg: {{controlBg}}; --control-shadow: {{controlShadow}}; --control-shadow-active: {{controlShadowActive}}; --bracket-display: {{bracketDisplay}}; --input-edge-w: {{inputEdgeWidth}}; --input-edge-s: {{inputEdgeStyle}}; --control-shadow-on: {{controlShadowOn}}; --card-border: {{cardBorder}}; --focus-style: {{focusStyle}}; --focus-offset: {{focusOffset}}; --disabled-shadow: {{disabledShadow}}; --rule-w: {{ruleWidth}}; --rule-s: {{ruleStyle}}; --rule-shadow: {{ruleShadow}}; --radius: {{radius}}; --title-transform: {{titleTransform}}; --title-tracking: {{titleTracking}}; --label-transform: {{labelTransform}}; --label-tracking: {{labelTracking}}; --on-underline: {{onUnderline}}; width: 100%; min-height: 100vh; background: {{bg}}; color: {{fg}}; padding: 40px 20px;">
 
   <div class="wrap col g20">
 
     <div class="row" style="justify-content: space-between; align-items: flex-end;">
       <div class="col">
         <div class="eyebrow">Vorgangsbewertungsstelle</div>
+        <sc-if value="{{showLogo}}" hint-placeholder-val="{{true}}">
         <pre class="logo" aria-hidden="true">{{logo}}</pre>
+        </sc-if>
+        <sc-if value="{{showWordmark}}" hint-placeholder-val="{{true}}">
+        <p class="wordmark">VBS</p>
+        </sc-if>
         <div class="hint">Planning Poker</div>
       </div>
       <div class="row g20">
-        <div class="row" style="gap: 6px;">
-          <span class="label" id="lbl-theme">Darstellung</span>
-          <button type="button" class="btn {{themeDarkCls}}" onClick="{{setThemeDark}}"><span class="br" aria-hidden="true">[</span>Dunkel<span class="br" aria-hidden="true">]</span></button>
-          <button type="button" class="btn {{themeLightCls}}" onClick="{{setThemeLight}}"><span class="br" aria-hidden="true">[</span>Hell<span class="br" aria-hidden="true">]</span></button>
-          <button type="button" class="btn {{themeAmtCls}}" onClick="{{setThemeAmt}}"><span class="br" aria-hidden="true">[</span>Behörde<span class="br" aria-hidden="true">]</span></button>
+        <div class="field" style="gap: 6px;">
+          <label class="label" for="themeSelect">Darstellung</label>
+          <select class="select" id="themeSelect" value="{{theme}}" onChange="{{onThemeChange}}">
+            <optgroup label="Modern">
+              <sc-for list="{{themesModern}}" as="t" hint-placeholder-count="2">
+                <option value="{{t.value}}">{{t.label}}</option>
+              </sc-for>
+            </optgroup>
+            <optgroup label="Nostalgie">
+              <sc-for list="{{themesRetro}}" as="t" hint-placeholder-count="4">
+                <option value="{{t.value}}">{{t.label}}</option>
+              </sc-for>
+            </optgroup>
+          </select>
         </div>
         <sc-if value="{{showApp}}" hint-placeholder-val="{{true}}">
         <div class="row" style="gap: 6px;">
           <span class="label">Rolle</span>
-          <button type="button" class="btn {{roleAdminCls}}" onClick="{{setRoleAdmin}}"><span class="br" aria-hidden="true">[</span>Admin<span class="br" aria-hidden="true">]</span></button>
-          <button type="button" class="btn {{rolePlayerCls}}" onClick="{{setRolePlayer}}"><span class="br" aria-hidden="true">[</span>Player<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{roleAdminCls}}" aria-pressed="{{roleAdminOn}}" onClick="{{setRoleAdmin}}"><span class="br" aria-hidden="true">[</span>Admin<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{rolePlayerCls}}" aria-pressed="{{rolePlayerOn}}" onClick="{{setRolePlayer}}"><span class="br" aria-hidden="true">[</span>Player<span class="br" aria-hidden="true">]</span></button>
         </div>
         </sc-if>
       </div>
@@ -126,8 +175,8 @@
       <div class="field">
         <span class="label">Rolle</span>
         <div class="row" style="gap: 6px;">
-          <button type="button" class="btn {{joinAdminCls}}" onClick="{{setJoinRoleAdmin}}"><span class="br" aria-hidden="true">[</span>Admin<span class="br" aria-hidden="true">]</span></button>
-          <button type="button" class="btn {{joinPlayerCls}}" onClick="{{setJoinRolePlayer}}"><span class="br" aria-hidden="true">[</span>Player<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{joinAdminCls}}" aria-pressed="{{joinAdminOn}}" onClick="{{setJoinRoleAdmin}}"><span class="br" aria-hidden="true">[</span>Admin<span class="br" aria-hidden="true">]</span></button>
+          <button type="button" class="btn {{joinPlayerCls}}" aria-pressed="{{joinPlayerOn}}" onClick="{{setJoinRolePlayer}}"><span class="br" aria-hidden="true">[</span>Player<span class="br" aria-hidden="true">]</span></button>
         </div>
       </div>
 
@@ -142,9 +191,9 @@
     <div class="col g20">
 
       <div class="row" style="gap: 6px;">
-        <button type="button" class="btn {{tabMainCls}}" onClick="{{goMain}}"><span class="br" aria-hidden="true">[</span>Abstimmung<span class="br" aria-hidden="true">]</span></button>
-        <button type="button" class="btn {{tabHistoryCls}}" onClick="{{goHistory}}"><span class="br" aria-hidden="true">[</span>Verlauf<span class="br" aria-hidden="true">]</span></button>
-        <button type="button" class="btn {{tabInfoCls}}" onClick="{{goInfo}}"><span class="br" aria-hidden="true">[</span>Regeln<span class="br" aria-hidden="true">]</span></button>
+        <button type="button" class="btn {{tabMainCls}}" aria-pressed="{{tabMainOn}}" onClick="{{goMain}}"><span class="br" aria-hidden="true">[</span>Abstimmung<span class="br" aria-hidden="true">]</span></button>
+        <button type="button" class="btn {{tabHistoryCls}}" aria-pressed="{{tabHistoryOn}}" onClick="{{goHistory}}"><span class="br" aria-hidden="true">[</span>Verlauf<span class="br" aria-hidden="true">]</span></button>
+        <button type="button" class="btn {{tabInfoCls}}" aria-pressed="{{tabInfoOn}}" onClick="{{goInfo}}"><span class="br" aria-hidden="true">[</span>Regeln<span class="br" aria-hidden="true">]</span></button>
       </div>
 
       <div class="panel">
@@ -166,8 +215,8 @@
             <h2 class="panel-title">Neue Story</h2>
             <div class="row" style="gap: 6px;">
               <span class="label">Deck</span>
-              <button type="button" class="btn {{deckFibCls}}" onClick="{{setDeckFib}}" disabled="{{deckLocked}}"><span class="br" aria-hidden="true">[</span>Fibonacci<span class="br" aria-hidden="true">]</span></button>
-              <button type="button" class="btn {{deckTshirtCls}}" onClick="{{setDeckTshirt}}" disabled="{{deckLocked}}"><span class="br" aria-hidden="true">[</span>T-Shirt<span class="br" aria-hidden="true">]</span></button>
+              <button type="button" class="btn {{deckFibCls}}" aria-pressed="{{deckFibOn}}" onClick="{{setDeckFib}}" disabled="{{deckLocked}}"><span class="br" aria-hidden="true">[</span>Fibonacci<span class="br" aria-hidden="true">]</span></button>
+              <button type="button" class="btn {{deckTshirtCls}}" aria-pressed="{{deckTshirtOn}}" onClick="{{setDeckTshirt}}" disabled="{{deckLocked}}"><span class="br" aria-hidden="true">[</span>T-Shirt<span class="br" aria-hidden="true">]</span></button>
             </div>
           </div>
           <div class="field">
@@ -378,6 +427,53 @@ function generateCode() {
   return s;
 }
 
+/* Modern: heutige Produktoberflaeche. Systemschrift, weiche Kanten, ein Akzent,
+   Flaechen statt Rahmen. Beide Varianten erfuellen 7:1 fuer Text. */
+const MODERN_SHARED = {
+  font: "ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+  edgeStyle: 'solid',
+  edgeWidth: '1px',
+  radius: '10px',
+  titleTransform: 'none',
+  titleTracking: '-0.01em',
+  labelTransform: 'none',
+  labelTracking: '0',
+  bracketDisplay: 'none',
+  onUnderline: 'none',
+  inputEdgeStyle: 'solid',
+  showLogo: false,
+};
+const MODERN_LIGHT = Object.assign({}, MODERN_SHARED, {
+  bg: '#f7f7f9',
+  fg: '#27272d',
+  fgDim: '#4b4b55',
+  fgStrong: '#111114',
+  divider: '#d3d3da',
+  inputBg: '#ffffff',
+  disabled: '#a5a5b0',
+  accent: '#4338ca',
+  danger: '#991b1b',
+  panelBg: '#ffffff',
+  panelShadow: '0 1px 2px rgba(17, 17, 20, 0.06), 0 1px 3px rgba(17, 17, 20, 0.05)',
+  controlBg: 'transparent',
+  /* Trennlinien duerfen zart sein, die Kante eines Bedienelements nicht: 3:1. */
+  cardBorder: '#8a8a94',
+});
+const MODERN_DARK = Object.assign({}, MODERN_SHARED, {
+  bg: '#0e0f13',
+  fg: '#d5d6dd',
+  fgDim: '#a9abb6',
+  fgStrong: '#f4f4f6',
+  divider: '#33343d',
+  inputBg: '#16171d',
+  disabled: '#5d5f6b',
+  accent: '#a5b4fc',
+  danger: '#fca5a5',
+  panelBg: '#16171d',
+  panelShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+  controlBg: 'transparent',
+  cardBorder: '#6b6d78',
+});
 const DARK = {
   bg: '#000000',
   fg: '#b7b7b7',
@@ -412,6 +508,44 @@ const AMT = {
   edgeWidth: '3px',
   titleBar: true,
   inputShadow: 'inset 2px 2px 0 rgba(0, 0, 0, 0.45)',
+};
+/* Fachanwendung: die VB6-Maske, die in jeder Verwaltung bis heute laeuft.
+   Silbergrau, Tahoma, gepraegte Kanten, Navy-Titelleisten, versenkte Felder.
+   Die Kanten sind echte Win9x-Bevel: aussen weiss/schwarz, innen hell/dunkelgrau. */
+const BEVEL_UP = 'inset 1px 1px 0 #ffffff, inset -1px -1px 0 #000000, inset 2px 2px 0 #dfdfdf, inset -2px -2px 0 #808080';
+const BEVEL_DOWN = 'inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff, inset 2px 2px 0 #000000, inset -2px -2px 0 #dfdfdf';
+const BEVEL_ETCH = 'inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff';
+const VB6 = {
+  bg: '#c0c0c0',
+  fg: '#000000',
+  fgDim: '#2e2e2e',
+  fgStrong: '#000000',
+  divider: '#5a5a5a',
+  inputBg: '#ffffff',
+  disabled: '#808080',
+  accent: '#000080',
+  danger: '#660000',
+  font: "Tahoma, 'MS Sans Serif', 'Segoe UI', Verdana, sans-serif",
+  edgeStyle: 'solid',
+  edgeWidth: '0px',
+  titleBar: true,
+  panelBg: '#c0c0c0',
+  panelShadow: BEVEL_ETCH,
+  controlBg: '#c0c0c0',
+  controlShadow: BEVEL_UP,
+  controlShadowActive: BEVEL_DOWN,
+  bracketDisplay: 'none',
+  inputShadow: BEVEL_DOWN,
+  inputEdgeWidth: '0px',
+  inputEdgeStyle: 'solid',
+  controlShadowOn: BEVEL_DOWN,
+  cardBorder: 'transparent',
+  focusStyle: 'dotted',
+  focusOffset: '-6px',
+  disabledShadow: '1px 1px 0 #ffffff',
+  ruleWidth: '1px',
+  ruleStyle: 'solid',
+  ruleShadow: '0 1px 0 #ffffff',
 };
 
 function hexToRgb(hex) {
@@ -509,7 +643,7 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.state = {
-      theme: 'dark',
+      theme: 'modernLight',
       joined: false,
       codeInput: generateCode(),
       nameInput: '',
@@ -538,8 +672,22 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state;
-    const theme = (s.theme === 'light' || s.theme === 'amt') ? s.theme : 'dark';
-    const pal = theme === 'light' ? LIGHT : (theme === 'amt' ? AMT : DARK);
+    const THEMES = {
+      modernLight: MODERN_LIGHT, modernDark: MODERN_DARK,
+      light: LIGHT, dark: DARK, amt: AMT, vb6: VB6,
+    };
+    const theme = THEMES[s.theme] ? s.theme : 'modernLight';
+    const pal = THEMES[theme];
+    const THEME_LABELS = {
+      modernLight: 'Hell', modernDark: 'Dunkel',
+      light: 'Terminal hell', dark: 'Terminal dunkel',
+      amt: 'Behörde', vb6: 'Fachanwendung',
+    };
+    const themeOptions = (keys) => keys.map((k) => ({ key: k, value: k, label: THEME_LABELS[k] }));
+    const onThemeChange = (e) => {
+      const v = e.target.value;
+      if (THEMES[v]) this.setState({ theme: v });
+    };
     const bg = pal.bg;
     // Das Behoerden-Theme bringt seine eigene Akzentfarbe mit; die Tweaks
     // gelten fuer Hell und Dunkel.
@@ -722,28 +870,59 @@ class Component extends DCLogic {
       titleFg: pal.titleBar ? onAccent : pal.fgStrong,
       titlePad: pal.titleBar ? '0 10px' : '0',
       inputShadow: pal.inputShadow ?? 'none',
+      fontFamily: pal.font ?? "'Courier New', Courier, monospace",
+      panelBg: pal.panelBg ?? 'transparent',
+      panelShadow: pal.panelShadow ?? 'none',
+      controlBg: pal.controlBg ?? 'transparent',
+      controlShadow: pal.controlShadow ?? 'none',
+      controlShadowActive: pal.controlShadowActive ?? (pal.controlShadow ?? 'none'),
+      bracketDisplay: pal.bracketDisplay ?? 'inline',
+      inputEdgeWidth: pal.inputEdgeWidth ?? '1px',
+      inputEdgeStyle: pal.inputEdgeStyle ?? (pal.edgeStyle ?? 'dashed'),
+      controlShadowOn: pal.controlShadowOn ?? 'none',
+      cardBorder: pal.cardBorder ?? pal.divider,
+      focusStyle: pal.focusStyle ?? 'solid',
+      focusOffset: pal.focusOffset ?? '2px',
+      disabledShadow: pal.disabledShadow ?? 'none',
+      ruleWidth: pal.ruleWidth ?? (pal.edgeWidth ?? '1px'),
+      ruleStyle: pal.ruleStyle ?? (pal.edgeStyle ?? 'dashed'),
+      ruleShadow: pal.ruleShadow ?? 'none',
 
-      themeDarkCls: on(theme === 'dark'), themeLightCls: on(theme === 'light'), themeAmtCls: on(theme === 'amt'),
-      setThemeDark: setTheme('dark'), setThemeLight: setTheme('light'), setThemeAmt: setTheme('amt'),
+      theme,
+      onThemeChange,
+      themesModern: themeOptions(['modernLight', 'modernDark']),
+      themesRetro: themeOptions(['light', 'dark', 'amt', 'vb6']),
+      radius: pal.radius ?? '0',
+      titleTransform: pal.titleTransform ?? 'uppercase',
+      titleTracking: pal.titleTracking ?? '0.1em',
+      labelTransform: pal.labelTransform ?? 'uppercase',
+      labelTracking: pal.labelTracking ?? '0.08em',
+      onUnderline: pal.onUnderline ?? 'underline',
+      showLogo: pal.showLogo !== false,
+      showWordmark: pal.showLogo === false,
 
       showJoin: !s.joined, showApp: s.joined,
       codeInput: s.codeInput, onCodeInput, regenCode,
       nameInput: s.nameInput, onNameInput,
       joinAdminCls: on(s.joinRole === 'admin'), joinPlayerCls: on(s.joinRole !== 'admin'),
+      joinAdminOn: s.joinRole === 'admin', joinPlayerOn: s.joinRole !== 'admin',
       setJoinRoleAdmin: setJoinRole('admin'), setJoinRolePlayer: setJoinRole('player'),
       doJoin, joinDisabled: !s.nameInput.trim() || !s.codeInput.trim(),
       leaveSession, sessionCode: s.sessionCode,
 
       isAdmin: s.role === 'admin', isPlayer: s.role !== 'admin',
       roleAdminCls: on(s.role === 'admin'), rolePlayerCls: on(s.role !== 'admin'),
+      roleAdminOn: s.role === 'admin', rolePlayerOn: s.role !== 'admin',
       setRoleAdmin: setRole('admin'), setRolePlayer: setRole('player'),
 
       isMain: s.activeTab === 'main', isHistory: s.activeTab === 'history', isInfo: s.activeTab === 'info',
       tabMainCls: on(s.activeTab === 'main'), tabHistoryCls: on(s.activeTab === 'history'), tabInfoCls: on(s.activeTab === 'info'),
+      tabMainOn: s.activeTab === 'main', tabHistoryOn: s.activeTab === 'history', tabInfoOn: s.activeTab === 'info',
       goMain: setTab('main'), goHistory: setTab('history'), goInfo: setTab('info'),
 
       deckLabel: s.deck === 'tshirt' ? 'T-Shirt' : 'Fibonacci',
       deckFibCls: on(s.deck === 'fib'), deckTshirtCls: on(s.deck === 'tshirt'),
+      deckFibOn: s.deck === 'fib', deckTshirtOn: s.deck === 'tshirt',
       setDeckFib: setDeck('fib'), setDeckTshirt: setDeck('tshirt'), deckLocked: s.phase !== 'idle',
 
       statusLabel: statusLabelMap[s.phase],
