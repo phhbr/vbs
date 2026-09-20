@@ -35,113 +35,212 @@ not a general escape hatch.
 
 Five roles, each doing exactly one job:
 
-- **`--vbs-fg-strong`** — values, headings, panel titles, logo. The thing
-  being displayed, not the label describing it.
-- **`--vbs-fg-dim`** — meta labels (12px, uppercase, `letter-spacing: 0.08em`)
-  and hint text. Never a value.
+- **`--vbs-fg-strong`** — values, headings, panel titles, logo/wordmark. The
+  thing being displayed, not the label describing it.
+- **`--vbs-fg-dim`** — meta labels and hint text. Never a value.
 - **`--vbs-accent`** — interactive things only: buttons, cards, active tabs
-  and toggles, the consensus badge. Nothing else gets it. The previous
-  version of this system used accent for section headings, status-bar
-  values, and link-styled text too, which is exactly the "does five things"
-  problem this pass exists to fix.
+  and toggles, the consensus badge. Nothing else gets it. An earlier version
+  of this system used accent for section headings, status-bar values, and
+  link-styled text too, which is exactly the "does five things" problem this
+  pass exists to fix.
 - **`--vbs-danger`** — warnings and the "waiting" status. Text only, never a
   fill.
-- **`--vbs-divider`** — rules and panel borders. Decorative, 3:1 rather than
-  the 7:1 text tiers.
+- **`--vbs-divider`** — decorative rules and (in four of the six themes)
+  panel borders. Never a control's own edge — see "A control's edge is not a
+  rule" below for why that split exists.
 
 `--vbs-on-accent` is a sixth, narrower role: text printed *on* an accent
 fill (a selected card, an "on" button, the consensus badge), not on the page
 background, which is why it has its own line in the contrast test rather than
 sharing one with `--vbs-fg-strong`.
 
+A seventh role was added for the two modern themes and reused by
+Fachanwendung: **`--vbs-control-border`**, the edge of a Card, the Input, or
+the Darstellung select — never a decorative rule, and never assumed to share
+`--vbs-divider`'s color. See "Themes" below for why the two needed to split.
+
 ## Themes
 
-Three: dark (the prototype's default), light, and Behörde (`amt`) — a 1980s
-German administrative terminal, added as a genuine third option rather than a
-variant of either. `data-theme` on `<html>` selects one; with nothing stored,
-`prefers-color-scheme` still decides between dark and light only — Behörde
-has no operating-system equivalent and is reached only by an explicit choice
-in the `Darstellung` control (`ThemeToggle`), a real three-option
-`role="radiogroup"` with the same roving-tabindex, arrow-key pattern as
-`CardDeck`, not the two-state toggle the previous version used. The choice
-persists per browser (`localStorage`) and applies before first paint through
-the same mechanism as the locale — `theme-bootstrap.js` reads the stored
-value and sets `data-theme` synchronously, so a returning visitor never sees
-a flash of the wrong theme.
+Six, in two families. `data-theme` on `<html>` selects one; `theme-
+bootstrap.js` reads the stored value and sets it synchronously before first
+paint, so a returning visitor never sees a flash of the wrong theme.
 
-Every color role above, plus four structural tokens, is defined per theme in
-`tokens.css` and nowhere else:
+**Modern** — today's ordinary product surface, system font, soft corners,
+one flat accent fill, no bracket glyphs, no ASCII logo:
 
-- **`--vbs-edge-width`** and **`--vbs-edge-style`** compose into
-  `--vbs-border-style` (`1px dashed` for dark and light, `3px double` for
-  Behörde). Every Panel, Input, and Dialog already read that one composed
-  token rather than a hardcoded value, so the third theme's edge needed zero
-  component CSS changes — only `tokens.css`.
-- **`--vbs-title-bg`**, **`--vbs-title-fg`**, and **`--vbs-title-pad`** are
-  transparent, `--vbs-fg-strong`, and `0` for dark and light — a no-op, the
-  title stays plain text exactly as before this theme existed. Behörde fills
-  them with the accent/on-accent pair and `0 10px`, giving its section
-  titles an inverted bar. Only the heading text itself gets the fill, in
-  both `Panel`'s own heading and `global.css`'s `.page-heading` — never the
-  action buttons that sit beside a heading in the same title row.
-- **`--vbs-input-shadow`** is `none` for dark and light, an inset shadow for
-  Behörde's sunken-field look — the one deliberate exception to "no shadows"
-  in the surfaces comment at the top of `tokens.css`.
+- **Hell** (`modernLight`) — the default when nothing is stored. Bare
+  `:root` carries its values directly in `tokens.css`, the same way the old
+  dark theme's selector alone used to be the unconditional default before
+  this theme existed.
+- **Dunkel** (`modernDark`) — reached automatically via
+  `prefers-color-scheme: dark` when nothing is stored, and explicitly via
+  the Darstellung select otherwise.
 
-Behörde's palette (`#000080` background, `#ffff54` accent, black text on that
-accent fill) clears every pair in `tokens.contrast.test.ts` with margin —
-nothing needed correcting when it was added, unlike a hue chosen without
-checking first. "Behörde" itself is never translated: it is a proper name in
-both `de` and `en`, with an English-only `title` attribute on its radio
-option for a reader who doesn't already know what it refers to.
+**Nostalgie** — four explicit-only choices, never a `prefers-color-scheme`
+default: picking one is always a deliberate act in the Darstellung select,
+never inferred from the OS.
 
-## Borders — one system
+- **Terminal hell** (`light`, formerly labelled "Hell") and **Terminal
+  dunkel** (`dark`, formerly labelled "Dunkel") — the app's original two
+  looks, palette and every structural token unchanged by this pass; only
+  their menu labels grew a "Terminal" qualifier once the modern pair took
+  the plain "Hell"/"Dunkel" names.
+- **Behörde** (`amt`) — a 1980s German administrative terminal: deep blue
+  screen, yellow highlights, a double-ruled edge instead of dashed, inverted
+  section titles, sunken input fields.
+- **Fachanwendung** (`vb6`) — a 1990s Windows line-of-business mask: silver
+  face, Tahoma, real Win9x bevels (engraved/embossed insets, not a drawn
+  border) instead of any edge color, navy title bars, sunken fields. The
+  structurally furthest of the six from the dashed/solid system — see its
+  own paragraph below.
 
-- **Dashed 1px** (`--vbs-border-style`, `3px double` in Behörde — see
-  Themes) is a Panel and nothing else.
-- **Solid 1px** is a Card.
-- **Rows, lists, and the status grid get no border at all.**
+Both Behörde and Fachanwendung are proper names, never translated, in both
+`de` and `en`, each with an English-only `title` attribute on its `<option>`
+for a reader who doesn't already know what it refers to.
 
-There is no dashed-vs-solid judgment call anywhere else in the app. A new
-component reaching for a border picks one of exactly these two, or none.
+### The token table
+
+Every color role above, plus every structural token below, is defined per
+theme in `tokens.css` and nowhere else. A theme block is fully
+self-contained — it redeclares every one of these rather than relying on a
+cross-theme fallback, the same convention Behörde already used before this
+pass (its edge-width/style and title-bar tokens were always spelled out in
+full, never inherited).
+
+| Token | Terminal hell/dunkel, Behörde | Fachanwendung | Modern (Hell/Dunkel) |
+| --- | --- | --- | --- |
+| `--vbs-radius` | `0` | `0` | `10px` |
+| `--vbs-title-transform` | `uppercase` | `uppercase` | `none` |
+| `--vbs-title-tracking` | `0.1em` | `0.1em` | `-0.01em` |
+| `--vbs-label-transform` | `uppercase` | `uppercase` | `none` |
+| `--vbs-label-tracking` | `0.08em` | `0.08em` | `0` |
+| `--vbs-on-underline` | `none` | `none` | `none` |
+| `--vbs-logo-display` / `--vbs-wordmark-display` | logo shown | logo shown | wordmark shown |
+| `--vbs-font-family` | `var(--vbs-font-mono)` | Tahoma stack | system sans stack |
+| `--vbs-panel-bg` | `transparent` | `var(--vbs-bg)` (no-op) | a real elevated card color |
+| `--vbs-panel-shadow` | `none` | etched bevel | a soft drop shadow |
+| `--vbs-control-bg` | `transparent` | `var(--vbs-bg)` (button face) | `transparent` |
+| `--vbs-control-shadow` / `-active` / `-on` | `none` | bevel-up / bevel-down / bevel-down | `none` |
+| `--vbs-bracket-display` | `inline` | `none` | `none` |
+| `--vbs-input-edge-width` / `-style` | mirrors `--vbs-edge-*` | `0px solid` | mirrors `--vbs-edge-*` (`1px solid`) |
+| `--vbs-control-border` | `var(--vbs-divider)` | `transparent` | a dedicated color, ≥3:1 |
+| `--vbs-focus-ring` | `2px solid` fg-strong | `1px dotted` fg-strong | `2px solid` fg-strong |
+| `--vbs-focus-offset` | `2px` | `-6px` (inset) | `2px` |
+| `--vbs-disabled-shadow` | `none` | an embossed highlight | `none` |
+| `--vbs-rule-width` / `-style` / `-shadow` | mirrors `--vbs-edge-*`, shadow `none` | `1px solid` + engraved highlight | mirrors `--vbs-edge-*` (`1px solid`), shadow `none` |
+
+`--vbs-edge-width` / `--vbs-edge-style` (composing into `--vbs-border-style`
+for Panel/Dialog) and `--vbs-title-bg` / `--vbs-title-fg` / `--vbs-title-pad`
+and `--vbs-input-shadow` predate this pass — Behörde already exercised all
+of them; Fachanwendung reuses the same mechanism (title bar filled, its own
+`--vbs-input-shadow`) rather than needing new ones.
+
+### A control's edge is not a rule
+
+Finding 2 of this pass: a Card, the Input, and the Darstellung select need a
+boundary that survives *on its own*, unlike a decorative rule between
+sections. The four original themes never had to distinguish the two —
+`--vbs-divider` happened to clear 3:1 in all of them, so it did double duty
+as both a rule color and a control's border color. The two modern themes
+break that coincidence on purpose: their divider is a genuinely faint
+hairline (~1.4:1 against the background — fine for a rule between sections,
+useless as the only line marking a clickable box), so a control's edge now
+reads `--vbs-control-border` instead, a color chosen to clear 3:1
+independently. `packages/ui/src/tokens.contrast.test.ts` checks the two
+tokens separately for exactly this reason — checking only `--vbs-divider` at
+3:1 for every theme would have let a modern theme ship with an invisible
+Card border.
+
+Fachanwendung goes one step further: its controls have no border color at
+all (`--vbs-control-border: transparent`) because they have no drawn edge —
+the Win9x bevel shadow *is* the edge. Reusing `--vbs-divider` there the way
+the four older themes do would draw a line that competes with the bevel
+instead of one that replaces it.
+
+### Fachanwendung's bevels
+
+The furthest of the six themes from the dashed/solid system in "Borders"
+below: Panel, Dialog, and Input all set `--vbs-edge-width` /
+`--vbs-input-edge-width: 0` — no drawn border anywhere. What reads as an
+edge instead is a real Win9x double-tone inset shadow, composed once from
+six literal grays (outer white/black, inner light/dark gray) and reused as:
+
+- `--vbs-control-shadow` — the idle "up" bevel on every button/card face.
+- `--vbs-control-shadow-active` and `--vbs-control-shadow-on` — the pressed
+  and selected "down" bevel, the same shadow used for both since Win9x
+  doesn't distinguish a held click from a toggled-on state.
+- `--vbs-panel-shadow` — a lighter, two-tone "etched" variant for Panel and
+  Dialog boxes.
+- `--vbs-input-shadow` — the "down" bevel again, giving Input its classic
+  sunken-field look (the same mechanism Behörde already used for its own
+  sunken fields, just a different shadow recipe).
+
+Its focus ring is the other structural outlier: `1px dotted`, inset with a
+negative `-6px` offset so the marching-ants rectangle sits inside the
+control rather than outside it — every other theme's ring sits outside, at a
+positive offset.
+
+## Borders
+
+- **Dashed 1px** (`--vbs-border-style`, `3px double` in Behörde, `1px solid`
+  in the two modern themes) is a Panel/Dialog and nothing else. Fachanwendung
+  is the one theme where this composes to a literal `0px` — no drawn edge;
+  see "Fachanwendung's bevels" above for what stands in for it.
+- **A control's own edge** (Card, Input, the Darstellung select) reads
+  `--vbs-control-border`, never `--vbs-divider` — see "A control's edge is
+  not a rule" above.
+- **Rows and lists get no border at all.**
+
+There is no dashed-vs-solid-vs-bevel judgment call anywhere else in the app.
+A new component reaching for a border picks one of exactly these, or none.
 
 ## Buttons
 
 One component, `BracketButton`, behind every action in the app — plain
 buttons, toggle options, nav tabs, the deck/role pickers. `min-height: 44px`,
-padding `10px 14px`, `border: 1px solid transparent`. The brackets are the
-component's own `aria-hidden` spans around the label, never characters baked
-into the label string — a locale string that still had them would double up
-now that the component adds its own. This is what makes "one bracket
-dialect" actually enforceable: there is exactly one place brackets come from.
+padding `10px 14px`, `border-radius: var(--vbs-radius)` (a no-op everywhere
+but the two modern themes). The brackets are the component's own
+`aria-hidden` spans around the label, never characters baked into the label
+string, and are hidden entirely (`display: var(--vbs-bracket-display)`) in
+the two modern themes and Fachanwendung — a locale string that still had
+brackets baked in would double up now that the component adds its own, and a
+theme that hides them relies on the fill/inversion and real ARIA state alone
+to signal every button state.
 
 - **Hover / focus-visible**: invert — `background: var(--vbs-accent)`,
   `color: var(--vbs-on-accent)`.
 - **`active` prop** (the "on" state — active tab, active toggle option,
   selected deck): the same inversion, held rather than transient, plus an
-  accent border. Signalled by the inversion and real state
-  (`aria-pressed`/`aria-selected`/`aria-checked`) together, not by a bold
-  weight — the previous version used bold for this, which is invisible to
-  anyone who can't distinguish it from the surrounding text at a glance.
+  accent border, `--vbs-control-shadow-on`, and (via `--vbs-on-underline`) an
+  underline in every theme except the two modern ones — a third, independent
+  signal on top of the fill and the real ARIA state
+  (`aria-pressed`/`aria-selected`/`aria-checked`), the kind that survives
+  Windows' forced-colors mode where fills and shadows are replaced but text
+  decoration isn't.
 - **`variant="primary"`**: an accent border on an otherwise-idle button — the
   one emphasized action in a group (a form's submit, "Karten aufdecken").
-- **Disabled**: the real `disabled` attribute plus `--vbs-disabled`, not a
-  different color choice layered on top of an enabled-looking control.
+- **Disabled**: the real `disabled` attribute plus `--vbs-disabled`, plus
+  `--vbs-disabled-shadow` (Fachanwendung's embossed-highlight look; a no-op
+  everywhere else) — not a different color choice layered on top of an
+  enabled-looking control.
 
-Cards (`CardDeck`) are a separate, smaller thing: 56×56, solid 1px border,
-`--vbs-accent` text, no brackets. Selected is the same inversion as a
-button's "on" state, signalled by the fill plus `aria-checked` — not by an
-extra border weight the way the previous version did.
+Cards (`CardDeck`) are a separate, smaller thing: 56×56, `--vbs-control-
+border` (not `--vbs-divider`) at 1px, `--vbs-accent` text, no brackets.
+Selected is the same inversion as a button's "on" state, at 3px instead of
+2px, signalled by the fill plus `aria-checked` — not by an extra border
+weight alone.
 
 ## Panels
 
-Every section is a Panel: dashed border, `padding: 20px`, `gap: 20px` between
-its own children. A titled Panel's heading is uppercase, `letter-spaced
-0.1em`, `--vbs-fg-strong`, no decorative prefix — the previous version's "»
-Heading" chevron is gone, along with the floating, boxless headings it used
-to sit next to (the voting column's "Abstimmung" label used to have no panel
-around it at all, while every other section did; that inconsistency was
-finding 9 of the review this document responds to).
+Every section is a Panel: bordered per "Borders" above, `padding: 20px`,
+`gap: 20px` between its own children, `border-radius: var(--vbs-radius)`,
+and a background/shadow pair (`--vbs-panel-bg` / `--vbs-panel-shadow`) that's
+a no-op everywhere except the two modern themes (a real elevated white/
+near-black card) and Fachanwendung (an etched two-tone bevel instead of a
+drop shadow). A titled Panel's heading takes its case and tracking from
+`--vbs-title-transform` / `--vbs-title-tracking` — uppercase and
+letter-spaced in every theme but the two modern ones, which leave heading
+case exactly as written — `--vbs-fg-strong`, no decorative prefix.
 
 A Panel's title bar can carry a second element via `headingAction` —
 "Rundenverlauf `[ Alle ]`", the deck picker beside "Neue Story" — in a row
@@ -154,9 +253,10 @@ Panel, or a heading with no box at all are all the same bug.
 
 `StatusBar` is a CSS grid of label-over-value pairs
 (`repeat(auto-fit, minmax(150px, 1fr))`, gap `10px 20px`), one `.item` per
-`{ label, value }`, label styled as a meta label, value in `--vbs-fg-strong`.
-No pipe characters, no inline "Label: value" text run — a test that looks for
-one, like `getByText("Story: X")`, is looking for the previous version.
+`{ label, value }`, label styled as a meta label (`--vbs-label-transform` /
+`--vbs-label-tracking`), value in `--vbs-fg-strong`. No pipe characters, no
+inline "Label: value" text run — a test that looks for one, like
+`getByText("Story: X")`, is looking for an earlier version.
 
 ## The participant row
 
@@ -169,62 +269,84 @@ in between.
 
 ## The input
 
-One styled text input, `Input` (there was no styled input at all before this
-pass — a bare `<input>` picked up whatever the browser or a stray global
-rule gave it). Same dashed border as a Panel, no radius, `width: 100%` inside
+One styled text input, `Input`. Same border system as a Panel but through
+`--vbs-control-border` rather than `--vbs-divider` (see "A control's edge is
+not a rule" above), `border-radius: var(--vbs-radius)`, `width: 100%` inside
 a `Field` (label above input, `gap: 10px`) or `flex: 1 1 260px` inside an
 `InputRow` beside a button — same `min-height: 44px` as that button, so
-their centers line up. Its own focus outline in `--vbs-accent`, not the
-shared `--vbs-focus-ring` every other focusable element uses — a dashed
-border plus a same-color solid ring would blur into one shape rather than
-read as two distinct signals.
+their centers line up. Its own focus outline is a fixed `2px solid
+var(--vbs-accent)` in every theme, deliberately *not* wired to
+`--vbs-focus-ring`/`--vbs-focus-offset` the way every other focusable
+element is — a border plus a same-color solid ring would blur into one
+shape rather than read as two distinct signals, and that holds even for
+Fachanwendung's otherwise-inset focus ring elsewhere.
+
+## The Darstellung select
+
+A single native `<select>`, not the three/six-way radiogroup an earlier
+version of this system used — six bracket buttons in the header wrapped
+twice at 360px, which is what motivated the switch. Two `<optgroup>`s,
+"Modern" (Hell, Dunkel) and "Nostalgie" (Terminal hell, Terminal dunkel,
+Behörde, Fachanwendung). Native on purpose: the system picker on mobile,
+correct keyboard behavior, and correct rendering under `forced-colors` mode
+all come from the browser rather than custom code that would have to
+reimplement each one. Styled from tokens only — `--vbs-radius`,
+`--vbs-input-bg`, `--vbs-control-border` for its edge (not `--vbs-divider`;
+the prototype's own `.select` rule still points at `--divider`, which this
+app treats as the oversight the control-border split exists to catch, not
+something to reproduce).
 
 ## The admin recovery dialog
 
 A real `Dialog`: `role="dialog"` plus `aria-modal`, focus moved in and
 trapped on open, Esc and the confirm button both close it, focus restored to
-whatever triggered it. It shows the session code and a copy button — never
+whatever triggered it. `border-radius: var(--vbs-radius)` and
+`box-shadow: var(--vbs-panel-shadow)` like every other box, otherwise
+unchanged by this pass. It shows the session code and a copy button — never
 the recovery URL as text. That specific rendering (`<code>{url}</code>`) is
-how a real token leaked into a screenshot during this review; the fix is not
-just "make it a real modal" but "never put the secret on screen as text" —
-see `docs/security.md`. Body copy is capped at 80ch (`.prose`, defined once in
-`global.css` and reused everywhere prose appears, not per-component).
+how a real token leaked into a screenshot during an earlier review; the fix
+is not just "make it a real modal" but "never put the secret on screen as
+text" — see `docs/security.md`. Body copy is capped at 80ch (`.prose`,
+defined once in `global.css` and reused everywhere prose appears, not
+per-component).
 
 ## Layout
 
 Left-aligned along one edge, header included: the wordmark block on the
 left, control groups (`Darstellung`, `Sprache`) to its right, each with its
 own visible label and no separator character between its options — the
-group's own `gap: 10px` is the only separator. The previous version centered
+group's own `gap: 10px` is the only separator. An earlier version centered
 the header and used a mix of pipes and middots between control groups and
 between nav-tab items; there is now exactly one separator convention (a
 group's own spacing) and it is used everywhere a separator would otherwise
 go, including the footer, which lost a hardcoded em-dash that the
 `justify-content: space-between` layout no longer needs.
 
-Two columns from 900px, one below that — unchanged from the previous
+Two columns from 900px, one below that — unchanged from any previous
 version, still no `min-width: 1040px`. A page's outer `.wrap`-equivalent
 (`App.module.css`'s `.page`) caps at 1120px, centers, and pads `40px 20px`
-(halved to `20px` below 480px via `--vbs-space-page-x`) — this didn't exist
-before the design revision, so content ran edge-to-edge at any width; it's
-what makes the 360px screenshots in `docs/screenshots/` have any margin at
-all.
+(halved to `20px` below 480px via `--vbs-space-page-x`) — this is what makes
+the 360px screenshots in `docs/screenshots/` have any margin at all.
 
 ## Copy and tone
 
-Unchanged from the previous version: dry and matter-of-fact, with a light
+Unchanged from any previous version: dry and matter-of-fact, with a light
 touch of bureaucratic humor and no silliness. German is the source locale.
 The app name stays German in both locales: Vorgangsbewertungsstelle, short
 VBS.
 
 ## Accessibility exceptions
 
-None currently. `--vbs-on-accent` reaches AAA against `--vbs-accent` in all
-three themes, and (Behörde only, since it's the only theme where the fill is
-real rather than transparent) `--vbs-title-fg` reaches AAA against
-`--vbs-title-bg` — both confirmed by `tokens.contrast.test.ts` — so the
-fallback this section would otherwise document — keeping a non-color cue and
-noting the hue that couldn't reach 7:1 — isn't needed. If a future accent
-color choice fails that test, the fix is either a different hue or a
-documented exception here, in that order; the test failing is not itself the
-problem to solve around.
+One, precisely scoped: `--vbs-divider` drops below the general 3:1 floor for
+non-text in the two modern themes (~1.4:1), because it is used there purely
+as a decorative rule between sections, never as a control's own edge —
+`packages/ui/src/tokens.contrast.test.ts` checks the two roles separately
+(see "A control's edge is not a rule" above) so this exception can never
+silently spread to a Card, Input, or select border. Every other pairing —
+text against background, text against a real panel color, `--vbs-on-accent`
+against `--vbs-accent`, title text against a filled title bar, and
+`--vbs-control-border` everywhere it's a real color — reaches AAA/3:1 with
+margin across all six themes and needs no exception. If a future accent (or
+divider) color choice fails a check it isn't exempt from, the fix is either
+a different hue or a documented exception here, in that order; the test
+failing is not itself the problem to solve around.
