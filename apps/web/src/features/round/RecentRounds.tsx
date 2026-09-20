@@ -1,5 +1,6 @@
 import { BracketButton, Panel } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { useErrorMessage } from "../session/useErrorMessage";
 import { HistoryLine } from "./RoundHistory";
 import { useRoundHistory } from "./queries";
 
@@ -13,6 +14,7 @@ export function RecentRounds({
   onShowAll: () => void;
 }) {
   const { t } = useTranslation();
+  const describeError = useErrorMessage();
   const history = useRoundHistory(sessionId);
   const recent = (history.data ?? [])
     .filter((round) => round.result)
@@ -27,7 +29,11 @@ export function RecentRounds({
         </BracketButton>
       }
     >
-      {recent.length === 0 ? (
+      {history.isError ? (
+        // Same reason as RoundHistory's: an unreadable table must not
+        // render as an empty one.
+        <p role="alert">{describeError(history.error)}</p>
+      ) : recent.length === 0 ? (
         <p>{t("round.historyEmpty")}</p>
       ) : (
         <ul>

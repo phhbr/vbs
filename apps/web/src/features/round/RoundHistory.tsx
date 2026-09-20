@@ -1,5 +1,6 @@
 import { Panel } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { useErrorMessage } from "../session/useErrorMessage";
 import { useRoundHistory } from "./queries";
 
 /**
@@ -41,12 +42,18 @@ export function HistoryLine({
  * result to show; a round still voting appears on the Main tab instead. */
 export function RoundHistory({ sessionId }: { sessionId: string }) {
   const { t } = useTranslation();
+  const describeError = useErrorMessage();
   const history = useRoundHistory(sessionId);
   const revealed = (history.data ?? []).filter((round) => round.result);
 
   return (
     <Panel heading={t("round.historyHeading")}>
-      {revealed.length === 0 ? (
+      {history.isError ? (
+        // A failed read is not an empty history. Reporting it as one is how
+        // a missing select grant on `rounds` in production read to everyone
+        // as "no rounds played yet" for three revealed rounds.
+        <p role="alert">{describeError(history.error)}</p>
+      ) : revealed.length === 0 ? (
         <p>{t("round.historyEmptyFull")}</p>
       ) : (
         <ul>
