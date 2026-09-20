@@ -10,9 +10,14 @@
   },
   "theme": {
     "label": "Display",
-    "light": "Light",
-    "dark": "Dark",
-    "amt": "Behörde"
+    "groupModern": "Modern",
+    "groupRetro": "Retro",
+    "modernLight": "Light",
+    "modernDark": "Dark",
+    "light": "Terminal Light",
+    "dark": "Terminal Dark",
+    "amt": "Behörde",
+    "vb6": "Fachanwendung"
   },
   "language": {
     "label": "Language",

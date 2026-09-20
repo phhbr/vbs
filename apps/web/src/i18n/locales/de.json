@@ -10,9 +10,14 @@
   },
   "theme": {
     "label": "Darstellung",
-    "light": "Hell",
-    "dark": "Dunkel",
-    "amt": "Behörde"
+    "groupModern": "Modern",
+    "groupRetro": "Nostalgie",
+    "modernLight": "Hell",
+    "modernDark": "Dunkel",
+    "light": "Terminal hell",
+    "dark": "Terminal dunkel",
+    "amt": "Behörde",
+    "vb6": "Fachanwendung"
   },
   "language": {
     "label": "Sprache",
