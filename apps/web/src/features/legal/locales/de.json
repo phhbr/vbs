@@ -1,0 +1,82 @@
+{
+  "legal": {
+    "footer": {
+      "impressum": "Impressum",
+      "datenschutz": "Datenschutz"
+    },
+    "impressum": {
+      "heading": "Impressum",
+      "providerHeading": "Angaben gemäß § 5 DDG",
+      "name": "Philipp Bruchner",
+      "street": "Greifswalder Straße 4",
+      "city": "90425 Nürnberg",
+      "contactHeading": "Kontakt",
+      "phoneLabel": "Telefon",
+      "phone": "+49 (0) 911 47 88 56 70",
+      "phoneHref": "+4991147885670",
+      "emailLabel": "E-Mail",
+      "email": "blog@phhbr.de",
+      "responsibleHeading": "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV"
+    },
+    "datenschutz": {
+      "heading": "Datenschutzerklärung",
+      "intro": "Diese Datenschutzerklärung informiert dich darüber, welche personenbezogenen Daten bei der Nutzung der Vorgangsbewertungsstelle (VBS) verarbeitet werden und zu welchem Zweck.",
+      "sections": [
+        {
+          "heading": "Verantwortlicher",
+          "paragraphs": [
+            "Verantwortlich für die Datenverarbeitung auf dieser Website ist:",
+            "Philipp Bruchner, Greifswalder Straße 4, 90425 Nürnberg. Telefon: +49 (0) 911 47 88 56 70, E-Mail: blog@phhbr.de."
+          ]
+        },
+        {
+          "heading": "Welche Daten wir verarbeiten",
+          "paragraphs": [
+            "Beim Erstellen oder Beitreten einer Sitzung verarbeiten wir den von dir gewählten Anzeigenamen sowie die von dir abgegebenen Schätzwerte innerhalb einer Runde. Diese Daten sind für die anderen Teilnehmenden derselben Sitzung sichtbar, sobald eine Runde aufgedeckt wurde.",
+            "Für die Nutzung ohne Registrierung erzeugt Supabase im Hintergrund ein anonymes, zufälliges Nutzerkonto (Anonymous Auth) ohne Namen, E-Mail-Adresse oder Passwort. Dieses Konto dient ausschließlich der technischen Zuordnung innerhalb einer Sitzung.",
+            "Zur Bereitstellung des Dienstes werden zudem technische Daten wie deine IP-Adresse durch unseren Hosting-Provider und durch Supabase kurzzeitig verarbeitet (Server-Logfiles)."
+          ]
+        },
+        {
+          "heading": "Hosting und Backend",
+          "paragraphs": [
+            "Datenbank, Authentifizierung und Echtzeit-Kommunikation werden über Supabase bereitgestellt, mit Serverstandort Frankfurt am Main (Deutschland, EU). Eine Übertragung deiner Sitzungs- und Nutzungsdaten in Länder außerhalb der EU/des EWR findet dadurch nicht statt.",
+            "Die Website selbst wird als statische Anwendung von einem Server in Deutschland ausgeliefert."
+          ]
+        },
+        {
+          "heading": "Speicherdauer und Löschung",
+          "paragraphs": [
+            "Sitzungen laufen automatisch 24 Stunden nach der letzten Aktivität ab. Abgelaufene Sitzungen werden automatisiert gelöscht, wodurch auch alle zugehörigen Teilnehmer- und Abstimmungsdaten entfernt werden.",
+            "Anonyme Nutzerkonten, die länger als 7 Tage keiner Sitzung mehr zugeordnet sind, werden ebenfalls automatisiert gelöscht."
+          ]
+        },
+        {
+          "heading": "Cookies und lokale Speicherung",
+          "paragraphs": [
+            "Diese Website setzt keine Tracking- oder Analyse-Cookies ein und bindet keine Werbe- oder Social-Media-Dienste ein. Im Local Storage deines Browsers werden lediglich technisch notwendige Informationen gespeichert, etwa deine Zugehörigkeit zu einer laufenden Sitzung sowie deine Sprach- und Darstellungseinstellungen."
+          ]
+        },
+        {
+          "heading": "Bot-Schutz (Cloudflare Turnstile)",
+          "paragraphs": [
+            "Sofern auf der von dir genutzten Instanz aktiviert, wird beim Anmelden der Dienst Cloudflare Turnstile zum Schutz vor automatisiertem Missbrauch eingesetzt. Anbieter ist Cloudflare, Inc., USA; die Verarbeitung erfolgt auf Grundlage von EU-Standardvertragsklauseln. Weitere Informationen findest du in der Datenschutzerklärung von Cloudflare unter cloudflare.com/privacypolicy. Ist diese Funktion nicht aktiv, findet keine Datenübertragung an Cloudflare statt."
+          ]
+        },
+        {
+          "heading": "Rechtsgrundlagen",
+          "paragraphs": [
+            "Die Verarbeitung erfolgt zur Erfüllung eines Vertrags bzw. zur Durchführung vorvertraglicher Maßnahmen (Art. 6 Abs. 1 lit. b DSGVO) sowie zur Wahrung berechtigter Interessen an einem sicheren und funktionsfähigen Betrieb des Dienstes (Art. 6 Abs. 1 lit. f DSGVO)."
+          ]
+        },
+        {
+          "heading": "Deine Rechte",
+          "paragraphs": [
+            "Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung deiner personenbezogenen Daten sowie ein Recht auf Datenübertragbarkeit und Widerspruch gegen die Verarbeitung (Art. 15 bis 21 DSGVO). Zudem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.",
+            "Für Anfragen zum Datenschutz wende dich bitte an die oben genannte Kontaktadresse."
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,7 +1,9 @@
-import { Header, LocaleToggle, ThemeToggle, useTheme } from "@vbs/ui";
+import { Footer, Header, LocaleToggle, ThemeToggle, useTheme } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
-import { Route, Routes } from "react-router";
+import { Link, Route, Routes } from "react-router";
+import { Datenschutz } from "./routes/Datenschutz";
 import { Home } from "./routes/Home";
+import { Impressum } from "./routes/Impressum";
 import { Session } from "./routes/Session";
 import styles from "./App.module.css";
 
@@ -38,7 +40,19 @@ export function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/s/:code" element={<Session />} />
+        <Route path="/impressum" element={<Impressum />} />
+        <Route path="/datenschutz" element={<Datenschutz />} />
       </Routes>
+      <Footer
+        segments={[
+          <Link to="/impressum" key="impressum">
+            {t("legal.footer.impressum")}
+          </Link>,
+          <Link to="/datenschutz" key="datenschutz">
+            {t("legal.footer.datenschutz")}
+          </Link>,
+        ]}
+      />
     </div>
   );
 }

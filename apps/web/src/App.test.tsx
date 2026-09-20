@@ -87,4 +87,42 @@ describe("home screen", () => {
       screen.queryByText("Ein Code besteht aus 12 Zeichen"),
     ).not.toBeInTheDocument();
   });
+
+  it("links to the legal pages from the footer", () => {
+    renderApp("/");
+
+    expect(
+      screen.getByRole("link", { name: "Impressum" }),
+    ).toHaveAttribute("href", "/impressum");
+    expect(
+      screen.getByRole("link", { name: "Datenschutz" }),
+    ).toHaveAttribute("href", "/datenschutz");
+  });
+});
+
+describe("legal pages", () => {
+  it("renders the legal notice with the operator's contact details", () => {
+    renderApp("/impressum");
+
+    expect(
+      screen.getByRole("heading", { name: "Impressum", level: 1 }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Angaben gemäß § 5 DDG" }),
+    ).toHaveTextContent("Philipp Bruchner");
+    expect(
+      screen.getByRole("link", { name: "blog@phhbr.de" }),
+    ).toHaveAttribute("href", "mailto:blog@phhbr.de");
+  });
+
+  it("renders the privacy policy", () => {
+    renderApp("/datenschutz");
+
+    expect(
+      screen.getByRole("heading", { name: "Datenschutzerklärung", level: 1 }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Verantwortlicher" }),
+    ).toBeInTheDocument();
+  });
 });

@@ -1,6 +1,8 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
+import legalDe from "../features/legal/locales/de.json";
+import legalEn from "../features/legal/locales/en.json";
 import roundDe from "../features/round/locales/de.json";
 import roundEn from "../features/round/locales/en.json";
 import sessionDe from "../features/session/locales/de.json";
@@ -11,8 +13,8 @@ import commonEn from "./locales/en.json";
 // Keys live with the feature (CLAUDE.md), merged here into one namespace so
 // components call plain t("lobby.title") without namespace boilerplate. Each
 // file owns distinct top-level keys, so a shallow merge is enough.
-const de = { ...commonDe, ...sessionDe, ...roundDe };
-const en = { ...commonEn, ...sessionEn, ...roundEn };
+const de = { ...commonDe, ...sessionDe, ...roundDe, ...legalDe };
+const en = { ...commonEn, ...sessionEn, ...roundEn, ...legalEn };
 
 void i18next
   .use(LanguageDetector)

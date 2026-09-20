@@ -1,0 +1,82 @@
+{
+  "legal": {
+    "footer": {
+      "impressum": "Legal notice",
+      "datenschutz": "Privacy policy"
+    },
+    "impressum": {
+      "heading": "Legal notice",
+      "providerHeading": "Information pursuant to § 5 DDG",
+      "name": "Philipp Bruchner",
+      "street": "Greifswalder Straße 4",
+      "city": "90425 Nürnberg, Germany",
+      "contactHeading": "Contact",
+      "phoneLabel": "Phone",
+      "phone": "+49 (0) 911 47 88 56 70",
+      "phoneHref": "+4991147885670",
+      "emailLabel": "Email",
+      "email": "blog@phhbr.de",
+      "responsibleHeading": "Responsible for content pursuant to § 18(2) MStV"
+    },
+    "datenschutz": {
+      "heading": "Privacy policy",
+      "intro": "This privacy policy explains which personal data is processed when using the Vorgangsbewertungsstelle (VBS), and for what purpose.",
+      "sections": [
+        {
+          "heading": "Controller",
+          "paragraphs": [
+            "The party responsible for data processing on this website is:",
+            "Philipp Bruchner, Greifswalder Straße 4, 90425 Nürnberg, Germany. Phone: +49 (0) 911 47 88 56 70, email: blog@phhbr.de."
+          ]
+        },
+        {
+          "heading": "What data we process",
+          "paragraphs": [
+            "When you create or join a session, we process the display name you choose and the estimates you submit within a round. This data becomes visible to the other participants of the same session once a round is revealed.",
+            "To allow use without registration, Supabase creates an anonymous, randomly generated user account (Anonymous Auth) in the background, with no name, email address, or password. This account is used solely to identify you technically within a session.",
+            "To provide the service, technical data such as your IP address is also briefly processed by our hosting provider and by Supabase (server log files)."
+          ]
+        },
+        {
+          "heading": "Hosting and backend",
+          "paragraphs": [
+            "The database, authentication, and realtime communication are provided by Supabase, hosted in Frankfurt am Main, Germany (EU). Your session and usage data is therefore not transferred to countries outside the EU/EEA.",
+            "The website itself is served as a static application from a server located in Germany."
+          ]
+        },
+        {
+          "heading": "Retention and deletion",
+          "paragraphs": [
+            "Sessions expire automatically 24 hours after the last activity. Expired sessions are deleted automatically, which also removes all associated participant and vote data.",
+            "Anonymous user accounts that have not been associated with any session for more than 7 days are likewise deleted automatically."
+          ]
+        },
+        {
+          "heading": "Cookies and local storage",
+          "paragraphs": [
+            "This website does not use tracking or analytics cookies and does not embed any advertising or social media services. Your browser's local storage holds only technically necessary information, such as which session you currently belong to and your language and display preferences."
+          ]
+        },
+        {
+          "heading": "Bot protection (Cloudflare Turnstile)",
+          "paragraphs": [
+            "Where enabled on the instance you are using, Cloudflare Turnstile is used at sign-in to protect against automated abuse. The provider is Cloudflare, Inc., USA; processing relies on EU Standard Contractual Clauses. See Cloudflare's privacy policy at cloudflare.com/privacypolicy for details. If this feature is not active, no data is transferred to Cloudflare."
+          ]
+        },
+        {
+          "heading": "Legal basis",
+          "paragraphs": [
+            "Processing takes place to perform a contract or pre-contractual measures (Art. 6(1)(b) GDPR), and to safeguard legitimate interests in operating the service securely and reliably (Art. 6(1)(f) GDPR)."
+          ]
+        },
+        {
+          "heading": "Your rights",
+          "paragraphs": [
+            "You have the right to access, rectify, erase, and restrict the processing of your personal data, as well as a right to data portability and to object to processing (Art. 15–21 GDPR). You also have the right to lodge a complaint with a data protection supervisory authority.",
+            "For privacy-related requests, please use the contact details above."
+          ]
+        }
+      ]
+    }
+  }
+}
