@@ -8,3 +8,15 @@
   flex-direction: column;
   gap: var(--vbs-space-20);
 }
+
+/* Plain text, not a dismissible alert — a permanent note for as long as the
+   test phase lasts, not a one-off status update. */
+.betaBanner {
+  margin: 0;
+  padding: var(--vbs-space-10);
+  border: var(--vbs-border-style);
+  border-radius: var(--vbs-radius);
+  color: var(--vbs-fg-dim);
+  font-size: var(--vbs-font-size-small);
+  text-align: center;
+}

@@ -1,6 +1,7 @@
 import { Footer, Header, LocaleToggle, ThemeSelect, useTheme } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
 import { Link, Route, Routes } from "react-router";
+import { SupportLink, supportUrl } from "./features/support/SupportLink";
 import { Datenschutz } from "./routes/Datenschutz";
 import { Home } from "./routes/Home";
 import { Impressum } from "./routes/Impressum";
@@ -42,6 +43,9 @@ export function App() {
           </>
         }
       />
+      {/* Not a feature flag: this banner has no env gate, unlike SupportLink
+       * below — it comes out again once the test phase ends. */}
+      <p className={styles.betaBanner}>{t("app.betaBanner")}</p>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/s/:code" element={<Session />} />
@@ -56,6 +60,10 @@ export function App() {
           <Link to="/datenschutz" key="datenschutz">
             {t("legal.footer.datenschutz")}
           </Link>,
+          // Filtered here, not by returning null from SupportLink into
+          // Footer: Footer prints a "·" before every segment past the
+          // first, which a null child would leave dangling.
+          ...(supportUrl() ? [<SupportLink key="support" />] : []),
         ]}
       />
     </div>

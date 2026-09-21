@@ -324,6 +324,33 @@ in this repo. `supabase/config.toml`'s `[auth.captcha]` block stays
 commented out — it only affects `supabase start`'s local stack, which must
 stay open for the Playwright suite to run unattended.
 
+## Support link
+
+VBS is free and carries no ads; `docs/support-link.md` has the full
+reasoning, kept here in short. A "buy me a coffee" affordance had to fit
+what the app already promises: the `Caddyfile` CSP pins `script-src`,
+`img-src`, `font-src` and `frame-src` to `'self'` plus Cloudflare, and the
+privacy notice states the site embeds no advertising or social-media
+services. The official Buy Me a Coffee widget needs a third-party script;
+the official button image needs a foreign image host and a webfont. Either
+would punch a hole in the CSP and make an existing privacy claim false, in
+exchange for a donation link — so instead it is a plain outbound link to
+`https://buymeacoffee.com/bruchner.dev`, no widget, no embedded button, no
+CSP change.
+
+Gated behind `VITE_SUPPORT_URL`, the same hermetic-by-omission pattern as
+Turnstile and Sentry above: unset locally and in CI, so both render no
+support link at all; production sets it. `SupportLink` (in
+`apps/web/src/features/support/`) renders nothing when the variable is
+unset — its `supportUrl()` helper reads `import.meta.env` at call time,
+not at module scope, so tests can exercise both states with `vi.stubEnv`.
+
+Two placements, deliberately not a third: the app-level footer (every
+route, including a live session) and a separate panel in the session's
+Rules tab (read at leisure, not mid-round). Never on the reveal or result
+panel — that is the team's working moment, and a nudge there would read
+as a nag once per round.
+
 ## i18n
 
 - Two locales, `de` and `en`, both complete. German copy from the prototype is the

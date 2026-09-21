@@ -54,6 +54,18 @@ code {
   max-width: 80ch;
 }
 
+/* Visually hidden but still announced — WCAG technique G201's "opens in a
+   new tab" note (SupportLink) is the first user. No padding or margin, so
+   it never has to answer to the 10/20/40 spacing scale. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* Every route's <main> and its own <h1> follow the same rhythm and heading
    treatment as every panel title (design revision finding 3) — shared here
    rather than duplicated per route. */

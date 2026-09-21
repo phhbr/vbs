@@ -43,6 +43,7 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
           VITE_SENTRY_DSN: ${{ vars.VITE_SENTRY_DSN }}
+          VITE_SUPPORT_URL: ${{ vars.VITE_SUPPORT_URL }}
 
       - uses: webfactory/ssh-agent@v0.9.0
         with:

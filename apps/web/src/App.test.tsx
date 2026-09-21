@@ -2,13 +2,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import "./i18n";
 
 beforeAll(async () => {
   const { default: i18n } = await import("./i18n");
   await i18n.changeLanguage("de");
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
 });
 
 function renderApp(path: string) {
@@ -97,6 +101,28 @@ describe("home screen", () => {
     expect(
       screen.getByRole("link", { name: "Datenschutz" }),
     ).toHaveAttribute("href", "/datenschutz");
+  });
+
+  it("omits the support link and its separator when VITE_SUPPORT_URL is unset", () => {
+    vi.stubEnv("VITE_SUPPORT_URL", "");
+    renderApp("/");
+
+    expect(
+      screen.queryByRole("link", { name: "Kaffee spendieren" }),
+    ).not.toBeInTheDocument();
+    // Two segments means exactly one separator — a stray trailing "·"
+    // would mean the filter in App.tsx let a falsy segment through.
+    expect(screen.getByRole("contentinfo").textContent?.match(/·/g)).toHaveLength(1);
+  });
+
+  it("adds the support link to the footer when VITE_SUPPORT_URL is set", () => {
+    vi.stubEnv("VITE_SUPPORT_URL", "https://buymeacoffee.com/bruchner.dev");
+    renderApp("/");
+
+    expect(
+      screen.getByRole("link", { name: /Kaffee spendieren/ }),
+    ).toHaveAttribute("href", "https://buymeacoffee.com/bruchner.dev");
+    expect(screen.getByRole("contentinfo").textContent?.match(/·/g)).toHaveLength(2);
   });
 });
 

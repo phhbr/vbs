@@ -7,14 +7,16 @@ import roundDe from "../features/round/locales/de.json";
 import roundEn from "../features/round/locales/en.json";
 import sessionDe from "../features/session/locales/de.json";
 import sessionEn from "../features/session/locales/en.json";
+import supportDe from "../features/support/locales/de.json";
+import supportEn from "../features/support/locales/en.json";
 import commonDe from "./locales/de.json";
 import commonEn from "./locales/en.json";
 
 // Keys live with the feature (CLAUDE.md), merged here into one namespace so
 // components call plain t("lobby.title") without namespace boilerplate. Each
 // file owns distinct top-level keys, so a shallow merge is enough.
-const de = { ...commonDe, ...sessionDe, ...roundDe, ...legalDe };
-const en = { ...commonEn, ...sessionEn, ...roundEn, ...legalEn };
+const de = { ...commonDe, ...sessionDe, ...roundDe, ...legalDe, ...supportDe };
+const en = { ...commonEn, ...sessionEn, ...roundEn, ...legalEn, ...supportEn };
 
 void i18next
   .use(LanguageDetector)

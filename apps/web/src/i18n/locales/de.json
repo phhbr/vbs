@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Vorgangsbewertungsstelle",
-    "subtitle": "Planning Poker"
+    "subtitle": "Planning Poker",
+    "betaBanner": "Beta — wir befinden uns in der Testphase."
   },
   "auth": {
     "signingIn": "Anmeldung läuft …",

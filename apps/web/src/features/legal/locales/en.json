@@ -54,7 +54,8 @@
         {
           "heading": "Cookies and local storage",
           "paragraphs": [
-            "This website does not use tracking or analytics cookies and does not embed any advertising or social media services. Your browser's local storage holds only technically necessary information, such as which session you currently belong to and your language and display preferences."
+            "This website does not use tracking or analytics cookies and does not embed any advertising or social media services. Your browser's local storage holds only technically necessary information, such as which session you currently belong to and your language and display preferences.",
+            "Where enabled on the instance you are using, the footer and the \"Rules\" tab link out to Buy Me a Coffee. This is a plain outbound link only: nothing from Buy Me a Coffee is embedded or loaded, so no data reaches them unless you click the link yourself."
           ]
         },
         {
