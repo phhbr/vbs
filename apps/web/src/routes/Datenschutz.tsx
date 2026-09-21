@@ -1,5 +1,6 @@
 import { Panel } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 type Section = { heading: string; paragraphs: string[] };
@@ -14,6 +15,7 @@ export function Datenschutz() {
   return (
     <main className="page-main">
       <h1 className="page-heading">{t("legal.datenschutz.heading")}</h1>
+      <Link to="/">{t("legal.back")}</Link>
       <Panel>
         <p className="prose">{t("legal.datenschutz.intro")}</p>
       </Panel>

@@ -1,5 +1,6 @@
 import { Panel } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 export function Impressum() {
@@ -9,6 +10,7 @@ export function Impressum() {
   return (
     <main className="page-main">
       <h1 className="page-heading">{t("legal.impressum.heading")}</h1>
+      <Link to="/">{t("legal.back")}</Link>
       <Panel heading={t("legal.impressum.providerHeading")}>
         <address className="prose">
           {t("legal.impressum.name")}

@@ -139,6 +139,9 @@ describe("legal pages", () => {
     expect(
       screen.getByRole("link", { name: "blog@phhbr.de" }),
     ).toHaveAttribute("href", "mailto:blog@phhbr.de");
+    expect(
+      screen.getByRole("link", { name: "Zurück zur Startseite" }),
+    ).toHaveAttribute("href", "/");
   });
 
   it("renders the privacy policy", () => {
@@ -150,5 +153,8 @@ describe("legal pages", () => {
     expect(
       screen.getByRole("heading", { name: "Verantwortlicher" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Zurück zur Startseite" }),
+    ).toHaveAttribute("href", "/");
   });
 });
