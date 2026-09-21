@@ -6,6 +6,32 @@ on:
   pull_request:
 
 jobs:
+  # Independent of the `ci` job below — no pnpm/Supabase needed, so it
+  # doesn't block on or wait for them. Scans the full history on every run
+  # (checkout with fetch-depth: 0), not just the current diff, so a secret
+  # committed and later removed still fails the build rather than only
+  # showing up in a one-time manual audit.
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Installed directly from a pinned release rather than a marketplace
+      # action, matching how supabase/setup-cli is version-pinned above —
+      # no third-party action with its own update cadence or, for gitleaks
+      # specifically, a licensing check against an external server.
+      - name: Install gitleaks
+        run: |
+          curl -sSLO https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          curl -sSLO https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_checksums.txt
+          sha256sum --ignore-missing -c gitleaks_8.30.1_checksums.txt
+          tar -xzf gitleaks_8.30.1_linux_x64.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/gitleaks
+
+      - run: gitleaks detect --source . --redact -v
+
   ci:
     runs-on: ubuntu-latest
     steps:

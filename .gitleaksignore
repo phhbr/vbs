@@ -1,0 +1,8 @@
+# Fixed Supabase local-dev demo keys (payload: iss=supabase-demo), the same
+# values every `supabase start` prints and Supabase's own CLI ships by
+# default. Valid only against a local Docker stack at 127.0.0.1:54321 —
+# never a real project — and intentionally checked in (see apps/web/.env.example
+# and CLAUDE.md's "No secrets in the frontend"). One fingerprint per
+# introducing commit; see CLAUDE.md if this list needs to grow.
+0aae0dfeed80208285897529725c1e87ac9be000:apps/web/e2e/helpers.ts:jwt:40
+db31053e9a0810b0bf6130a43d15edb57aa1dc39:apps/web/.env.example:jwt:4

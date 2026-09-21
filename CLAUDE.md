@@ -383,6 +383,23 @@ New database functions and policies ship with pgTAP tests. Changes to the flow
 (phases, reveal, re-estimate) ship with a Playwright test across multiple browser
 contexts. CI runs lint, typecheck, Vitest, pgTAP, Playwright.
 
+## Secret scanning
+
+A `secrets-scan` CI job runs `gitleaks detect` over the full git history
+(`fetch-depth: 0`) on every push and PR, not just the current diff — a secret
+committed and later removed still fails the build. The binary is installed
+from a pinned, checksum-verified release tarball rather than a marketplace
+action, the same reasoning as pinning `supabase/setup-cli`'s version, plus
+avoiding a licensing check against an external server on every run.
+
+`.gitleaksignore` allowlists two fingerprints: the fixed Supabase local-dev
+demo anon/service-role JWTs (payload `iss: supabase-demo`) that `supabase
+start` prints identically on every machine and that `apps/web/.env.example`
+and `apps/web/e2e/helpers.ts` intentionally check in — they authenticate
+against nothing but `127.0.0.1:54321`. Each entry is pinned to the commit
+that introduced it; a real secret added later gets its own commit hash and
+is not covered by an existing allowlist line.
+
 ## The full plan
 
 The implementation plan — reasoning, decision table, data model, diagrams,
