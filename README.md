@@ -1,64 +1,90 @@
 # Vorgangsbewertungsstelle (VBS)
 
-Planning Poker für agile Teams im Stil eines Gaming-Portals der frühen 2000er.
-Details zu Architektur, Rollen und Ablauf stehen in [CLAUDE.md](./CLAUDE.md).
+[![CI](https://github.com/phhbr/vbs/actions/workflows/ci.yml/badge.svg)](https://github.com/phhbr/vbs/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+Planning poker for agile teams, styled like an early-2000s gaming portal.
+Live at **[vbs.bruchner.dev](https://vbs.bruchner.dev)** — no sign-up, just
+open a link and vote. Bilingual (German/English), free, no ads, no analytics
+or tracking cookies (see the site's own [privacy notice](https://vbs.bruchner.dev/datenschutz)).
+
+Architecture, roles, and the full request/response flow are documented in
+[CLAUDE.md](./CLAUDE.md). Security posture and known trade-offs are in
+[docs/security.md](./docs/security.md).
+
+| Retro (`amt` theme)                                                         | Modern (dark)                                                                      |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| ![Session screen, retro amber theme](docs/screenshots/session-1440-amt.png) | ![Session screen, modern dark theme](docs/screenshots/session-1440-moderndark.png) |
+
+Six themes ship in total (two modern, four retro), switchable per browser —
+see [docs/prototype/STYLE.md](./docs/prototype/STYLE.md).
 
 ## Setup (macOS, Colima)
 
-Voraussetzungen: [Homebrew](https://brew.sh), Node 22, pnpm, Colima.
+Prerequisites: [Homebrew](https://brew.sh), Node ≥ 22.12, pnpm, Colima.
 
 ```bash
 brew install pnpm colima docker supabase/tap/supabase
 
-# Colima starten (einmalig, danach läuft es im Hintergrund)
+# Start Colima once; it keeps running in the background afterwards
 colima start
 
-# Docker-CLI auf Colimas Socket zeigen lassen (falls nicht automatisch gesetzt)
+# Point the Docker CLI at Colima's socket (if not already set)
 docker context use colima
 
-# Abhängigkeiten installieren
+# Install dependencies
 pnpm install
 
-# Frontend-Konfiguration: die lokalen Supabase-Keys sind auf jedem Rechner
-# dieselben festen Demo-Werte, die Beispieldatei ist also direkt lauffähig.
+# Frontend config: the local Supabase keys are the same fixed demo values
+# on every machine, so the example file works as-is.
 cp apps/web/.env.example apps/web/.env.local
 ```
 
 ### Frontend
 
 ```bash
-pnpm dev                 # Vite Dev-Server unter http://localhost:5173
-pnpm build                # Produktions-Build von apps/web
+pnpm dev                  # Vite dev server at http://localhost:5173
+pnpm build                # production build of apps/web
 pnpm lint && pnpm typecheck
-pnpm test                 # Vitest über alle Packages
-pnpm test:e2e             # Playwright gegen den lokalen Dev-Server
+pnpm test                 # Vitest across all packages
+pnpm test:e2e             # Playwright — starts its own dev server, but needs
+                           # local Supabase running first (see below)
 ```
 
-### Backend (lokales Supabase)
+### Backend (local Supabase)
 
-Docker (über Colima) muss laufen.
+Docker (via Colima) must be running.
 
 ```bash
-supabase start            # startet Postgres, Auth, Realtime, Studio lokal
-supabase db reset         # spielt Migrationen (+ Seeds) neu ein
-supabase test db --local  # pgTAP-Tests gegen die lokale Datenbank
-pnpm gen:types             # generiert packages/core/src/database.types.ts
-supabase stop              # stoppt den lokalen Stack wieder
+supabase start             # starts Postgres, Auth, Realtime, Studio locally
+supabase db reset          # replays migrations (+ seeds) from scratch
+supabase test db --local   # pgTAP tests against the local database
+pnpm gen:types              # regenerates packages/core/src/database.types.ts
+supabase stop               # stops the local stack again
 ```
 
-`supabase start` gibt lokale URLs und Keys aus (u. a. die Studio-URL und den
-anon Key für `apps/web`'s `.env.local`, siehe `.env.example`, sobald vorhanden).
+`supabase start` prints local URLs and keys (including the Studio URL and the
+anon key for `apps/web`'s `.env.local` — see `.env.example`, already filled
+in with those same fixed values).
 
-**Colima-Falle:** Mit `mountType: sshfs` (Colima-Default) kann der erste
-`supabase start` mit `chown ... permission denied` für
-`supabase/snippets` fehlschlagen, weil Docker das Bind-Mount-Verzeichnis
-selbst anlegen und chownen will und sshfs das nicht erlaubt. Das Verzeichnis
-liegt bereits im Repo (`supabase/snippets/.gitkeep`), das reicht als Fix.
+**Colima gotcha:** with `mountType: sshfs` (Colima's default), the first
+`supabase start` can fail with `chown ... permission denied` for
+`supabase/snippets`, because Docker wants to create and chown that
+bind-mounted directory itself, and sshfs won't allow it. The directory
+already exists in the repo (`supabase/snippets/.gitkeep`), which is enough
+to avoid the failure.
 
-## Monorepo-Struktur
+## Monorepo structure
 
-- `apps/web` — React 19 + Vite + TypeScript, die eigentliche Anwendung
-- `packages/core` — generierte DB-Typen, Deck-Definitionen, reine Anzeige-Helfer
-- `packages/ui` — Komponenten und Design-Tokens (`tokens.css`)
-- `supabase/` — Schema-Migrationen, RLS-Policies, pgTAP-Tests
-- `docs/prototype/` — verbindlicher visueller Prototyp (siehe `STYLE.md`)
+- `apps/web` — React 19 + Vite + TypeScript, the application itself
+- `packages/core` — generated DB types, deck definitions, pure display helpers
+- `packages/ui` — components and design tokens (`tokens.css`)
+- `supabase/` — schema migrations, RLS policies, pgTAP tests
+- `docs/prototype/` — the binding visual prototype (see `STYLE.md`)
+- `docs/security.md`, `docs/support-link.md` — design-decision write-ups
+- `.github/workflows/` — CI (lint, typecheck, tests, secret scanning) and
+  the production deploy workflow
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
