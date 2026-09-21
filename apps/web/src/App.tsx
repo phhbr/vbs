@@ -42,10 +42,12 @@ export function App() {
             />
           </>
         }
+        // Not a feature flag: this banner has no env gate, unlike SupportLink
+        // below — it comes out again once the test phase ends. Rendered
+        // inside Header's <header> landmark rather than as a page-level
+        // sibling, so axe's "region" rule doesn't flag it as orphaned content.
+        notice={<p className={styles.betaBanner}>{t("app.betaBanner")}</p>}
       />
-      {/* Not a feature flag: this banner has no env gate, unlike SupportLink
-       * below — it comes out again once the test phase ends. */}
-      <p className={styles.betaBanner}>{t("app.betaBanner")}</p>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/s/:code" element={<Session />} />

@@ -7,6 +7,12 @@ export type HeaderProps = {
   subtitle: string;
   /** The theme/locale toggle row (STYLE.md's "Darstellung: [Dunkel] | [Hell]" line). */
   actions?: ReactNode;
+  /**
+   * Site-wide notice below the brand/actions row (e.g. a beta banner).
+   * Rendered inside the `<header>` landmark rather than as a sibling of it,
+   * so it stays contained by a landmark for axe's "region" rule.
+   */
+  notice?: ReactNode;
 };
 
 /**
@@ -15,23 +21,26 @@ export type HeaderProps = {
  * one that describes its own content). The ASCII wordmark is decoration:
  * aria-hidden, with the real name as the eyebrow text right above it.
  */
-export function Header({ title, subtitle, actions }: HeaderProps) {
+export function Header({ title, subtitle, actions, notice }: HeaderProps) {
   return (
     <header className={styles.header}>
-      <div className={styles.brand}>
-        <p className={styles.eyebrow}>{title}</p>
-        {/* Both always render; --vbs-logo-display/--vbs-wordmark-display
-         * pick exactly one per theme (design revision: modern themes swap
-         * the ASCII logo for a plain wordmark). */}
-        <pre className={styles.logo} aria-hidden="true">
-          {LOGO_TEXT}
-        </pre>
-        <p className={styles.wordmark} aria-hidden="true">
-          VBS
-        </p>
-        <p className={styles.subtitle}>{subtitle}</p>
+      <div className={styles.top}>
+        <div className={styles.brand}>
+          <p className={styles.eyebrow}>{title}</p>
+          {/* Both always render; --vbs-logo-display/--vbs-wordmark-display
+           * pick exactly one per theme (design revision: modern themes swap
+           * the ASCII logo for a plain wordmark). */}
+          <pre className={styles.logo} aria-hidden="true">
+            {LOGO_TEXT}
+          </pre>
+          <p className={styles.wordmark} aria-hidden="true">
+            VBS
+          </p>
+          <p className={styles.subtitle}>{subtitle}</p>
+        </div>
+        {actions && <div className={styles.actions}>{actions}</div>}
       </div>
-      {actions && <div className={styles.actions}>{actions}</div>}
+      {notice}
     </header>
   );
 }
