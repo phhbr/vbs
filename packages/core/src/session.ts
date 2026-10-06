@@ -25,6 +25,9 @@ export type SessionParticipant = {
   role: ParticipantRole;
   can_vote: boolean;
   is_you: boolean;
+  /** Sent a heartbeat() within the last 15 seconds, by the database's
+   * clock — how a client without a realtime socket stays visibly online. */
+  seen_recently: boolean;
 };
 
 export type SessionViewer = {

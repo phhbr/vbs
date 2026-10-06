@@ -144,7 +144,7 @@ adding a policy, not by changing grants.
 `create_session`, `join_session`, `vote`, `start_story`, `reveal`, `re_estimate`,
 `new_story`, `set_deck`, `remove_participant`, `leave_session`, `transfer_admin`,
 `claim_admin`, `regenerate_admin_token`, `set_can_vote`, `record_join_failure`,
-`round_status` (read-only; before reveal it returns only who has voted, never
+`heartbeat`, `round_status` (read-only; before reveal it returns only who has voted, never
 values).
 
 Every mutating function goes through `lock_live_session()`, which takes a row
@@ -198,10 +198,19 @@ broadcast ever arrives. While the channel is not subscribed,
 `useSessionRealtime` refetches `session_state` every 4 s and refetches the
 round queries only when its `version` moves, the same signal a broadcast
 carries, so a blocked client costs one request per tick. After 10 s it
-reports `polling` and the UI says so. Presence rides the same socket, so
-`onlineParticipantIds` is `null` (unknown) then, and nobody is marked
-offline. `e2e/polling-fallback.spec.ts` blocks the socket with
-`routeWebSocket` to cover it.
+reports `polling` and the UI says so.
+
+Presence rides the same socket, so a polling client also calls
+`heartbeat()` each tick. It sets `participants.last_seen_at` and nothing
+else: no `version` bump, no expiry change (rule 6). `session_state` turns
+that into `seen_recently` (within 15 s, by the database clock), and
+connected clients count someone as online if they are in socket presence
+**or** `seen_recently`. Since a heartbeat triggers no broadcast, a connected
+client rechecks `session_state` every 10 s for as long as anyone in the
+member list is missing from presence. The polling client itself cannot see
+anyone else's presence, so its `onlineParticipantIds` is `null` (unknown)
+and it marks nobody offline. `e2e/polling-fallback.spec.ts` blocks the
+socket with `routeWebSocket` and covers both directions.
 
 ## Error codes
 

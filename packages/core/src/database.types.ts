@@ -40,6 +40,7 @@ export type Database = {
           id: string
           joined_at: string
           last_activity_at: string
+          last_seen_at: string | null
           name: string
           removed_at: string | null
           role: string
@@ -51,6 +52,7 @@ export type Database = {
           id?: string
           joined_at?: string
           last_activity_at?: string
+          last_seen_at?: string | null
           name: string
           removed_at?: string | null
           role: string
@@ -62,6 +64,7 @@ export type Database = {
           id?: string
           joined_at?: string
           last_activity_at?: string
+          last_seen_at?: string | null
           name?: string
           removed_at?: string | null
           role?: string
@@ -241,6 +244,7 @@ export type Database = {
           id: string
           joined_at: string
           last_activity_at: string
+          last_seen_at: string | null
           name: string
           removed_at: string | null
           role: string
@@ -261,6 +265,7 @@ export type Database = {
           id: string
           joined_at: string
           last_activity_at: string
+          last_seen_at: string | null
           name: string
           removed_at: string | null
           role: string
@@ -306,6 +311,7 @@ export type Database = {
       deck_card_values: { Args: { p_deck: string }; Returns: string[] }
       expire_stale_sessions: { Args: never; Returns: number }
       generate_session_code: { Args: never; Returns: string }
+      heartbeat: { Args: { p_session_id: string }; Returns: undefined }
       is_active_session_member: {
         Args: { p_session_id: string }
         Returns: boolean

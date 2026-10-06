@@ -90,6 +90,12 @@ export async function removeParticipant(
   );
 }
 
+/** Online presence for a client without a realtime socket; see heartbeat()
+ * in the migrations. Not activity — it never extends the session. */
+export async function sendHeartbeat(sessionId: string): Promise<void> {
+  unwrap<null>(await supabase.rpc("heartbeat", { p_session_id: sessionId }));
+}
+
 export async function leaveSession(code: string): Promise<LeaveSessionResult> {
   return unwrap<LeaveSessionResult>(
     await supabase.rpc("leave_session", { p_code: code }),

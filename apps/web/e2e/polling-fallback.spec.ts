@@ -33,6 +33,16 @@ test("a participant whose network blocks WebSockets still follows the round", as
   // No broadcast can reach Bob — only polling can deliver this.
   await expect(bob.getByText("Proxy story").first()).toBeVisible(POLLED);
 
+  // Bob never appears in socket presence, but his heartbeats reach Ada's
+  // screen through session_state: up to one 4 s heartbeat plus one 10 s
+  // presence-gap recheck.
+  const bobOnAdmin = admin
+    .getByRole("list", { name: "Abstimmungsstatus" })
+    .getByRole("listitem")
+    .filter({ hasText: "Bob" });
+  await expect(bobOnAdmin).toBeVisible();
+  await expect(bobOnAdmin).not.toContainText("offline", { timeout: 20_000 });
+
   // Without presence, Bob's view cannot know who is online, so it must not
   // claim that anyone is offline.
   const bobList = bob.getByRole("list", { name: "Abstimmungsstatus" });

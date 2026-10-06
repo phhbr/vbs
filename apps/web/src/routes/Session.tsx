@@ -64,6 +64,7 @@ export function Session() {
     sessionId: state.data?.is_member ? state.data.session.id : undefined,
     participantId: state.data?.viewer?.participant_id,
     version: state.data?.session.version,
+    participants: state.data?.participants,
   });
 
   useEffect(() => {

@@ -2,9 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { SessionParticipant } from "@vbs/core";
 import {
   POLL_INTERVAL_MS,
   POLLING_NOTICE_AFTER_MS,
+  PRESENCE_GAP_POLL_MS,
   useSessionRealtime,
 } from "./realtime";
 
@@ -45,23 +47,30 @@ function createFakeChannel() {
 // vi.mock is hoisted above every other statement in this file, so the mock
 // factory cannot close over a plain top-level variable — it would run before
 // that variable is initialized. vi.hoisted runs alongside it instead.
-const { channelSpy, removeChannelSpy, getFakeChannel, resetFakeChannel } =
-  vi.hoisted(() => {
-    let fakeChannel = createFakeChannel();
-    return {
-      channelSpy: vi.fn(() => fakeChannel),
-      removeChannelSpy: vi.fn(),
-      getFakeChannel: () => fakeChannel,
-      resetFakeChannel: () => {
-        fakeChannel = createFakeChannel();
-      },
-    };
-  });
+const {
+  channelSpy,
+  removeChannelSpy,
+  rpcSpy,
+  getFakeChannel,
+  resetFakeChannel,
+} = vi.hoisted(() => {
+  let fakeChannel = createFakeChannel();
+  return {
+    channelSpy: vi.fn(() => fakeChannel),
+    removeChannelSpy: vi.fn(),
+    rpcSpy: vi.fn(() => Promise.resolve({ data: null, error: null })),
+    getFakeChannel: () => fakeChannel,
+    resetFakeChannel: () => {
+      fakeChannel = createFakeChannel();
+    },
+  };
+});
 
 vi.mock("../../lib/supabase", () => ({
   supabase: {
     channel: channelSpy,
     removeChannel: removeChannelSpy,
+    rpc: rpcSpy,
   },
 }));
 
@@ -78,6 +87,7 @@ beforeEach(() => {
   resetFakeChannel();
   channelSpy.mockClear();
   removeChannelSpy.mockClear();
+  rpcSpy.mockClear();
 });
 
 describe("useSessionRealtime", () => {
@@ -88,6 +98,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -104,6 +115,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -118,6 +130,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -135,6 +148,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -153,6 +167,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -178,6 +193,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -194,6 +210,7 @@ describe("useSessionRealtime", () => {
           sessionId: "session-1",
           participantId: "participant-1",
           version: 1,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -212,6 +229,7 @@ describe("useSessionRealtime", () => {
           sessionId: undefined,
           participantId: undefined,
           version: undefined,
+          participants: undefined,
         }),
       { wrapper },
     );
@@ -240,16 +258,22 @@ describe("useSessionRealtime without a socket", () => {
   let queryClient: QueryClient;
   let invalidateSpy: ReturnType<typeof vi.spyOn>;
 
-  function renderRealtime(version = 1) {
+  type Props = {
+    version: number;
+    participants?: readonly SessionParticipant[];
+  };
+
+  function renderRealtime(version = 1, participants?: SessionParticipant[]) {
     return renderHook(
-      ({ version }: { version: number }) =>
+      ({ version, participants }: Props) =>
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
           version,
+          participants,
         }),
       {
-        initialProps: { version },
+        initialProps: { version, participants } as Props,
         wrapper: ({ children }: { children: ReactNode }) => (
           <QueryClientProvider client={queryClient}>
             {children}
@@ -350,5 +374,99 @@ describe("useSessionRealtime without a socket", () => {
 
     act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
     expect(result.current.onlineParticipantIds).toEqual(new Set());
+  });
+
+  it("sends a heartbeat with every poll tick, and none once connected", () => {
+    renderRealtime();
+
+    act(() => vi.advanceTimersByTime(POLL_INTERVAL_MS * 2));
+    expect(rpcSpy).toHaveBeenCalledTimes(2);
+    expect(rpcSpy).toHaveBeenCalledWith("heartbeat", {
+      p_session_id: "session-1",
+    });
+
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    rpcSpy.mockClear();
+    act(() => vi.advanceTimersByTime(POLL_INTERVAL_MS * 3));
+    expect(rpcSpy).not.toHaveBeenCalled();
+  });
+});
+
+function participant(id: string, seen_recently = false): SessionParticipant {
+  return {
+    id,
+    name: id,
+    role: "player",
+    can_vote: true,
+    is_you: false,
+    seen_recently,
+  };
+}
+
+describe("useSessionRealtime with a participant who is polling", () => {
+  let queryClient: QueryClient;
+  let invalidateSpy: ReturnType<typeof vi.spyOn>;
+
+  function renderConnected(participants: SessionParticipant[]) {
+    const hook = renderHook(
+      ({ participants }: { participants: SessionParticipant[] }) =>
+        useSessionRealtime({
+          sessionId: "session-1",
+          participantId: "me",
+          version: 1,
+          participants,
+        }),
+      {
+        initialProps: { participants },
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        ),
+      },
+    );
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    act(() => getFakeChannel().emitPresenceSync({ me: [{}] }));
+    invalidateSpy.mockClear();
+    return hook;
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    queryClient = new QueryClient();
+    invalidateSpy = vi
+      .spyOn(queryClient, "invalidateQueries")
+      .mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("counts someone seen by heartbeat as online, though absent from presence", () => {
+    const { result } = renderConnected([
+      participant("me"),
+      participant("polling-bob", true),
+      participant("gone-cy", false),
+    ]);
+
+    expect([...(result.current.onlineParticipantIds ?? [])].sort()).toEqual([
+      "me",
+      "polling-bob",
+    ]);
+  });
+
+  it("rechecks session_state while someone is missing from presence", () => {
+    renderConnected([participant("me"), participant("polling-bob", true)]);
+
+    act(() => vi.advanceTimersByTime(PRESENCE_GAP_POLL_MS));
+    expect(invalidatedFamilies(invalidateSpy)).toEqual(new Set(["session"]));
+  });
+
+  it("does not recheck when everyone is present on the socket", () => {
+    renderConnected([participant("me")]);
+
+    act(() => vi.advanceTimersByTime(PRESENCE_GAP_POLL_MS * 3));
+    expect(invalidateSpy).not.toHaveBeenCalled();
   });
 });
