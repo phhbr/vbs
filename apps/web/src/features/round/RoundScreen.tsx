@@ -37,7 +37,7 @@ export function RoundScreen({
 }: {
   code: string;
   state: SessionState;
-  onlineParticipantIds: ReadonlySet<string>;
+  onlineParticipantIds: ReadonlySet<string> | null;
   shareUrl: string;
   onShowHistory: () => void;
 }) {

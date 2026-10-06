@@ -191,6 +191,18 @@ can't be used to send an arbitrary broadcast. Missing this in the first cut
 meant every `track()` call failed silently (a `phx_reply` error visible only
 in the websocket frames) and presence never worked at all.
 
+**Polling fallback.** Some networks never let the socket through: a
+TLS-inspecting corporate proxy with a "Block WebSockets" rule passes every
+REST call, so the app loads and the user's own actions work, but no
+broadcast ever arrives. While the channel is not subscribed,
+`useSessionRealtime` refetches `session_state` every 4 s and refetches the
+round queries only when its `version` moves, the same signal a broadcast
+carries, so a blocked client costs one request per tick. After 10 s it
+reports `polling` and the UI says so. Presence rides the same socket, so
+`onlineParticipantIds` is `null` (unknown) then, and nobody is marked
+offline. `e2e/polling-fallback.spec.ts` blocks the socket with
+`routeWebSocket` to cover it.
+
 ## Error codes
 
 Functions raise custom SQLSTATEs, which PostgREST passes through as

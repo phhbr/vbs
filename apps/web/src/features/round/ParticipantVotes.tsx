@@ -18,7 +18,7 @@ export function ParticipantVotes({
 }: {
   participants: SessionParticipant[];
   roundStatus: RoundStatusResult | undefined;
-  onlineParticipantIds: ReadonlySet<string>;
+  onlineParticipantIds: ReadonlySet<string> | null;
   /** The signed-in viewer's own role — only admins get a remove control. */
   isAdmin: boolean;
   onRemove: (participantId: string) => void;
@@ -34,7 +34,11 @@ export function ParticipantVotes({
   const items = participants.map((participant) => {
     const isSpectator = participant.role === "spectator";
     const vote = byId.get(participant.id);
-    const online = onlineParticipantIds.has(participant.id);
+    // null: presence is unavailable (no realtime socket), so nobody is
+    // known to be offline either — say nothing rather than mark everyone.
+    const offline =
+      onlineParticipantIds !== null &&
+      !onlineParticipantIds.has(participant.id);
     const voted = vote?.voted ?? false;
     const status = isSpectator
       ? t("round.spectating")
@@ -48,7 +52,7 @@ export function ParticipantVotes({
       id: participant.id,
       name: participant.name,
       isYou: participant.is_you,
-      status: online ? status : `${status} (${t("round.offline")})`,
+      status: offline ? `${status} (${t("round.offline")})` : status,
       statusVariant: (isSpectator || revealed
         ? "neutral"
         : voted

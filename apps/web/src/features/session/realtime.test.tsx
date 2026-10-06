@@ -1,8 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useSessionRealtime } from "./realtime";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  POLL_INTERVAL_MS,
+  POLLING_NOTICE_AFTER_MS,
+  useSessionRealtime,
+} from "./realtime";
 
 type Handler = (arg: never) => void;
 
@@ -83,6 +87,7 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
@@ -98,6 +103,7 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
@@ -111,6 +117,7 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
@@ -127,6 +134,7 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
@@ -144,17 +152,19 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
 
+    getFakeChannel().emitStatus("SUBSCRIBED");
     getFakeChannel().emitPresenceSync({
       "participant-1": [{}],
       "participant-2": [{}],
     });
 
     await waitFor(() =>
-      expect([...result.current.onlineParticipantIds].sort()).toEqual([
+      expect([...(result.current.onlineParticipantIds ?? [])].sort()).toEqual([
         "participant-1",
         "participant-2",
       ]),
@@ -167,6 +177,7 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
@@ -182,6 +193,7 @@ describe("useSessionRealtime", () => {
         useSessionRealtime({
           sessionId: "session-1",
           participantId: "participant-1",
+          version: 1,
         }),
       { wrapper },
     );
@@ -196,10 +208,147 @@ describe("useSessionRealtime", () => {
   it("does nothing until both a session and a participant id are known", () => {
     renderHook(
       () =>
-        useSessionRealtime({ sessionId: undefined, participantId: undefined }),
+        useSessionRealtime({
+          sessionId: undefined,
+          participantId: undefined,
+          version: undefined,
+        }),
       { wrapper },
     );
 
     expect(channelSpy).not.toHaveBeenCalled();
+  });
+});
+
+type InvalidateFilters = {
+  predicate: (query: { queryKey: unknown[] }) => boolean;
+};
+
+/** Which of the hook's query families a set of invalidate calls touched. */
+function invalidatedFamilies(spy: ReturnType<typeof vi.spyOn>) {
+  const families = new Set<string>();
+  for (const [filters] of spy.mock.calls as [InvalidateFilters][]) {
+    if (filters.predicate({ queryKey: ["session", "CODE"] }))
+      families.add("session");
+    if (filters.predicate({ queryKey: ["round", "round-1"] }))
+      families.add("round");
+  }
+  return families;
+}
+
+describe("useSessionRealtime without a socket", () => {
+  let queryClient: QueryClient;
+  let invalidateSpy: ReturnType<typeof vi.spyOn>;
+
+  function renderRealtime(version = 1) {
+    return renderHook(
+      ({ version }: { version: number }) =>
+        useSessionRealtime({
+          sessionId: "session-1",
+          participantId: "participant-1",
+          version,
+        }),
+      {
+        initialProps: { version },
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        ),
+      },
+    );
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    queryClient = new QueryClient();
+    invalidateSpy = vi
+      .spyOn(queryClient, "invalidateQueries")
+      .mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("polls only session_state while disconnected, and stops once subscribed", () => {
+    renderRealtime();
+
+    act(() => vi.advanceTimersByTime(POLL_INTERVAL_MS));
+    expect(invalidatedFamilies(invalidateSpy)).toEqual(new Set(["session"]));
+
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    invalidateSpy.mockClear();
+    act(() => vi.advanceTimersByTime(POLL_INTERVAL_MS * 3));
+    expect(invalidateSpy).not.toHaveBeenCalled();
+  });
+
+  it("resumes polling when an established connection drops", () => {
+    renderRealtime();
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    act(() => getFakeChannel().emitStatus("CHANNEL_ERROR"));
+    invalidateSpy.mockClear();
+
+    act(() => vi.advanceTimersByTime(POLL_INTERVAL_MS));
+    expect(invalidatedFamilies(invalidateSpy)).toEqual(new Set(["session"]));
+  });
+
+  it("reports polling once the socket has stayed away long enough", () => {
+    const { result } = renderRealtime();
+
+    act(() => vi.advanceTimersByTime(POLLING_NOTICE_AFTER_MS - 1));
+    expect(result.current.status).toBe("reconnecting");
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(result.current.status).toBe("polling");
+
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    expect(result.current.status).toBe("connected");
+  });
+
+  it("refetches the round queries when session_state's version moves", () => {
+    const { rerender } = renderRealtime(1);
+    // The first version is only a baseline: nothing to catch up on yet.
+    expect(invalidateSpy).not.toHaveBeenCalled();
+
+    rerender({ version: 2 });
+    expect(invalidatedFamilies(invalidateSpy)).toEqual(new Set(["round"]));
+  });
+
+  it("skips a broadcast for a version session_state already delivered", () => {
+    const { rerender } = renderRealtime(1);
+    rerender({ version: 2 });
+    invalidateSpy.mockClear();
+
+    act(() =>
+      getFakeChannel().emitBroadcast("session_changed", { version: 2 }),
+    );
+    expect(invalidateSpy).not.toHaveBeenCalled();
+
+    act(() =>
+      getFakeChannel().emitBroadcast("session_changed", { version: 3 }),
+    );
+    expect(invalidatedFamilies(invalidateSpy)).toEqual(
+      new Set(["session", "round"]),
+    );
+  });
+
+  it("refetches session_state when the tab becomes visible again", () => {
+    renderRealtime();
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    invalidateSpy.mockClear();
+
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    expect(invalidatedFamilies(invalidateSpy)).toEqual(new Set(["session"]));
+  });
+
+  it("reports presence as unknown rather than empty while disconnected", () => {
+    const { result } = renderRealtime();
+    expect(result.current.onlineParticipantIds).toBeNull();
+
+    act(() => getFakeChannel().emitStatus("SUBSCRIBED"));
+    expect(result.current.onlineParticipantIds).toEqual(new Set());
   });
 });

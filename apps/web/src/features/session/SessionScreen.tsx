@@ -29,7 +29,7 @@ export function SessionScreen({
   code: string;
   state: SessionState;
   connectionStatus: ConnectionStatus;
-  onlineParticipantIds: ReadonlySet<string>;
+  onlineParticipantIds: ReadonlySet<string> | null;
 }) {
   const { t } = useTranslation();
   const describeError = useErrorMessage();
@@ -68,11 +68,7 @@ export function SessionScreen({
         />
       )}
       <h1 className="page-heading">{t("session.heading")}</h1>
-      <p aria-live="polite">
-        {connectionStatus === "connected"
-          ? t("lobby.connected")
-          : t("lobby.reconnecting")}
-      </p>
+      <p aria-live="polite">{t(`lobby.${connectionStatus}`)}</p>
 
       <NavTabs
         tabs={tabs}

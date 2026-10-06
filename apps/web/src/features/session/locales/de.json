@@ -29,7 +29,8 @@
     "qrCaption": "QR-Code für den Sitzungslink",
     "you": "du",
     "connected": "Verbunden",
-    "reconnecting": "Verbindung wird wiederhergestellt …"
+    "reconnecting": "Verbindung wird wiederhergestellt …",
+    "polling": "Keine Live-Verbindung — die Ansicht wird stattdessen alle paar Sekunden aktualisiert. Manche Netzwerke blockieren Live-Aktualisierungen."
   },
   "session": {
     "heading": "Sitzung",

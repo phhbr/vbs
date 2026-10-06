@@ -29,7 +29,8 @@
     "qrCaption": "QR code for the session link",
     "you": "you",
     "connected": "Connected",
-    "reconnecting": "Reconnecting …"
+    "reconnecting": "Reconnecting …",
+    "polling": "No live connection — refreshing every few seconds instead. Some networks block live updates."
   },
   "session": {
     "heading": "Session",
