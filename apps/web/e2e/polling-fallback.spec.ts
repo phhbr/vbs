@@ -60,6 +60,10 @@ test("a participant whose network blocks WebSockets still follows the round", as
       .getByRole("listitem")
       .filter({ hasText: "Bob" }),
   ).toContainText("hat abgestimmt");
+  // And Ada's own, so the reveal is not an early one that asks first.
+  await expect(
+    admin.getByText("Abstimmung läuft — 2 von 2 abgegeben.").first(),
+  ).toBeVisible();
 
   await admin.getByRole("button", { name: "Karten aufdecken" }).click();
 
@@ -70,4 +74,33 @@ test("a participant whose network blocks WebSockets still follows the round", as
 
   await contextA.close();
   await contextB.close();
+});
+
+test("an admin whose network blocks WebSockets sees their own reveal at once", async ({
+  browser,
+}) => {
+  const context = await browser.newContext();
+  await context.routeWebSocket(/\/realtime\/v1\/websocket/, (ws) => ws.close());
+  const admin = await context.newPage();
+
+  await createSession(admin, "Ada");
+  await admin.getByRole("textbox", { name: "Story" }).fill("Own reveal");
+  await admin.getByRole("button", { name: "Runde starten" }).click();
+  await admin.getByRole("radio", { name: "5", exact: true }).click();
+  await expect(
+    admin.getByText("Abstimmung läuft — 1 von 1 abgegeben.").first(),
+  ).toBeVisible();
+  await admin.getByRole("button", { name: "Karten aufdecken" }).click();
+
+  // Shorter than one 4 s poll tick: the reveal's own refetch has to bring
+  // the result in, not the next poll. Before every mutation refreshed all
+  // session data, only the round status was refetched, and the result
+  // panel kept saying "voting" until a broadcast — which never comes here.
+  await expect(
+    admin
+      .getByRole("region", { name: "Ergebnis" })
+      .getByRole("list", { name: "Stimmverteilung" }),
+  ).toContainText("5: 1 Stimme, Ada", { timeout: 1_500 });
+
+  await context.close();
 });

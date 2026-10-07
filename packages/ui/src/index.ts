@@ -26,6 +26,8 @@ export type { CardDeckProps } from "./CardDeck/CardDeck";
 export { ParticipantList } from "./ParticipantList/ParticipantList";
 export type { ParticipantListItem } from "./ParticipantList/ParticipantList";
 export { ResultPanel } from "./ResultPanel/ResultPanel";
+export { VoteDistribution } from "./VoteDistribution/VoteDistribution";
+export type { VoteDistributionRow } from "./VoteDistribution/VoteDistribution";
 export type { ResultPanelProps } from "./ResultPanel/ResultPanel";
 export { Input, Field, InputRow } from "./Input/Input";
 export type { InputProps } from "./Input/Input";

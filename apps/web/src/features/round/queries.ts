@@ -1,6 +1,6 @@
 import type { Deck, RoundStatusResult } from "@vbs/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { sessionKey } from "../session/queries";
+import { invalidateSessionData } from "../session/queries";
 import {
   fetchRoundHistory,
   fetchRoundStatus,
@@ -42,8 +42,7 @@ export function useStartStory(code: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (title: string) => startStory(code, title),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+    onSuccess: () => invalidateSessionData(queryClient),
   });
 }
 
@@ -51,8 +50,7 @@ export function useNewStory(code: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => newStory(code),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+    onSuccess: () => invalidateSessionData(queryClient),
   });
 }
 
@@ -60,8 +58,7 @@ export function useSetDeck(code: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (deck: Deck) => setDeck(code, deck),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+    onSuccess: () => invalidateSessionData(queryClient),
   });
 }
 
@@ -69,8 +66,7 @@ export function useVote(roundId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (value: string) => vote(roundId!, value),
-    onSuccess: () =>
-      roundId && queryClient.invalidateQueries({ queryKey: roundKey(roundId) }),
+    onSuccess: () => invalidateSessionData(queryClient),
   });
 }
 
@@ -78,16 +74,14 @@ export function useReveal(roundId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => reveal(roundId!),
-    onSuccess: () =>
-      roundId && queryClient.invalidateQueries({ queryKey: roundKey(roundId) }),
+    onSuccess: () => invalidateSessionData(queryClient),
   });
 }
 
-export function useReEstimate(roundId: string | undefined, code: string) {
+export function useReEstimate(roundId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => reEstimate(roundId!),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: sessionKey(code) }),
+    onSuccess: () => invalidateSessionData(queryClient),
   });
 }

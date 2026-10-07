@@ -17,3 +17,22 @@
   margin-top: var(--vbs-space-10);
   color: var(--vbs-danger);
 }
+
+.distribution {
+  margin-top: var(--vbs-space-20);
+}
+
+.distribution:first-child {
+  margin-top: 0;
+}
+
+/* The average (or majority) once the distribution leads: still there for
+   the round history it matches, but no longer the headline. */
+.summary {
+  margin-top: var(--vbs-space-10);
+  color: var(--vbs-fg-dim);
+}
+
+.notVoted {
+  margin-top: var(--vbs-space-10);
+}

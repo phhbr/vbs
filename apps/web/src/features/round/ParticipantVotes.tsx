@@ -15,15 +15,21 @@ export function ParticipantVotes({
   isAdmin,
   onRemove,
   removingId,
+  onPromote,
+  isPromoting,
 }: {
   participants: SessionParticipant[];
   roundStatus: RoundStatusResult | undefined;
   onlineParticipantIds: ReadonlySet<string> | null;
-  /** The signed-in viewer's own role — only admins get a remove control. */
+  /** The signed-in viewer's own role — only admins get the remove and
+   * hand-over controls. */
   isAdmin: boolean;
   onRemove: (participantId: string) => void;
   /** The id currently being removed, to disable its own control mid-mutation. */
   removingId?: string;
+  onPromote: (participantId: string) => void;
+  /** A hand-over is in flight; every row's control waits for it. */
+  isPromoting: boolean;
 }) {
   const { t } = useTranslation();
   const byId = new Map(
@@ -60,16 +66,28 @@ export function ParticipantVotes({
           : "waiting") as "neutral" | "voted" | "waiting",
       action:
         isAdmin && participant.role !== "admin" ? (
-          <ConfirmAction
-            label={t("session.remove")}
-            confirmQuestion={t("session.removeConfirm", {
-              name: participant.name,
-            })}
-            confirmLabel={t("session.removeConfirmYes")}
-            cancelLabel={t("session.removeConfirmNo")}
-            onConfirm={() => onRemove(participant.id)}
-            disabled={removingId === participant.id}
-          />
+          <>
+            <ConfirmAction
+              label={t("session.promote")}
+              confirmQuestion={t("session.promoteConfirm", {
+                name: participant.name,
+              })}
+              confirmLabel={t("session.promoteConfirmYes")}
+              cancelLabel={t("session.promoteConfirmNo")}
+              onConfirm={() => onPromote(participant.id)}
+              disabled={isPromoting}
+            />
+            <ConfirmAction
+              label={t("session.remove")}
+              confirmQuestion={t("session.removeConfirm", {
+                name: participant.name,
+              })}
+              confirmLabel={t("session.removeConfirmYes")}
+              cancelLabel={t("session.removeConfirmNo")}
+              onConfirm={() => onRemove(participant.id)}
+              disabled={removingId === participant.id}
+            />
+          </>
         ) : undefined,
     };
   });

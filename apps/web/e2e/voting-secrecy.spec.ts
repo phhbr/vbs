@@ -48,6 +48,8 @@ test("no vote value ever appears in a player's realtime frames", async ({
   ).toContainText("hat abgestimmt");
 
   await admin.getByRole("button", { name: "Karten aufdecken" }).click();
+  // Bob only watches the frames and never votes, so this reveal is early.
+  await admin.getByRole("button", { name: "Ja, aufdecken" }).click();
   // Confirms Bob actually received the reveal over the socket, so the
   // capture window covers the moment values became public knowledge too.
   // Scoped to the result panel: the recent-rounds preview shows the same

@@ -2,7 +2,7 @@ import type { SessionState } from "@vbs/core";
 import { cardsForDeck } from "@vbs/core";
 import { CardDeck, Panel, StatusBar } from "@vbs/ui";
 import { useTranslation } from "react-i18next";
-import { useRemoveParticipant } from "../session/queries";
+import { useRemoveParticipant, useTransferAdmin } from "../session/queries";
 import { ShareLink } from "../session/ShareLink";
 import { SessionQr } from "../session/SessionQr";
 import { useErrorMessage } from "../session/useErrorMessage";
@@ -57,8 +57,9 @@ export function RoundScreen({
   const setDeck = useSetDeck(code);
   const castVote = useVote(currentRound?.id);
   const reveal = useReveal(currentRound?.id);
-  const reEstimate = useReEstimate(currentRound?.id, code);
-  const removeParticipant = useRemoveParticipant(code);
+  const reEstimate = useReEstimate(currentRound?.id);
+  const removeParticipant = useRemoveParticipant();
+  const transferAdmin = useTransferAdmin();
 
   const myVote = roundStatus.data?.participants.find(
     (p) => p.participant_id === viewer.participant_id,
@@ -66,11 +67,12 @@ export function RoundScreen({
   const eligibleVoters = participants.filter(
     (p) => p.role !== "spectator" && p.can_vote,
   );
-  const votedCount = eligibleVoters.filter(
-    (p) =>
-      roundStatus.data?.participants.find((rp) => rp.participant_id === p.id)
-        ?.voted,
-  ).length;
+  const votedIds = new Set(
+    (roundStatus.data?.participants ?? [])
+      .filter((p) => p.voted)
+      .map((p) => p.participant_id),
+  );
+  const votedCount = eligibleVoters.filter((p) => votedIds.has(p.id)).length;
 
   const mutationError =
     startStory.error ??
@@ -79,7 +81,8 @@ export function RoundScreen({
     castVote.error ??
     reveal.error ??
     reEstimate.error ??
-    removeParticipant.error;
+    removeParticipant.error ??
+    transferAdmin.error;
 
   const phaseLabel = isVoting
     ? t("round.phaseVoting")
@@ -159,6 +162,8 @@ export function RoundScreen({
                 canReveal={isVoting ?? false}
                 onReveal={() => reveal.mutate()}
                 isRevealing={reveal.isPending}
+                votedCount={votedCount}
+                voterCount={eligibleVoters.length}
                 canReEstimate={isRevealed ?? false}
                 onReEstimate={() => reEstimate.mutate()}
                 isReEstimating={reEstimate.isPending}
@@ -183,6 +188,8 @@ export function RoundScreen({
                   ? removeParticipant.variables
                   : undefined
               }
+              onPromote={(participantId) => transferAdmin.mutate(participantId)}
+              isPromoting={transferAdmin.isPending}
             />
           </Panel>
         </div>
@@ -203,7 +210,14 @@ export function RoundScreen({
             )}
             {currentRound && isRevealed && roundStatus.data?.result && (
               <div aria-live="polite">
-                <ResultPanel result={roundStatus.data.result} />
+                <ResultPanel
+                  result={roundStatus.data.result}
+                  cards={cardsForDeck(state.session.deck)}
+                  votes={roundStatus.data.participants}
+                  notVoted={eligibleVoters
+                    .filter((p) => !votedIds.has(p.id))
+                    .map((p) => p.name)}
+                />
               </div>
             )}
           </Panel>

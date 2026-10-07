@@ -247,8 +247,10 @@ message text.
 ## Roles
 
 - **admin** — exactly one per session, the creator. Creates stories, reveals cards,
-  triggers re-estimate, picks the deck, removes participants. Votes as well, which
-  can be switched off via `can_vote`.
+  triggers re-estimate, picks the deck, removes participants, hands the chair to
+  someone else (`transfer_admin`). Votes as well, which can be switched off via
+  `can_vote`. Revealing never required a full round; the UI only asks for
+  confirmation when votes are missing.
 - **player** — votes, nothing else.
 - **spectator** — watches; not counted in "x of y voted".
 
@@ -291,6 +293,13 @@ else to take. `join_session` distinguishes a removed row from an ordinary
 "already joined" one and refuses with `VB019` rather than silently
 reviving membership — a removed participant gets a "you were removed"
 screen on their next visit, not a rejoin.
+
+`transfer_admin` and `round_status` predate the soft delete and only
+learned it in `20261006130000`: before that, the chair could be handed to
+a removed participant (orphaning it for the active team) and a removed
+participant could still read rounds by id. Any new function that takes a
+participant or checks membership goes through `active_participant()` /
+`assert_is_admin()` rather than querying `participants` directly.
 
 When the admin leaves via `leave_session`, the chair passes to the
 remaining active participant with the earliest `joined_at` — the

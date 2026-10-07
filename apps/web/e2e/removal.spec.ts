@@ -30,11 +30,15 @@ test("the admin removes a player mid-vote, and the removed player lands on their
   });
   await expect(bob.getByRole("alert")).toContainText("entfernt");
 
-  // Bob's earlier vote stays in the round for the admin to see.
+  // Bob's earlier vote stays in the round for the admin to see. Ada herself
+  // has not voted, so revealing asks first.
   await admin.getByRole("button", { name: "Karten aufdecken" }).click();
+  await admin.getByRole("button", { name: "Ja, aufdecken" }).click();
   await expect(
-    admin.getByRole("region", { name: "Ergebnis" }).getByText("5"),
-  ).toBeVisible();
+    admin
+      .getByRole("region", { name: "Ergebnis" })
+      .getByRole("list", { name: "Stimmverteilung" }),
+  ).toContainText("5: 1 Stimme, Bob");
 
   await contextA.close();
   await contextB.close();

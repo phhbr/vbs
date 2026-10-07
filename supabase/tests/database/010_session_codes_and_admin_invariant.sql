@@ -84,7 +84,7 @@ select throws_ok(
 
 -- --------------------------------------------------------- one admin: index
 select throws_ok(
-  $$ update participants set role = 'admin' where name = 'Bob' $$,
+  $$ update participants set role = 'admin' where session_id = '50000000-0000-0000-0000-000000000001' and name = 'Bob' $$,
   '23505',
   null,
   'a second admin in the same session is rejected by the partial unique index'
@@ -94,8 +94,8 @@ select throws_ok(
 -- The cases that must PASS stay in deferred mode and force the check at the
 -- end, which is what a real commit does.
 savepoint before_swap;
-update participants set role = 'player' where name = 'Ada';
-update participants set role = 'admin' where name = 'Bob';
+update participants set role = 'player' where session_id = '50000000-0000-0000-0000-000000000001' and name = 'Ada';
+update participants set role = 'admin' where session_id = '50000000-0000-0000-0000-000000000001' and name = 'Bob';
 select lives_ok(
   'set constraints all immediate',
   'demote then promote inside one transaction is accepted'
@@ -116,14 +116,14 @@ rollback to savepoint before_empty;
 set constraints all immediate;
 
 select throws_ok(
-  $$ delete from participants where name = 'Ada' $$,
+  $$ delete from participants where session_id = '50000000-0000-0000-0000-000000000001' and name = 'Ada' $$,
   'VB010',
   null,
   'deleting the only admin while a participant remains is rejected'
 );
 
 select throws_ok(
-  $$ update participants set role = 'player' where name = 'Ada' $$,
+  $$ update participants set role = 'player' where session_id = '50000000-0000-0000-0000-000000000001' and name = 'Ada' $$,
   'VB010',
   null,
   'demoting the only admin without promoting anyone is rejected'

@@ -55,6 +55,9 @@ for (const theme of THEMES) {
       test("home route", async ({ page }) => {
         await primeThemeAndLocale(page, theme, locale);
         await page.goto("/");
+        // The route renders only after AuthGate's anonymous sign-in; scanning
+        // before that sees an empty shell (no main, no h1) — a CI flake.
+        await expect(page.getByRole("main")).toBeVisible();
         await expectNoViolations(page);
       });
 

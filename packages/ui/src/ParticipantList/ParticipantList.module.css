@@ -14,7 +14,9 @@
 .item {
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
+  /* Wraps so an admin's row actions (remove, hand over the chair) drop to
+     their own line at 360px instead of overflowing. */
+  flex-wrap: wrap;
   gap: var(--vbs-space-10);
 }
 

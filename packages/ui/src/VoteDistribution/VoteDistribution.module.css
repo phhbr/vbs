@@ -1,0 +1,82 @@
+/* One grid for the whole list, with each row a subgrid of it, so every
+   bar starts at the same x no matter how wide its card label is ("3" vs
+   "PAUSE") — while each <li> keeps its list-item semantics, which
+   display: contents would not reliably do. */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  column-gap: var(--vbs-space-10);
+  row-gap: var(--vbs-space-20);
+}
+
+.item {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+/* The card chip echoes CardDeck's cards: square, 1px control border,
+   accent text; the leading group gets the selected card's inversion. */
+.value {
+  min-width: var(--vbs-space-40);
+  min-height: var(--vbs-space-40);
+  padding: 0 var(--vbs-space-10);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--vbs-control-border);
+  border-radius: var(--vbs-radius);
+  /* The bevel some themes (vb6) draw their card edges with. */
+  box-shadow: var(--vbs-control-shadow);
+  background: var(--vbs-control-bg);
+  color: var(--vbs-accent);
+}
+
+.leading .value {
+  background: var(--vbs-accent);
+  border-color: var(--vbs-accent);
+  box-shadow: var(--vbs-control-shadow-on);
+  color: var(--vbs-on-accent);
+}
+
+.track {
+  display: block;
+}
+
+.bar {
+  display: block;
+  height: var(--vbs-space-20);
+  background: var(--vbs-accent);
+}
+
+.count {
+  color: var(--vbs-fg-dim);
+  white-space: nowrap;
+}
+
+.leading .count {
+  color: var(--vbs-fg-strong);
+  font-weight: 700;
+}
+
+.voters {
+  grid-column: 2 / -1;
+  color: var(--vbs-fg);
+  overflow-wrap: anywhere;
+}
+
+/* Visually hidden, still read. No negative margin — the spacing-scale test
+   allows only 0/10/14/20/40px, and clip-path makes it unnecessary. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

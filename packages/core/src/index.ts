@@ -24,10 +24,16 @@ export type {
   CurrentRound,
   RoundPhase,
   RoundResult,
+  VoteGroup,
   RoundStatusParticipant,
   RoundStatusResult,
 } from "./round";
-export { FIBONACCI_CARDS, TSHIRT_CARDS, cardsForDeck } from "./round";
+export {
+  FIBONACCI_CARDS,
+  TSHIRT_CARDS,
+  cardsForDeck,
+  groupVotesByValue,
+} from "./round";
 export {
   SESSION_CODE_ALPHABET,
   SESSION_CODE_LENGTH,

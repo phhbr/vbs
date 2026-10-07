@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { sendHeartbeat } from "./api";
+import { invalidateSessionData } from "./queries";
 
 /**
  * `polling` is `reconnecting` that has lasted long enough to say so: the
@@ -70,11 +71,7 @@ export function useSessionRealtime({
 
     let hasConnectedOnce = false;
 
-    const refetchAll = () =>
-      void queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === "session" || query.queryKey[0] === "round",
-      });
+    const refetchAll = () => void invalidateSessionData(queryClient);
 
     const channel = supabase.channel(`session:${sessionId}`, {
       config: { private: true, presence: { key: participantId } },
